@@ -164,6 +164,8 @@ def get_customer_responses(transaction_id):
 # ==============================================================
 
 
+import joblib
+
 # Function: fraud_detection_system
 # Main dashboard UI for fraud detection, staff view and customer response.
 def fraud_detection_system():
@@ -180,6 +182,113 @@ def fraud_detection_system():
             </div>
         </div>
     """, unsafe_allow_html=True)
+
+    # --- PAGE SELECTION ---
+    page_options = ["Dashboard", "Manual Check"]
+    selected_page = st.sidebar.radio("Navigation", page_options)
+
+    # --- LOAD MODEL FOR MANUAL CHECK ---
+    model = None
+    try:
+        model = joblib.load("fraud_detection_PKL1_model.pkl")
+        st.success("✅ Model loaded successfully.")
+    except Exception as e:
+        st.error(f"❌ Failed to load model: {e}")
+
+    if selected_page == "Manual Check":
+        # حذف النص placeholder (لا يوجد نص سابق هنا)
+        # إضافة واجهة الإدخال اليدوي كما هو مطلوب
+        st.markdown("## 🧪 Manual Transaction Classification")
+        st.write("Enter transaction details to test the model's prediction capability:")
+
+        with st.form("manual_city_form"):
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                step = st.number_input("Step", min_value=1)
+                amount = st.number_input("Amount", min_value=0.0)
+                transaction_type = st.selectbox("Type", options=["CASH_OUT", "CASH_IN", "PAYMENT", "TRANSFER", "DEBIT"])
+            with col2:
+                oldBalanceOrig = st.number_input("Old Balance Orig", min_value=0.0)
+                newBalanceOrig = st.number_input("New Balance Orig", min_value=0.0 )
+                isFlaggedFraud = st.selectbox("Is Flagged Fraud", options=[0, 1])
+            with col3:
+                oldBalanceDest = st.number_input("Old Balance Dest", min_value=0.0)
+                newBalanceDest = st.number_input("New Balance Dest", min_value=0.0)
+                city = st.text_input("City (Optional)", value="")
+
+            submitted = st.form_submit_button("🔍 Predict")
+
+        if submitted:
+            try:
+                sample = pd.DataFrame([{
+                    "transactionID": int(time.time()),
+                    "step": step,
+                    "type": transaction_type,
+                    "amount": amount,
+                    "oldBalanceOrig": oldBalanceOrig,
+                    "newBalanceOrig": newBalanceOrig,
+                    "oldBalanceDest": oldBalanceDest,
+                    "newBalanceDest": newBalanceDest,
+                    "isFlaggedFraud": isFlaggedFraud
+                }])
+
+                # تشفير العمود type قبل التنبؤ
+                type_encoding = {"CASH_OUT": 0, "CASH_IN": 1, "PAYMENT": 2, "TRANSFER": 3, "DEBIT": 4}
+                sample["type"] = sample["type"].map(type_encoding)
+
+                # تأكد من أن الأعمدة مطابقة للنموذج
+                required_cols = [
+                    "transactionID", "step", "type", "amount",
+                    "oldBalanceOrig", "newBalanceOrig",
+                    "oldBalanceDest", "newBalanceDest", "isFlaggedFraud"
+                ]
+                if model:
+                    prob = model.predict_proba(sample[required_cols])[0][1]
+                    prediction = 1 if prob >= 0.9 else 0
+                    st.info(f"🔍 Fraud Probability: {prob:.4f}")
+                    result = "🟥 Fraudulent" if prediction == 1 else "🟩 Legitimate"
+                    st.success(f"**Prediction Result:** {result}")
+                    # ==== تفسير إضافي عند تصنيف العملية كاحتيال ====
+                    if prediction == 1:
+                        explanation = ""
+                        if transaction_type == "CASH_IN" and oldBalanceOrig == 0:
+                            explanation = "⚠️ Sudden large deposit into an empty account — suspicious behavior."
+                        elif transaction_type == "TRANSFER" and newBalanceOrig == 0:
+                            explanation = "⚠️ Full balance transferred from origin account — potential fraud pattern."
+                        elif oldBalanceDest == 0 and newBalanceDest == amount:
+                            explanation = "⚠️ Receiver had zero balance before receiving full transaction amount."
+                        else:
+                            explanation = "⚠️ The model detected suspicious transaction patterns based on training data."
+                        st.warning(explanation)
+                else:
+                    st.warning("Model is not loaded.")
+            except Exception as e:
+                st.error(f"Prediction failed: {e}")
+
+        # ==== CSV Upload and Classification ====
+        st.markdown("### 📂 Upload CSV File for Bulk Classification")
+        uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+        if uploaded_file and model:
+            try:
+                try:
+                    df_csv = pd.read_csv(uploaded_file)
+                except UnicodeDecodeError:
+                    df_csv = pd.read_csv(uploaded_file, encoding='latin1')
+                if "type" in df_csv.columns:
+                    type_encoding = {"CASH_OUT": 0, "CASH_IN": 1, "PAYMENT": 2, "TRANSFER": 3, "DEBIT": 4}
+                    df_csv["type"] = df_csv["type"].map(type_encoding)
+                required_cols = [
+                    "transactionID", "step", "type", "amount",
+                    "oldBalanceOrig", "newBalanceOrig",
+                    "oldBalanceDest", "newBalanceDest", "isFlaggedFraud"
+                ]
+                df_csv["fraud_probability"] = model.predict_proba(df_csv[required_cols])[:, 1]
+                df_csv["prediction"] = df_csv["fraud_probability"].apply(lambda p: "🟥 Fraudulent" if p >= 0.9 else "🟩 Legitimate")
+                st.success("✅ File processed successfully.")
+                st.dataframe(df_csv[["transactionID", "amount", "type", "fraud_probability", "prediction"]])
+            except Exception as e:
+                st.error(f"Error processing uploaded file: {e}")
+        return
 
     # --- CUSTOMER RESPONSE HANDLING VIA EMAIL LINK ---
     # Allows customer to respond YES/NO via email link; processes the response.
