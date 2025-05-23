@@ -13,22 +13,42 @@ from email.mime.text import MIMEText
 # ==============================================================
 
 
-st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="Fraud Detection System", layout="wide")
+st.markdown("""
+    <style>
+        html, body, [class*="css"] {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+        }
+        .block-container {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 # ==============================================================
 # DATABASE FUNCTIONS
 # ==============================================================
 
+# Function: get_connection
+# Returns a new connection to the fraud_detection database.
+def get_connection():
+    return pymysql.connect(
+        host="localhost",
+        user="root",
+        password="User0202",
+        database="fraud_detection"
+    )
+
 # Function: login_user
 # Authenticates a user against the users table using email and password.
 def login_user(email, password):
     try:
-        conn = pymysql.connect(
-            host="localhost",
-            user="root",
-            password="00000000",
-            database="fraud_detection"
-        )
+        conn = get_connection()
         cursor = conn.cursor()
         query = "SELECT * FROM users WHERE email=%s AND password=%s"
         cursor.execute(query, (email, password))
@@ -43,12 +63,7 @@ def login_user(email, password):
 # Function: load_transactions
 # Loads all transactions from the database into a DataFrame.
 def load_transactions():
-    conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='00000000',
-        database='fraud_detection'
-    )
+    conn = get_connection()
     df = pd.read_sql("SELECT * FROM transactions", conn)
     conn.close()
     return df
@@ -56,12 +71,7 @@ def load_transactions():
 # Function: get_customer_info
 # Retrieves customer details (name, phone, city, email) given customer_id.
 def get_customer_info(customer_id):
-    conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='00000000',
-        database='fraud_detection'
-    )
+    conn = get_connection()
     cursor = conn.cursor()
     query = "SELECT name, phone_number, city, email FROM customers WHERE customer_id = %s"
     cursor.execute(query, (customer_id,))
@@ -122,7 +132,7 @@ def send_otp_email(to_email, otp_code):
         yag.send(to=to_email, subject=subject, contents=[body])
         return True
     except Exception as e:
-        st.error(f"❌ Failed to send OTP: {e}")
+        st.error(f"Failed to send OTP: {e}")
         return False
 
 # ==============================================================
@@ -133,7 +143,7 @@ def send_otp_email(to_email, otp_code):
 # Saves a customer's YES/NO response for a transaction in the DB.
 def save_customer_response(transaction_id, response):
     try:
-        conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
+        conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO transaction_feedback (transaction_id, response) VALUES (%s, %s)",
@@ -148,7 +158,7 @@ def save_customer_response(transaction_id, response):
 # Function: get_customer_responses
 # Retrieves all responses for a given transaction (most recent first).
 def get_customer_responses(transaction_id):
-    conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
         "SELECT response, created_at FROM transaction_feedback WHERE transaction_id = %s ORDER BY id DESC",
@@ -169,104 +179,41 @@ import joblib
 # Function: fraud_detection_system
 # Main dashboard UI for fraud detection, staff view and customer response.
 def fraud_detection_system():
-    # --- TOP BAR: Professional Dashboard Header ---
-    # Displays the SecureBank branding and currently logged-in user's email.
+    # --- TOP BAR: Professional Dashboard Header with Integrated Action Buttons ---
+    # Updated: Bar stretches from far left and title is flush left beside sidebar.
     st.markdown(f"""
-        <div style='display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; border-bottom: 1px solid #ccc; background-color: white;'>
-            <div style='display:flex; align-items:center; gap: 12px;'>
-                <img src="https://img.icons8.com/color/48/000000/security-checked.png" width="36"/>
-                <span style='font-size: 20px; font-weight: bold;'>SecureBank Dashboard</span>
+        <div style='position:fixed; top:0; left:0; width:100%; z-index:1000; background-color:#f5f8fa; border-bottom:1px solid #ccc; padding:10px 30px; display:flex; justify-content:space-between; align-items:center; height:60px;'>
+            <div style='display:flex; align-items:center; gap:12px;'>
+                <span style='font-weight:600; font-size:17px; color:#2c3e50;'>SecureBank Dashboard</span>
             </div>
-            <div style='display:flex; align-items:center; gap: 15px;'>
-                <span style="font-weight:600;">{st.session_state['email']}</span>
+            <div style='display:flex; align-items:center; gap:12px;'>
+                <div style='font-size:13px; color:#555;'>{st.session_state['email']}</div>
+                <button style='padding:5px 12px; border:none; background-color:#e0e0e0; border-radius:4px; font-size:13px;'>Settings</button>
+                <button style='padding:5px 12px; border:none; background-color:#e0e0e0; border-radius:4px; font-size:13px;'>Help</button>
+                <button style='padding:5px 12px; border:none; background-color:#d9534f; color:white; border-radius:4px; font-size:13px;'>Logout</button>
             </div>
         </div>
+        <div style='height:60px;'></div>
     """, unsafe_allow_html=True)
 
     # --- PAGE SELECTION ---
-    page_options = ["Dashboard", "Manual Check"]
-    selected_page = st.sidebar.radio("Navigation", page_options)
+    page_options = ["Dashboard", " Upload Transactions"]
+    selected_page = st.sidebar.radio(
+        "Navigation",
+        page_options,
+        key="sidebar_nav",
+        help="Choose a page",
+    )
 
-    # --- LOAD MODEL FOR MANUAL CHECK ---
+    # --- LOAD MODEL FOR UPLOAD PAGE ---
     model = None
     try:
         model = joblib.load("fraud_detection_PKL1_model.pkl")
-        st.success("✅ Model loaded successfully.")
     except Exception as e:
-        st.error(f"❌ Failed to load model: {e}")
+        st.error(f"Failed to load model: {e}")
 
-    if selected_page == "Manual Check":
-        # Removed placeholder text (no prior content)
-        # Add manual input interface as required
-        st.markdown("## 🧪 Manual Transaction Classification")
-        st.write("Enter transaction details to test the model's prediction capability:")
-
-        with st.form("manual_city_form"):
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                step = st.number_input("Step", min_value=1)
-                amount = st.number_input("Amount", min_value=0.0)
-                transaction_type = st.selectbox("Type", options=["CASH_OUT", "CASH_IN", "PAYMENT", "TRANSFER", "DEBIT"])
-            with col2:
-                oldBalanceOrig = st.number_input("Old Balance Orig", min_value=0.0)
-                newBalanceOrig = st.number_input("New Balance Orig", min_value=0.0 )
-                isFlaggedFraud = st.selectbox("Is Flagged Fraud", options=[0, 1])
-            with col3:
-                oldBalanceDest = st.number_input("Old Balance Dest", min_value=0.0)
-                newBalanceDest = st.number_input("New Balance Dest", min_value=0.0)
-                city = st.text_input("City (Optional)", value="")
-
-            submitted = st.form_submit_button("🔍 Predict")
-
-        if submitted:
-            try:
-                sample = pd.DataFrame([{
-                    "transactionID": int(time.time()),
-                    "step": step,
-                    "type": transaction_type,
-                    "amount": amount,
-                    "oldBalanceOrig": oldBalanceOrig,
-                    "newBalanceOrig": newBalanceOrig,
-                    "oldBalanceDest": oldBalanceDest,
-                    "newBalanceDest": newBalanceDest,
-                    "isFlaggedFraud": isFlaggedFraud
-                }])
-
-                # Encode the 'type' column before prediction
-                type_encoding = {"CASH_OUT": 0, "CASH_IN": 1, "PAYMENT": 2, "TRANSFER": 3, "DEBIT": 4}
-                sample["type"] = sample["type"].map(type_encoding)
-
-                # Ensure columns match the model's requirements
-                required_cols = [
-                    "transactionID", "step", "type", "amount",
-                    "oldBalanceOrig", "newBalanceOrig",
-                    "oldBalanceDest", "newBalanceDest", "isFlaggedFraud"
-                ]
-                if model:
-                    prob = model.predict_proba(sample[required_cols])[0][1]
-                    prediction = 1 if prob >= 0.9 else 0
-                    st.info(f"🔍 Fraud Probability: {prob:.4f}")
-                    result = "🟥 Fraudulent" if prediction == 1 else "🟩 Legitimate"
-                    st.success(f"**Prediction Result:** {result}")
-                    # ==== Additional explanation if transaction is classified as fraudulent ====
-                    if prediction == 1:
-                        explanation = ""
-                        if transaction_type == "CASH_IN" and oldBalanceOrig == 0:
-                            explanation = "⚠️ Sudden large deposit into an empty account — suspicious behavior."
-                        elif transaction_type == "TRANSFER" and newBalanceOrig == 0:
-                            explanation = "⚠️ Full balance transferred from origin account — potential fraud pattern."
-                        elif oldBalanceDest == 0 and newBalanceDest == amount:
-                            explanation = "⚠️ Receiver had zero balance before receiving full transaction amount."
-                        else:
-                            explanation = "⚠️ The model detected suspicious transaction patterns based on training data."
-                        st.warning(explanation)
-                else:
-                    st.warning("Model is not loaded.")
-            except Exception as e:
-                st.error(f"Prediction failed: {e}")
-
-        # ==== CSV Upload and Classification ====
-        st.markdown("### 📂 Upload CSV File for Bulk Classification")
+    if selected_page == " Upload Transactions":
+        st.markdown("## Upload Transactions for Classification")
         uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
         if uploaded_file and model:
             try:
@@ -284,8 +231,49 @@ def fraud_detection_system():
                 ]
                 df_csv["fraud_probability"] = model.predict_proba(df_csv[required_cols])[:, 1]
                 df_csv["prediction"] = df_csv["fraud_probability"].apply(lambda p: "🟥 Fraudulent" if p >= 0.9 else "🟩 Legitimate")
-                st.success("✅ File processed successfully.")
+                st.success("File processed successfully.")
                 st.dataframe(df_csv[["transactionID", "amount", "type", "fraud_probability", "prediction"]])
+
+                # ===== Prepare and insert to database =====
+                try:
+                    # إعادة تسمية الأعمدة لتطابق قاعدة البيانات
+                    df_csv.rename(columns={
+                        "transactionID": "transaction_id",
+                        "type": "transaction_type",
+                        "oldBalanceOrig": "oldbalanceOrg",
+                        "newBalanceOrig": "newbalanceOrig",
+                        "oldBalanceDest": "oldbalanceDest",
+                        "newBalanceDest": "newbalanceDest",
+                        "isFlaggedFraud": "is_fraud"
+                    }, inplace=True)
+
+                    # حساب الأعمدة الإضافية
+                    df_csv["errorBalanceOrig"] = df_csv["oldbalanceOrg"] - df_csv["newbalanceOrig"] - df_csv["amount"]
+                    df_csv["errorBalanceDest"] = df_csv["newbalanceDest"] - df_csv["oldbalanceDest"]
+                    df_csv["email"] = None  # قيمة افتراضية
+
+                    # الاتصال بقاعدة البيانات
+                    conn = get_connection()
+                    cursor = conn.cursor()
+
+                    for _, row in df_csv.iterrows():
+                        cursor.execute("""
+                            INSERT INTO transactions (transaction_id, amount, transaction_type, is_fraud, step, oldbalanceOrg, newbalanceOrig, oldbalanceDest, newbalanceDest, errorBalanceOrig, errorBalanceDest, email)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """, (
+                            int(row['transaction_id']), float(row['amount']), row['transaction_type'],
+                            int(row['is_fraud']), int(row['step']), float(row['oldbalanceOrg']),
+                            float(row['newbalanceOrig']), float(row['oldbalanceDest']),
+                            float(row['newbalanceDest']), float(row['errorBalanceOrig']),
+                            float(row['errorBalanceDest']), row['email']
+                        ))
+
+                    conn.commit()
+                    cursor.close()
+                    conn.close()
+                    st.success("Transactions inserted into database and reflected in dashboard.")
+                except Exception as e:
+                    st.error(f"❌ Failed to insert data into database: {e}")
             except Exception as e:
                 st.error(f"Error processing uploaded file: {e}")
         return
@@ -323,7 +311,7 @@ def fraud_detection_system():
         st.query_params.clear()
 
         # Update the transaction status (is_active) according to the response
-        conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
+        conn = get_connection()
         cursor = conn.cursor()
         if response == 'NO':
             cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (transaction_id,))
@@ -350,46 +338,37 @@ def fraud_detection_system():
     with st.sidebar:
         # Display logo at top of sidebar
         st.markdown(
-            "<div style='text-align:center; padding-top:20px;'><img src='https://img.icons8.com/color/96/000000/security-checked.png'/></div>",
+            "<div style='text-align:center; padding-top:20px;'></div>",
             unsafe_allow_html=True
         )
-        # Style the sidebar with white background and vertical border
+        # Enhanced sidebar style
         st.markdown("""
             <style>
-            section[data-testid='stSidebar'] {
-                background-color: white !important;
-                width: 220px !important;
-                border-right: 2px solid #ccc;
-            }
-            div[data-testid="stSidebar"]::after {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 219px;
-                width: 1px;
-                height: 100vh;
-                background-color: #ccc;
-            }
+                section[data-testid='stSidebar'] {
+                    background-color: #ffffff;
+                    border-right: 1px solid #ccc;
+                    padding: 20px 10px;
+                }
+                div[data-testid="stSidebar"] button {
+                    font-size: 14px;
+                    margin-bottom: 10px;
+                    font-weight: 500;
+                    border-radius: 6px;
+                }
+                .sidebar-title {
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #1e8449;
+                    margin-bottom: 8px;
+                    margin-top: 20px;
+                }
+                .sidebar-section {
+                    margin-bottom: 18px;
+                }
             </style>
         """, unsafe_allow_html=True)
-        # Horizontal rule below logo
-        st.markdown("<hr style='border:0; border-top:1px solid #ccc; margin:20px 0;'>", unsafe_allow_html=True)
-        # Sidebar navigation buttons
-        st.button("Settings")
-        st.button("Help & Support")
-        st.button("Logout")
-
-    # Sidebar button style
-    st.markdown("""
-        <style>
-        div[data-testid="stSidebar"] button {
-            background-color: white !important;
-            border: 1px solid #ccc !important;
-            color: black !important;
-            font-weight: 500;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+        # Sidebar navigation buttons (move Quick Actions to the bottom)
+        # (Navigation radio or buttons can be here, if any)
 
     # --- METRIC CARDS ---
     # Display summary metrics: Fraudulent, Legitimate, and Total transactions.
@@ -399,48 +378,48 @@ def fraud_detection_system():
         legit_count = df_all[df_all["is_fraud"] == 0].shape[0]
         total_transactions = df_all.shape[0]
         # Build a transaction_id -> customer_id map for lookup in preview_df
-        id_map = df_all.set_index("transaction_id")["customer_id"].to_dict()
+        if "customer_id" in df_all.columns:
+            id_map = df_all.set_index("transaction_id")["customer_id"].fillna("N/A").to_dict()
+        else:
+            id_map = {}
     except:
-        st.error("❌ Failed to load live data from database.")
+        st.error("Failed to load live data from database.")
         fraud_count = 0
         legit_count = 0
         total_transactions = 0
 
-    metric_cols = st.columns(3)
-    with metric_cols[0]:
-        # Number of fraudulent transactions
-        st.markdown(f"""
-        <div style='background-color:#fff; padding:20px; border-radius:10px; text-align:center'>
-            <h4>Fraudulent Transactions</h4>
-            <h2 style='color:#d32f2f;'>{fraud_count:,}</h2>
-            <small style='color:#388E3C;'>+2.15%</small>
-        </div>""", unsafe_allow_html=True)
-    with metric_cols[1]:
-        # Number of legitimate transactions
-        st.markdown(f"""
-        <div style='background-color:#fff; padding:20px; border-radius:10px; text-align:center'>
-            <h4>Legitimate Transactions</h4>
-            <h2 style='color:#388E3C;'>{legit_count:,}</h2>
-            <small style='color:#d32f2f;'>-0.72%</small>
-        </div>""", unsafe_allow_html=True)
-    with metric_cols[2]:
-        # Total number of transactions
-        st.markdown(f"""
-        <div style='background-color:#fff; padding:20px; border-radius:10px; text-align:center'>
-            <h4>Total Transactions</h4>
-            <h2>{total_transactions:,}</h2>
-        </div>""", unsafe_allow_html=True)
+    # More formal, neat dashboard metrics display with smaller, more styled fonts
+    st.markdown(f"""
+        <div style='display:flex; gap:25px; margin-top:30px; justify-content:center;'>
+            <div style='flex:1; padding:22px 15px 18px 15px; background:#ffffff; border:1px solid #e0e0e0; border-radius:15px; text-align:center; box-shadow: 0 2px 5px rgba(0,0,0,0.06);'>
+                <h4 style='color:#2c3e50; margin-bottom:4px; font-size:15px;'>Fraudulent Transactions</h4>
+                <h2 style='color:#e74c3c; margin:0; font-size:28px;'>{fraud_count:,}</h2>
+                <p style='color:#27ae60; font-size:12px; margin-top:2px;'>+2.15%</p>
+            </div>
+            <div style='flex:1; padding:22px 15px 18px 15px; background:#ffffff; border:1px solid #e0e0e0; border-radius:15px; text-align:center; box-shadow: 0 2px 5px rgba(0,0,0,0.06);'>
+                <h4 style='color:#2c3e50; margin-bottom:4px; font-size:15px;'>Legitimate Transactions</h4>
+                <h2 style='color:#27ae60; margin:0; font-size:28px;'>{legit_count:,}</h2>
+                <p style='color:#c0392b; font-size:12px; margin-top:2px;'>-0.72%</p>
+            </div>
+            <div style='flex:1; padding:22px 15px 18px 15px; background:#ffffff; border:1px solid #e0e0e0; border-radius:15px; text-align:center; box-shadow: 0 2px 5px rgba(0,0,0,0.06);'>
+                <h4 style='color:#2c3e50; margin-bottom:4px; font-size:15px;'>Total Transactions</h4>
+                <h2 style='margin:0; font-size:28px;'>{total_transactions:,}</h2>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    # Add clear space below the cards to prevent overlap with other elements
+    st.markdown("<div style='margin-bottom:30px;'></div>", unsafe_allow_html=True)
 
     # --- PERFORMANCE CHART ---
     # Displays a stacked bar chart of fraudulent vs. legitimate transactions over months.
-    st.markdown("### Performance")
+    st.markdown("<h4 style='color:#2c3e50; font-size:16px; margin-top:10px; margin-bottom:-10px;'>Performance Overview</h4>", unsafe_allow_html=True)
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
     fraud_data = [1.2, 1.8, 1.5, 1.6, 1.9, 2.0, 2.2]
     legit_data = [2.2, 2.5, 2.4, 2.6, 2.7, 2.8, 2.9]
     import plotly.graph_objects as go
     fig = go.Figure(data=[
-        go.Bar(name='Fraudulent', x=months, y=fraud_data, marker_color='#d32f2f'),
-        go.Bar(name='Legitimate', x=months, y=legit_data, marker_color='#81c784')
+        go.Bar(name='Fraudulent', x=months, y=fraud_data, marker_color='rgba(102, 204, 153, 0.85)'),
+        go.Bar(name='Legitimate', x=months, y=legit_data, marker_color='rgba(153, 255, 204, 0.85)')
     ])
     fig.update_layout(
         barmode='stack',
@@ -477,7 +456,7 @@ def fraud_detection_system():
         return f"background-color: {color}; border-radius:10px; text-align:center"
 
     # --- SEARCH & FILTERS ---
-    search_term = st.text_input("🔍 Search by Transaction ID")
+    search_term = st.text_input("Search by Transaction ID")
     col_filter1, col_filter2 = st.columns(2)
     with col_filter1:
         transaction_type_filter = st.selectbox("Transaction Type", options=["All", "CASH_OUT", "CASH_IN", "PAYMENT", "TRANSFER", "DEBIT"])
@@ -537,11 +516,14 @@ def fraud_detection_system():
 
             # Lookup customer_id from transaction
             customer_row = df_all[df_all['transaction_id'] == row['transaction_id']]
-            customer_id = customer_row['customer_id'].values[0] if not customer_row.empty else ""
+            customer_id = customer_row['customer_id'].values[0] if not customer_row.empty and pd.notnull(customer_row['customer_id'].values[0]) else ""
 
             # Customer Details column: show details if button clicked
             if cols[4].button("Details", key=detail_key):
-                cust = get_customer_info(customer_id)
+                if customer_id:
+                    cust = get_customer_info(customer_id)
+                else:
+                    cust = None
                 if cust:
                     st.markdown(f"""
                     <div style='background-color:#eef2f7; padding:10px; border-radius:8px;'>
@@ -564,7 +546,7 @@ def fraud_detection_system():
                     if cust and cust[3]:
                         success = send_email_confirmation(cust[3], row['transaction_id'])
                         if success:
-                            cols[5].success("✅ Email sent successfully.")
+                            cols[5].success("Email sent successfully.")
                     else:
                         cols[5].error("No email found.")
             # Show transaction status: Waiting (no response), Active (YES), Stopped (NO)
@@ -621,11 +603,11 @@ def fraud_detection_system():
     # --- PAGINATION CONTROLS ---
     col_prev, col_page, col_next = st.columns([1, 2, 1])
     with col_prev:
-        if st.button(" Previous", key="dashboard_prev") and st.session_state.dashboard_page > 1:
+        if st.button("< Previous", key="dashboard_prev") and st.session_state.dashboard_page > 1:
             st.session_state.dashboard_page -= 1
             st.rerun()
     with col_next:
-        if st.button("Next ➡️", key="dashboard_next") and st.session_state.dashboard_page < total_pages:
+        if st.button("Next >", key="dashboard_next") and st.session_state.dashboard_page < total_pages:
             st.session_state.dashboard_page += 1
             st.rerun()
     with col_page:
@@ -659,7 +641,7 @@ def main():
     elif not st.session_state['logged_in']:
         # Login form for staff authentication
         st.markdown(
-            "<h2 style='color:#004085'>🔐 Secure Employee Login</h2>",
+            "<h2 style='color:#004085'>Secure Employee Login</h2>",
             unsafe_allow_html=True
         )
         st.write("Please login to continue.")
@@ -680,7 +662,7 @@ def main():
                     if otp_sent:
                         st.success("OTP has been sent to your email.")
                     else:
-                        st.error("❌ Failed to send OTP. Please check your email and try again.")
+                        st.error("Failed to send OTP. Please check your email and try again.")
                     st.rerun()
                 else:
                     st.error("Invalid Email or Password.")
@@ -698,7 +680,7 @@ def main():
     elif st.session_state['logged_in'] and not st.session_state['otp_verified']:
         # OTP check after login; user must enter OTP sent to email
         st.markdown(
-            "<h2 style='color:#004085'>📨 Verify OTP Sent to Email</h2>",
+            "<h2 style='color:#004085'>Verify OTP Sent to Email</h2>",
             unsafe_allow_html=True
         )
         st.write("Please enter the OTP sent to your email.")
