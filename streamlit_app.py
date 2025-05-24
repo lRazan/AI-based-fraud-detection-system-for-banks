@@ -828,7 +828,6 @@ def main():
                 },
                 "a": {
                     "color": "#2e7d32",
-                    "pointer-events": "none",
                     "padding": "0px",
                     "font-size": "1px"
                 },
@@ -893,7 +892,13 @@ def main():
     </style>
 """, unsafe_allow_html=True)
         # Add CSS to hide navbar items (keep colored bar only)
-
+        st.markdown("""
+            <style>
+                /* nav ul li {
+                    display: none !important;
+                } */
+            </style>
+        """, unsafe_allow_html=True)
 
         # Improved login form centering and style
         st.markdown("""
@@ -1003,7 +1008,6 @@ def main():
                 },
                 "a": {
                     "color": "#2e7d32",
-                    "pointer-events": "none",
                     "padding": "0px",
                     "font-size": "1px"
                 },
@@ -1069,9 +1073,9 @@ def main():
         # Add CSS to hide navbar items (keep colored bar only)
         st.markdown("""
             <style>
-                nav ul li {
+                /* nav ul li {
                     display: none !important;
-                }
+                } */
             </style>
         """, unsafe_allow_html=True)
         # Background, font, and form settings as in login page
