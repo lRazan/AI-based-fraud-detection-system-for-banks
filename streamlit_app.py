@@ -1,4 +1,5 @@
 import streamlit as st 
+st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
 import pandas as pd
 import pymysql
 import matplotlib.pyplot as plt 
@@ -38,7 +39,6 @@ st.cache_data(ttl=300)
 # --------------------------------------------------------------
 # PAGE CONFIGURATION & GLOBAL STYLES
 # --------------------------------------------------------------
-st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
 st.markdown("""
     <style>
         html, body, [class*="css"] {
