@@ -11,7 +11,6 @@ import altair as alt
 import os
 from streamlit_navigation_bar import st_navbar
 
-
 # ==============================================================
 # IMPORTS
 # ==============================================================
@@ -84,7 +83,7 @@ def login_user(email, password):
         conn = pymysql.connect(
             host="localhost",
             user="root",
-            password="User0202",
+            password="00000000",
             database="fraud_detection"
         )
         cursor = conn.cursor()
@@ -104,10 +103,10 @@ def login_user(email, password):
 # --------------------------------------------------------------
 def load_transactions():
     conn = pymysql.connect(
-        host="localhost",
-        user="root",
-        password="User0202",
-        database="fraud_detection"
+        host='localhost',
+        user='root',
+        password='00000000',
+        database='fraud_detection'
     )
     df = pd.read_sql("SELECT * FROM transactions", conn)
     conn.close()
@@ -119,10 +118,10 @@ def load_transactions():
 # --------------------------------------------------------------
 def get_customer_info(customer_id):
     conn = pymysql.connect(
-        host="localhost",
-        user="root",
-        password="User0202",
-        database="fraud_detection"
+        host='localhost',
+        user='root',
+        password='00000000',
+        database='fraud_detection'
     )
     cursor = conn.cursor()
     query = "SELECT name, phone_number, city, email FROM customers WHERE customer_id = %s"
@@ -158,10 +157,11 @@ def send_email_confirmation(to_email, transaction_id):
         password = keyring.get_password("yagmail", "addminn332005@gmail.com")
         yag = yagmail.SMTP("addminn332005@gmail.com", password)
         yag.send(to=to_email, subject=subject, contents=[body])
-        # Removed Streamlit message here to avoid extra message outside the table
+        # Do not show Streamlit message here; handled in Transaction Table
         return True
     except Exception as e:
-        st.error(f"Email sending failed: {e}")
+        # Remove or comment out Streamlit error message for email sending in table context
+        # st.error(f"Email sending failed: {e}")
         return False
 
 # --------------------------------------------------------------
@@ -196,12 +196,7 @@ def send_otp_email(to_email, otp_code):
 # --------------------------------------------------------------
 def save_customer_response(transaction_id, response):
     try:
-        conn = pymysql.connect(
-            host="localhost",
-            user="root",
-            password="User0202",
-            database="fraud_detection"
-        )
+        conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO transaction_feedback (transaction_id, response) VALUES (%s, %s)",
@@ -218,12 +213,7 @@ def save_customer_response(transaction_id, response):
 # Retrieves all responses for a given transaction (most recent first).
 # --------------------------------------------------------------
 def get_customer_responses(transaction_id):
-    conn = pymysql.connect(
-        host="localhost",
-        user="root",
-        password="User0202",
-        database="fraud_detection"
-    )
+    conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
     cursor = conn.cursor()
     cursor.execute(
         "SELECT response, created_at FROM transaction_feedback WHERE transaction_id = %s ORDER BY id DESC",
@@ -284,24 +274,8 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     # LOAD MODEL BEFORE ANY PAGE LOGIC
     # ----------------------------------------------------------
-    # Model download URL (for user reference or download)
-    
-    import urllib.request
-    import joblib
-
-    model_path = "fraud_detection_PKL1_model.pkl"
-    model_url = "https://github.com/IRazan/AI-based-fraud-detection-system-for-banks/releases/download/v1.0.0/fraud_detection_PKL1_model.pkl"
-
-    # If the model doesn't exist locally, download it from GitHub Release
-    if not os.path.exists(model_path):
-        with st.spinner("Downloading trained model..."):
-            urllib.request.urlretrieve(model_url, model_path)
-            st.success("Model downloaded successfully.")
-
-    # Load the model
     try:
-       # model = joblib.load("fraud_detection_PKL1_model.pkl")
-        model = joblib.load(model_path)
+        model = joblib.load("fraud_detection_PKL1_model.pkl")
     except Exception as e:
         st.error(f"❌ Failed to load model: {e}")
         model = None
@@ -323,7 +297,7 @@ def fraud_detection_system():
                 z-index: 9999;
             }
         </style>
-        <div class="navbar-title">Fraud Detection Transactions</div>
+        <div class="navbar-title">Banking Fraud Detection System</div>
     """, unsafe_allow_html=True)
     selected_page = selected.strip().lower()
 
@@ -375,12 +349,7 @@ def fraud_detection_system():
                     df_csv["errorBalanceDest"] = df_csv["newbalanceDest"] - df_csv["oldbalanceDest"]
                     df_csv["email"] = None
 
-                    conn = pymysql.connect(
-                        host="localhost",
-                        user="root",
-                        password="User0202",
-                        database="fraud_detection"
-                    )
+                    conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
                     cursor = conn.cursor()
 
                     for _, row in df_csv.iterrows():
@@ -444,12 +413,7 @@ def fraud_detection_system():
         st.session_state['response_already_processed'] = True
         st.query_params.clear()
         # Update the transaction status (is_active) according to the response
-        conn = pymysql.connect(
-            host="localhost",
-            user="root",
-            password="User0202",
-            database="fraud_detection"
-        )
+        conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
         cursor = conn.cursor()
         if response == 'NO':
             cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (transaction_id,))
@@ -741,7 +705,8 @@ def fraud_detection_system():
                     if cust and cust[3]:
                         success = send_email_confirmation(cust[3], row['transaction_id'])
                         if success:
-                            cols[5].success("Email sent successfully.")
+                            cols[5].markdown("<span style='color:green; font-size:12px;'>Sent successfully</span>", unsafe_allow_html=True)
+                        # st.success() or st.error() messages related to email sending removed here
                     else:
                         cols[5].error("No email found.")
             # Show transaction status: Active (YES), Stopped (NO)
@@ -839,22 +804,6 @@ def main():
     # LOGIN FORM FOR STAFF
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
-        #st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
-        st.markdown("""
-            <div class="background-image"></div>
-            <style>
-                .background-image {
-                    background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100vw;
-                    height: 100vh;
-                    z-index: -1;
-                    pointer-events: none;
-                }
-            </style>
-        """, unsafe_allow_html=True)
         # Add top navbar for login page with a hidden 'Login' link to avoid empty item error,
         # set color same as background and font-size small to hide visually.
         logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
@@ -898,7 +847,7 @@ def main():
                     z-index: 9999;
                 }
             </style>
-            <div class="navbar-title">Fraud Detection Transactions</div>
+            <div class="navbar-title">Banking Fraud Detection System</div>
         """, unsafe_allow_html=True)
         # Enforce full-width top navbar
         st.markdown("""
@@ -945,6 +894,10 @@ def main():
         # Improved login form centering and style
         st.markdown("""
             <style>
+                .stApp {
+                    background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
+                    background-attachment: fixed;
+                }
                 .stApp > header, .stApp > footer {
                     box-shadow: none !important;
                 }
@@ -1069,7 +1022,7 @@ def main():
                     z-index: 9999;
                 }
             </style>
-            <div class="navbar-title">Fraud Detection Transactions</div>
+            <div class="navbar-title">Banking Fraud Detection System</div>
         """, unsafe_allow_html=True)
         # Enforce full-width top navbar on OTP screen
         st.markdown("""
@@ -1120,6 +1073,10 @@ def main():
         # Background, font, and form settings as in login page
         st.markdown("""
             <style>
+                .stApp {
+                    background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
+                    background-attachment: fixed;
+                }
                 .stApp > header, .stApp > footer {
                     box-shadow: none !important;
                 }
