@@ -29,7 +29,11 @@ import plotly.graph_objects as go
 # ==============================================================
 # PERFORMANCE & CACHING OPTIONS
 # ==============================================================
-st.cache_data(ttl=300)
+@st.cache_data(ttl=300)
+def dummy_cache():
+    return None
+
+dummy_cache()
 
 # ==============================================================
 # FRAUD DETECTION SYSTEM - STREAMLIT APP
