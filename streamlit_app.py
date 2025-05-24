@@ -1,5 +1,5 @@
 import streamlit as st 
-    </style>
+    #</style>
     # st.markdown(\"\"\"
     #     <div class="background-image"></div>
     #     <style>
