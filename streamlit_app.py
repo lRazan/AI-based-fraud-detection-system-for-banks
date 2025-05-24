@@ -1,20 +1,4 @@
 import streamlit as st 
-import streamlit as st 
-st.markdown("""
-    <div class="background-image"></div>
-    <style>
-        .background-image {
-            background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            pointer-events: none;
-        }
-    </style>
-""", unsafe_allow_html=True)
 import pandas as pd
 import pymysql
 import matplotlib.pyplot as plt 
@@ -855,6 +839,22 @@ def main():
     # LOGIN FORM FOR STAFF
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
+        st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
+        st.markdown("""
+            <div class="background-image"></div>
+            <style>
+                .background-image {
+                    background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    z-index: -1;
+                    pointer-events: none;
+                }
+            </style>
+        """, unsafe_allow_html=True)
         # Add top navbar for login page with a hidden 'Login' link to avoid empty item error,
         # set color same as background and font-size small to hide visually.
         logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
