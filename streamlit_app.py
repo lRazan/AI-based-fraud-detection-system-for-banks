@@ -11,9 +11,23 @@ import altair as alt
 import os
 from streamlit_navigation_bar import st_navbar
 
-# ==============================
-# Performance & Caching Options
-# ==============================
+# ==============================================================
+# IMPORTS
+# ==============================================================
+
+# ----- Standard Library Imports -----
+# (Removed duplicate imports)
+
+# ----- Third Party/External Libraries -----
+# (Removed duplicate imports)
+import yagmail
+import keyring
+import joblib
+import plotly.graph_objects as go
+
+# ==============================================================
+# PERFORMANCE & CACHING OPTIONS
+# ==============================================================
 st.cache_data(ttl=300)
 
 # ==============================================================
@@ -21,7 +35,9 @@ st.cache_data(ttl=300)
 # Structured code with clear comments and logical section headers.
 # ==============================================================
 
-
+# --------------------------------------------------------------
+# PAGE CONFIGURATION & GLOBAL STYLES
+# --------------------------------------------------------------
 st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
 st.markdown("""
     <style>
@@ -58,8 +74,10 @@ st.markdown("""
 # DATABASE FUNCTIONS
 # ==============================================================
 
+# --------------------------------------------------------------
 # Function: login_user
-# Authenticates a user against the users table using email and password.
+# Authenticates user by email and password from the users table.
+# --------------------------------------------------------------
 def login_user(email, password):
     try:
         conn = pymysql.connect(
@@ -79,8 +97,10 @@ def login_user(email, password):
         st.error(f"Database error: {e}")
         return None
 
+# --------------------------------------------------------------
 # Function: load_transactions
 # Loads all transactions from the database into a DataFrame.
+# --------------------------------------------------------------
 def load_transactions():
     conn = pymysql.connect(
         host='localhost',
@@ -92,8 +112,10 @@ def load_transactions():
     conn.close()
     return df
 
+# --------------------------------------------------------------
 # Function: get_customer_info
-# Retrieves customer details (name, phone, city, email) given customer_id.
+# Retrieves customer details (name, phone, city, email) by customer_id.
+# --------------------------------------------------------------
 def get_customer_info(customer_id):
     conn = pymysql.connect(
         host='localhost',
@@ -112,12 +134,10 @@ def get_customer_info(customer_id):
 # ==============================================================
 # OTP & EMAIL LOGIC
 # ==============================================================
-
-import yagmail
-import keyring
-
+# --------------------------------------------------------------
 # Function: send_email_confirmation
 # Sends a confirmation email to the customer for a specific transaction.
+# --------------------------------------------------------------
 def send_email_confirmation(to_email, transaction_id):
     subject = f"Transaction #{transaction_id} Confirmation"
     body = f"""
@@ -143,8 +163,10 @@ def send_email_confirmation(to_email, transaction_id):
         st.error(f"Email sending failed: {e}")
         return False
 
+# --------------------------------------------------------------
 # Function: send_otp_email
 # Sends an OTP verification code to the user's email address.
+# --------------------------------------------------------------
 def send_otp_email(to_email, otp_code):
     subject = "Your OTP Verification Code"
     body = f"""
@@ -167,9 +189,10 @@ def send_otp_email(to_email, otp_code):
 # ==============================================================
 # CUSTOMER RESPONSE HANDLING
 # ==============================================================
-
+# --------------------------------------------------------------
 # Function: save_customer_response
-# Saves a customer's YES/NO response for a transaction in the DB.
+# Saves a customer's YES/NO response for a transaction in the database.
+# --------------------------------------------------------------
 def save_customer_response(transaction_id, response):
     try:
         conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
@@ -184,8 +207,10 @@ def save_customer_response(transaction_id, response):
     except Exception as e:
         st.error(f"Database error while saving response: {e}")
 
+# --------------------------------------------------------------
 # Function: get_customer_responses
 # Retrieves all responses for a given transaction (most recent first).
+# --------------------------------------------------------------
 def get_customer_responses(transaction_id):
     conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
     cursor = conn.cursor()
@@ -202,13 +227,14 @@ def get_customer_responses(transaction_id):
 # FRAUD DETECTION DASHBOARD UI
 # ==============================================================
 
-
-import joblib
-
+# --------------------------------------------------------------
 # Function: fraud_detection_system
 # Main dashboard UI for fraud detection, staff view and customer response.
+# --------------------------------------------------------------
 def fraud_detection_system():
-    # --- TOP NAVIGATION BAR using streamlit_navigation_bar ---
+    # ----------------------------------------------------------
+    # TOP NAVIGATION BAR using streamlit_navigation_bar
+    # ----------------------------------------------------------
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     logo_path = os.path.join(parent_dir, "logo.svg")
     pages = ["Dashboard", "Upload Transactions", "Logout"]
@@ -244,7 +270,9 @@ def fraud_detection_system():
         }
     }
 
-    # --- LOAD MODEL BEFORE ANY PAGE LOGIC ---
+    # ----------------------------------------------------------
+    # LOAD MODEL BEFORE ANY PAGE LOGIC
+    # ----------------------------------------------------------
     try:
         model = joblib.load("fraud_detection_PKL1_model.pkl")
     except Exception as e:
@@ -273,6 +301,9 @@ def fraud_detection_system():
     selected_page = selected.strip().lower()
 
     if "upload transactions" in selected_page:
+        # ------------------------------------------------------
+        # UPLOAD TRANSACTIONS PAGE
+        # ------------------------------------------------------
         st.markdown("""
             <style>
                 .block-container {
@@ -352,16 +383,16 @@ def fraud_detection_system():
         st.rerun()
         return
 
-    # --- CUSTOMER RESPONSE HANDLING VIA EMAIL LINK ---
+    # ----------------------------------------------------------
+    # CUSTOMER RESPONSE HANDLING VIA EMAIL LINK
     # Allows customer to respond YES/NO via email link; processes the response.
+    # ----------------------------------------------------------
     from streamlit_autorefresh import st_autorefresh
-    # Auto-refresh disabled to avoid full reloads.
     query_params = st.query_params
     # Prevent duplicate processing if already handled (e.g. on auto-reload)
     if st.session_state.get('response_already_processed'):
         return
     if 'tx' in query_params and 'r' in query_params:
-        # Handle response from email link without requiring login
         try:
             # Convert tx value from URL to transaction_id as integer
             transaction_id_raw = query_params['tx'][0]
@@ -369,21 +400,17 @@ def fraud_detection_system():
         except Exception:
             st.error("Invalid transaction ID format in URL.")
             return
-        # Read response value and convert to uppercase (YES/NO)
         response = query_params['r'][0].upper()
-
         # Check if transaction_id exists in the database
         df_check = load_transactions()
         df_check['transaction_id'] = df_check['transaction_id'].astype(int)
         if transaction_id not in df_check['transaction_id'].values:
             st.error(f"Transaction ID {transaction_id} does not exist in the transaction table.")
             return
-
         # Save the response in transaction_feedback table
         save_customer_response(transaction_id, response)
         st.session_state['response_already_processed'] = True
         st.query_params.clear()
-
         # Update the transaction status (is_active) according to the response
         conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
         cursor = conn.cursor()
@@ -394,10 +421,8 @@ def fraud_detection_system():
         conn.commit()
         cursor.close()
         conn.close()
-
         st.session_state[f'alert_sent_{transaction_id}'] = True
         st.session_state[f'show_alert_{transaction_id}'] = True
-
         # Show confirmation message to the customer
         st.markdown(
             "<h2 style='color:#004085'>Response Received</h2>",
@@ -407,10 +432,10 @@ def fraud_detection_system():
         st.markdown("You may now close this page.")
         return
 
-    # --- SIDEBAR REMOVED ---
-
-    # --- METRIC CARDS ---
+    # ----------------------------------------------------------
+    # METRIC CARDS
     # Display summary metrics: Fraudulent, Legitimate, and Total transactions.
+    # ----------------------------------------------------------
     try:
         df_all = load_transactions()
         fraud_count = df_all[df_all["is_fraud"] == 1].shape[0]
@@ -427,10 +452,9 @@ def fraud_detection_system():
         legit_count = 0
         total_transactions = 0
 
-    # ===== Add spacing above KPI cards =====
-    # Removed extra vertical space before cards to eliminate white background/extra space.
-
-    # ==== Clean KPI Cards: Only Number + Arrow/Percentage (all in one card div) ====
+    # ----------------------------------------------------------
+    # KPI Cards: Only Number + Arrow/Percentage (all in one card div)
+    # ----------------------------------------------------------
     col1, col2, col3 = st.columns(3, gap="large")
     with col1:
         st.markdown(
@@ -464,13 +488,14 @@ def fraud_detection_system():
         )
     st.markdown("<div style='margin-bottom:10px;'></div>", unsafe_allow_html=True)
 
-    # --- PERFORMANCE CHART ---
+    # ----------------------------------------------------------
+    # PERFORMANCE CHART
     # Displays a stacked bar chart of fraudulent vs. legitimate transactions over months (green theme).
+    # ----------------------------------------------------------
     st.markdown("<h4 style='color:#2c3e50; font-size:16px; margin-top:0px; margin-bottom:0px; text-align:left;'>Performance Overview</h4>", unsafe_allow_html=True)
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
     fraud_data = [v * 8 for v in [1.2, 1.8, 1.5, 1.6, 1.9, 1.4, 2.2]]
     legit_data = [v * 8 for v in [2.2, 2.5, 2.4, 1.6, 1.7, 2, 2.9]]
-    import plotly.graph_objects as go
     fig = go.Figure(data=[
         go.Bar(name='Fraudulent', x=months, y=fraud_data, marker_color='rgba(144, 238, 144, 0.85)', width=0.4),
         go.Bar(name='Legitimate', x=months, y=legit_data, marker_color='rgba(0, 128, 0, 0.85)', width=0.4)
@@ -485,8 +510,10 @@ def fraud_detection_system():
     )
     st.plotly_chart(fig, use_container_width=True)
 
-    # --- TRANSACTION FILTERING & TABLE ---
+    # ----------------------------------------------------------
+    # TRANSACTION FILTERING & TABLE
     # Allows filtering by Transaction ID, Type, and Fraud Status. Table displays main transaction details.
+    # ----------------------------------------------------------
     st.markdown("<h4 style='color:#2c3e50; font-size:18px; margin-bottom:10px; text-align:left;'>Transaction Table</h4>", unsafe_allow_html=True)
     # Compact row for search/type/fraud filters (no refresh)
     with st.container():
@@ -515,12 +542,14 @@ def fraud_detection_system():
     preview_df = preview_df[['transaction_id', 'amount', 'Transaction Type', 'Fraud Status',
                              'Customer Details', 'Transaction Status', 'Execution Status']]
 
-    # Helper for styling fraud status
+    # Helper function for styling fraud status cell
     def style_fraud_status(val):
         color = '#f8d7da' if val == 'Fraud' else '#d0f0c0'
         return f"background-color: {color}; border-radius:10px; text-align:center"
 
-    # --- SEARCH & FILTERS ---
+    # ----------------------------------------------------------
+    # SEARCH & FILTERS
+    # ----------------------------------------------------------
     filtered_df = preview_df.copy()
     if search_term:
         filtered_df = filtered_df[filtered_df['transaction_id'].astype(str).str.contains(search_term)]
@@ -531,7 +560,9 @@ def fraud_detection_system():
     elif fraud_filter == "Not Fraud":
         filtered_df = filtered_df[filtered_df['Fraud Status'] == "Not Fraud"]
 
-    # --- PAGINATION FOR TABLE ---
+    # ----------------------------------------------------------
+    # PAGINATION FOR TABLE
+    # ----------------------------------------------------------
     page_size = 8
     total_rows = filtered_df.shape[0]
     total_pages = (total_rows - 1) // page_size + 1
@@ -541,8 +572,10 @@ def fraud_detection_system():
     end_idx = start_idx + page_size
     page_data = filtered_df.iloc[start_idx:end_idx]
 
-    # --- TRANSACTION TABLE ---
+    # ----------------------------------------------------------
+    # TRANSACTION TABLE
     # Table columns: Transaction ID, Amount, Type, Fraud Status, Customer Details, Transaction Status, Execution Status
+    # ----------------------------------------------------------
     st.markdown("""
         <style>
             .block-container {
@@ -588,7 +621,7 @@ def fraud_detection_system():
             .stDataFrame thead tr th:last-child {
                 border-right: none;
             }
-            /* تعديل الطول الرأسي وحشوة خلايا جدول المعاملات */
+            /* Adjust the vertical height and padding of transaction table cells */
             .stDataFrame tbody tr {
                 height: 10px;
             }
@@ -597,7 +630,7 @@ def fraud_detection_system():
                 padding-bottom: 0px;
                 line-height: 1;
             }
-            /* تقليل المسافة بين صفوف جدول المعاملات اليدوية */
+            /* Reduce the space between rows of the manual transaction table */
             .stMarkdown + div {
                 margin-top: -6px !important;
                 margin-bottom: -6px !important;
@@ -659,8 +692,10 @@ def fraud_detection_system():
                 # Empty cell for alignment
                 cols[4].markdown(f"<div style='text-align:center;'>&nbsp;</div>", unsafe_allow_html=True)
 
-            # --- Transaction Status column (cols[5]) ---
+            # ----------------------------------------------------------
+            # Transaction Status column (cols[5])
             # If fraudulent, allow sending confirmation email and show status based on response
+            # ----------------------------------------------------------
             responses = get_customer_responses(row['transaction_id']) if row['Fraud Status'] == "Fraud" else []
             # Show Send button only if not Active or Stopped
             if row['Fraud Status'] == "Fraud" and (not responses or responses[0][0].upper() not in ["YES", "NO"]):
@@ -685,8 +720,10 @@ def fraud_detection_system():
                 # Not fraudulent: show Legitimate
                 cols[5].markdown("<div style='background-color:#e2e3e5; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>Legitimate</div>", unsafe_allow_html=True)
 
-            # --- Execution Status column (cols[6]) ---
+            # ----------------------------------------------------------
+            # Execution Status column (cols[6])
             # Shows Completed/Cancelled if response received, Waiting otherwise
+            # ----------------------------------------------------------
             show_details_key = f"show_exec_{row['transaction_id']}"
             detail_toggle_key = f"exec_detail_toggle_{row['transaction_id']}"
             if detail_toggle_key not in st.session_state:
@@ -718,7 +755,9 @@ def fraud_detection_system():
             # Add horizontal rule after each row for clarity
             st.markdown("<hr style='margin-top:5px; margin-bottom:5px; border-color:#ddd;'>", unsafe_allow_html=True)
 
-    # --- PAGINATION CONTROLS ---
+    # ----------------------------------------------------------
+    # PAGINATION CONTROLS
+    # ----------------------------------------------------------
     col_prev, col_page, col_next = st.columns([1, 2, 1])
     with col_prev:
         if st.button("< Previous", key="dashboard_prev") and st.session_state.dashboard_page > 1:
@@ -736,8 +775,10 @@ def fraud_detection_system():
 # LOGIN & SESSION MANAGEMENT
 # ==============================================================
 
+# --------------------------------------------------------------
 # Function: main
 # Handles user login, OTP verification, and routing to dashboard or customer response.
+# --------------------------------------------------------------
 def main():
     # Initialize session state variables for authentication and OTP
     if 'logged_in' not in st.session_state:
@@ -749,13 +790,17 @@ def main():
     if 'otp_code' not in st.session_state:
         st.session_state['otp_code'] = None
 
-    # --- CUSTOMER RESPONSE HANDLING FROM EMAIL LINK (NO LOGIN REQUIRED) ---
+    # ----------------------------------------------------------
+    # CUSTOMER RESPONSE HANDLING FROM EMAIL LINK (NO LOGIN REQUIRED)
+    # ----------------------------------------------------------
     query_params = st.query_params
     if 'tx' in query_params and 'r' in query_params:
         # Handle response from email link without requiring login
         fraud_detection_system()
 
-    # --- LOGIN FORM FOR STAFF ---
+    # ----------------------------------------------------------
+    # LOGIN FORM FOR STAFF
+    # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
         # Add top navbar for login page with a hidden 'Login' link to avoid empty item error,
         # set color same as background and font-size small to hide visually.
@@ -884,7 +929,7 @@ def main():
                 </div>
                 """, unsafe_allow_html=True)
 
-        # زر Direct Access بمحاذاة اليسار فقط
+        # Direct Access button aligned left only
         col_direct, _ = st.columns([1, 10])
         with col_direct:
             if st.button("Direct"):
@@ -892,7 +937,7 @@ def main():
                 st.session_state['otp_verified'] = True
                 st.rerun()
 
-        # تخصيص لون الزر
+        # Custom button color
         st.markdown("""
             <style>
                 div.stButton > button:first-child {
@@ -929,7 +974,9 @@ def main():
                 else:
                     st.error("Invalid Email or Password.")
 
-    # --- OTP VERIFICATION FORM ---
+    # ----------------------------------------------------------
+    # OTP VERIFICATION FORM
+    # ----------------------------------------------------------
     elif st.session_state['logged_in'] and not st.session_state['otp_verified']:
         # Add top navbar for OTP page, hide nav items as in login page
         logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
@@ -1021,7 +1068,7 @@ def main():
                 }
             </style>
         """, unsafe_allow_html=True)
-        # إعدادات الخلفية والخط والنموذج كما في صفحة تسجيل الدخول
+        # Background, font, and form settings as in login page
         st.markdown("""
             <style>
                 .stApp {
@@ -1070,7 +1117,9 @@ def main():
                 else:
                     st.markdown("<p style='color:red; font-size:14px;'>Please try again</p>", unsafe_allow_html=True)
 
-    # --- SHOW FRAUD DASHBOARD ONCE LOGGED IN AND VERIFIED ---
+    # ----------------------------------------------------------
+    # SHOW FRAUD DASHBOARD ONCE LOGGED IN AND VERIFIED
+    # ----------------------------------------------------------
     else:
         fraud_detection_system()
 
