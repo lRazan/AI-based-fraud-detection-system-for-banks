@@ -839,7 +839,7 @@ def main():
     # LOGIN FORM FOR STAFF
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
-        st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
+        #st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
         st.markdown("""
             <div class="background-image"></div>
             <style>
