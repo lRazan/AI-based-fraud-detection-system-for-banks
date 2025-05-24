@@ -11,6 +11,7 @@ import altair as alt
 import os
 from streamlit_navigation_bar import st_navbar
 
+
 # ==============================================================
 # IMPORTS
 # ==============================================================
@@ -83,7 +84,7 @@ def login_user(email, password):
         conn = pymysql.connect(
             host="localhost",
             user="root",
-            password="00000000",
+            password="User0202",
             database="fraud_detection"
         )
         cursor = conn.cursor()
@@ -105,7 +106,7 @@ def load_transactions():
     conn = pymysql.connect(
         host='localhost',
         user='root',
-        password='00000000',
+        password='User0202',
         database='fraud_detection'
     )
     df = pd.read_sql("SELECT * FROM transactions", conn)
@@ -120,7 +121,7 @@ def get_customer_info(customer_id):
     conn = pymysql.connect(
         host='localhost',
         user='root',
-        password='00000000',
+        password='User0202',
         database='fraud_detection'
     )
     cursor = conn.cursor()
@@ -195,7 +196,7 @@ def send_otp_email(to_email, otp_code):
 # --------------------------------------------------------------
 def save_customer_response(transaction_id, response):
     try:
-        conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
+        conn = pymysql.connect(host='localhost', user='root', password='User0202', database='fraud_detection')
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO transaction_feedback (transaction_id, response) VALUES (%s, %s)",
@@ -212,7 +213,7 @@ def save_customer_response(transaction_id, response):
 # Retrieves all responses for a given transaction (most recent first).
 # --------------------------------------------------------------
 def get_customer_responses(transaction_id):
-    conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
+    conn = pymysql.connect(host='localhost', user='root', password='User0202', database='fraud_detection')
     cursor = conn.cursor()
     cursor.execute(
         "SELECT response, created_at FROM transaction_feedback WHERE transaction_id = %s ORDER BY id DESC",
@@ -273,8 +274,24 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     # LOAD MODEL BEFORE ANY PAGE LOGIC
     # ----------------------------------------------------------
+    # Model download URL (for user reference or download)
+    
+    import urllib.request
+    import joblib
+
+    model_path = "fraud_detection_PKL1_model.pkl"
+    model_url = "https://github.com/IRazan/AI-based-fraud-detection-system-for-banks/releases/download/v1.0.0/fraud_detection_PKL1_model.pkl"
+
+    # If the model doesn't exist locally, download it from GitHub Release
+    if not os.path.exists(model_path):
+        with st.spinner("Downloading trained model..."):
+            urllib.request.urlretrieve(model_url, model_path)
+            st.success("Model downloaded successfully.")
+
+    # Load the model
     try:
-        model = joblib.load("fraud_detection_PKL1_model.pkl")
+       # model = joblib.load("fraud_detection_PKL1_model.pkl")
+        model = joblib.load(model_path)
     except Exception as e:
         st.error(f"❌ Failed to load model: {e}")
         model = None
@@ -348,7 +365,7 @@ def fraud_detection_system():
                     df_csv["errorBalanceDest"] = df_csv["newbalanceDest"] - df_csv["oldbalanceDest"]
                     df_csv["email"] = None
 
-                    conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
+                    conn = pymysql.connect(host='localhost', user='root', password='User0202', database='fraud_detection')
                     cursor = conn.cursor()
 
                     for _, row in df_csv.iterrows():
@@ -412,7 +429,7 @@ def fraud_detection_system():
         st.session_state['response_already_processed'] = True
         st.query_params.clear()
         # Update the transaction status (is_active) according to the response
-        conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
+        conn = pymysql.connect(host='localhost', user='root', password='User0202', database='fraud_detection')
         cursor = conn.cursor()
         if response == 'NO':
             cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (transaction_id,))
