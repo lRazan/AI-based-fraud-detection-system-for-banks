@@ -1,0 +1,8 @@
+streamlit
+pandas
+pymysql
+matplotlib
+numpy
+altair
+streamlit_navigation_bar
+requests
