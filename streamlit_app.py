@@ -1,4 +1,19 @@
 import streamlit as st 
+st.markdown("""
+    <div class="background-image"></div>
+    <style>
+        .background-image {
+            background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+""", unsafe_allow_html=True)
 import pandas as pd
 import pymysql
 import matplotlib.pyplot as plt 
@@ -929,11 +944,6 @@ def main():
         # Improved login form centering and style
         st.markdown("""
             <style>
-                .stApp {
-                    background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
-                    background-attachment: fixed;
-                    pointer-events: auto;
-                }
                 .stApp > header, .stApp > footer {
                     box-shadow: none !important;
                 }
@@ -1109,11 +1119,6 @@ def main():
         # Background, font, and form settings as in login page
         st.markdown("""
             <style>
-                .stApp {
-                    background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
-                    background-attachment: fixed;
-                    pointer-events: auto;
-                }
                 .stApp > header, .stApp > footer {
                     box-shadow: none !important;
                 }
