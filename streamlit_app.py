@@ -210,11 +210,20 @@ import joblib
 def fraud_detection_system():
     # --- TOP NAVIGATION BAR using streamlit_navigation_bar ---
     parent_dir = os.path.dirname(os.path.abspath(__file__))
-    #logo_path = os.path.join(parent_dir, "bank.svg")
-    pages = ["Dashboard", "Upload Transactions", "Settings", "Logout"]
+    logo_path = os.path.join(parent_dir, "logo.svg")
+    pages = ["Dashboard", "Upload Transactions", "Logout"]
     styles = {
         "nav": {"background-color": "#2e7d32"},
-        "img": {"padding-right": "10px"},
+        "img": {
+            "margin-left": "0px",
+            "margin-right": "auto",
+            "display": "inline-block",
+            "height": "40px",
+            "position": "absolute",
+            "top": "50%",
+            "left": "0px",
+            "transform": "translateY(-50%)"
+        },
         "a": {
             "color": "white",
             "padding": "8px 20px",
@@ -226,6 +235,12 @@ def fraud_detection_system():
             "color": "#2e7d32",
             "background-color": "white",
             "border-radius": "0px"
+        },
+        "span": {
+            "color": "white",
+            "font-size": "16px",
+            "font-weight": "500",
+            "margin-left": "12px"
         }
     }
 
@@ -238,9 +253,23 @@ def fraud_detection_system():
 
     selected = st_navbar(
         pages,
-        #logo_path=logo_path,
+        logo_path=logo_path,
         styles=styles
     )
+    st.markdown("""
+        <style>
+            .navbar-title {
+                position: fixed;
+                top: 22px;
+                left: 90px;
+                font-size: 13px;
+                font-weight: 400;
+                color: white;
+                z-index: 9999;
+            }
+        </style>
+        <div class="navbar-title">Fraud Detection Transactions</div>
+    """, unsafe_allow_html=True)
     selected_page = selected.strip().lower()
 
     if "upload transactions" in selected_page:
@@ -252,7 +281,6 @@ def fraud_detection_system():
                 }
             </style>
         """, unsafe_allow_html=True)
-        st.markdown("<h3 style='color:#2c3e50;'>📤 Upload Transactions for Classification</h3>", unsafe_allow_html=True)
         uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
         if uploaded_file and model:
             try:
@@ -440,8 +468,8 @@ def fraud_detection_system():
     # Displays a stacked bar chart of fraudulent vs. legitimate transactions over months (green theme).
     st.markdown("<h4 style='color:#2c3e50; font-size:16px; margin-top:0px; margin-bottom:0px; text-align:left;'>Performance Overview</h4>", unsafe_allow_html=True)
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
-    fraud_data = [v * 2 for v in [1.2, 1.8, 1.5, 1.6, 1.9, 2.0, 2.2]]
-    legit_data = [v * 2 for v in [2.2, 2.5, 2.4, 2.6, 2.7, 2.8, 2.9]]
+    fraud_data = [v * 8 for v in [1.2, 1.8, 1.5, 1.6, 1.9, 1.4, 2.2]]
+    legit_data = [v * 8 for v in [2.2, 2.5, 2.4, 1.6, 1.7, 2, 2.9]]
     import plotly.graph_objects as go
     fig = go.Figure(data=[
         go.Bar(name='Fraudulent', x=months, y=fraud_data, marker_color='rgba(144, 238, 144, 0.85)', width=0.4),
@@ -450,9 +478,9 @@ def fraud_detection_system():
     fig.update_layout(
         barmode='stack',
         xaxis_title='Month',
-        yaxis_title='Transactions (Millions)',
+        yaxis_title='Transactions',
         height=280,
-        yaxis=dict(range=[0, 8])
+        yaxis=dict(range=[0, 20])
         # width omitted to allow responsive sizing
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -729,25 +757,51 @@ def main():
 
     # --- LOGIN FORM FOR STAFF ---
     elif not st.session_state['logged_in']:
-        # Add top navbar for login page with a fake page to avoid error, then hide links
-        st_navbar(
+        # Add top navbar for login page with a hidden 'Login' link to avoid empty item error,
+        # set color same as background and font-size small to hide visually.
+        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
+        selected = st_navbar(
             ["Login"],
+            logo_path=logo_path,
             styles={
                 "nav": {"background-color": "#2e7d32"},
+                "img": {
+                    "margin-left": "0px",
+                    "margin-right": "auto",
+                    "display": "inline-block",
+                    "height": "40px",
+                    "position": "absolute",
+                    "top": "50%",
+                    "left": "0px",
+                    "transform": "translateY(-50%)"
+                },
                 "a": {
-                    "color": "white",
-                    "padding": "8px 20px",
-                    "text-decoration": "none",
-                    "font-size": "16px",
-                    "font-weight": "400"
+                    "color": "#2e7d32",
+                    "pointer-events": "none",
+                    "padding": "0px",
+                    "font-size": "1px"
                 },
                 "active": {
-                    "color": "#2e7d32",
-                    "background-color": "white",
+                    "background-color": "#2e7d32",
                     "border-radius": "0px"
                 }
             }
         )
+        # Add navbar title and logo text beside each other (like dashboard)
+        st.markdown("""
+            <style>
+                .navbar-title {
+                    position: fixed;
+                    top: 22px;
+                    left: 90px;
+                    font-size: 13px;
+                    font-weight: 400;
+                    color: white;
+                    z-index: 9999;
+                }
+            </style>
+            <div class="navbar-title">Fraud Detection Transactions</div>
+        """, unsafe_allow_html=True)
         # Enforce full-width top navbar
         st.markdown("""
             <style>
@@ -817,20 +871,26 @@ def main():
         with st.form("login_form"):
             email = st.text_input("Email", key="email_input")
             password = st.text_input("Password", type="password", key="pass_input")
-            login_button = st.form_submit_button("Login Securely")
 
-        # زر Direct Access
-        if st.button("Direct Access"):
-            st.session_state['logged_in'] = True
-            st.session_state['otp_verified'] = True
-            st.rerun()
+            col_login, _ = st.columns([2, 20])
+            with col_login:
+                login_button = st.form_submit_button("Login")
 
-        # رابط نسيان كلمة المرور
-        st.markdown("""
-        <div style='text-align:left; margin-top:-10px;'>
-            <a href='#' style='color:#14532d; font-size:12px;'>Forgot your password?</a>
-        </div>
-        """, unsafe_allow_html=True)
+            col_forgot, _ = st.columns([1, 5])
+            with col_forgot:
+                st.markdown("""
+                <div style='text-align:left; margin-top:-8px;'>
+                    <a href='#' style='color:#14532d; font-size:12px;'>Forgot password?</a>
+                </div>
+                """, unsafe_allow_html=True)
+
+        # زر Direct Access بمحاذاة اليسار فقط
+        col_direct, _ = st.columns([1, 10])
+        with col_direct:
+            if st.button("Direct"):
+                st.session_state['logged_in'] = True
+                st.session_state['otp_verified'] = True
+                st.rerun()
 
         # تخصيص لون الزر
         st.markdown("""
@@ -871,25 +931,50 @@ def main():
 
     # --- OTP VERIFICATION FORM ---
     elif st.session_state['logged_in'] and not st.session_state['otp_verified']:
-        # Add top navbar for OTP page with a fake page to avoid error, then hide links
+        # Add top navbar for OTP page, hide nav items as in login page
+        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
         st_navbar(
-            ["OTP Verification"],
+            ["Login"],
+            logo_path=logo_path,
             styles={
                 "nav": {"background-color": "#2e7d32"},
+                "img": {
+                    "margin-left": "0px",
+                    "margin-right": "auto",
+                    "display": "inline-block",
+                    "height": "40px",
+                    "position": "absolute",
+                    "top": "50%",
+                    "left": "0px",
+                    "transform": "translateY(-50%)"
+                },
                 "a": {
-                    "color": "white",
-                    "padding": "8px 20px",
-                    "text-decoration": "none",
-                    "font-size": "16px",
-                    "font-weight": "400"
+                    "color": "#2e7d32",
+                    "pointer-events": "none",
+                    "padding": "0px",
+                    "font-size": "1px"
                 },
                 "active": {
-                    "color": "#2e7d32",
-                    "background-color": "white",
+                    "background-color": "#2e7d32",
                     "border-radius": "0px"
                 }
             }
         )
+        # Add navbar title and logo text beside each other (like dashboard)
+        st.markdown("""
+            <style>
+                .navbar-title {
+                    position: fixed;
+                    top: 22px;
+                    left: 90px;
+                    font-size: 13px;
+                    font-weight: 400;
+                    color: white;
+                    z-index: 9999;
+                }
+            </style>
+            <div class="navbar-title">Fraud Detection Transactions</div>
+        """, unsafe_allow_html=True)
         # Enforce full-width top navbar on OTP screen
         st.markdown("""
             <style>
@@ -936,22 +1021,54 @@ def main():
                 }
             </style>
         """, unsafe_allow_html=True)
+        # إعدادات الخلفية والخط والنموذج كما في صفحة تسجيل الدخول
+        st.markdown("""
+            <style>
+                .stApp {
+                    background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
+                    background-attachment: fixed;
+                }
+                .stApp > header, .stApp > footer {
+                    box-shadow: none !important;
+                }
+                form {
+                    max-width: 360px;
+                    margin: auto;
+                    background: rgba(255, 255, 255, 0.75);
+                    padding: 1.2rem;
+                    border-radius: 10px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                }
+                .block-container {
+                    padding-top: 7rem !important;
+                }
+            </style>
+        """, unsafe_allow_html=True)
         # OTP check after login; user must enter OTP sent to email
-        st.markdown(
-            "<h2 style='color:#004085'>📨 Verify OTP Sent to Email</h2>",
-            unsafe_allow_html=True
-        )
-        st.write("Please enter the OTP sent to your email.")
-        otp_input = st.text_input("Enter OTP")
-        # Verify OTP button
-        if st.button("Verify OTP"):
-            if otp_input == st.session_state['otp_code']:
-                st.success("OTP Verified successfully!")
-                st.session_state['otp_verified'] = True
-                time.sleep(1)
-                st.rerun()
-            else:
-                st.error("Invalid OTP. Please try again.")
+        col_otp, _ = st.columns([5, 5])
+        with col_otp:
+            otp_input = st.text_input("Enter OTP", key="otp_input")
+            st.markdown("""
+                <style>
+                    div[data-testid="stTextInput"] input {
+                        background-color: white !important;
+                        height: 36px !important;
+                        font-size: 14px !important;
+                        padding: 8px 12px !important;
+                        border-radius: 6px !important;
+                    }
+                </style>
+            """, unsafe_allow_html=True)
+        col_btn_verify, _ = st.columns([1, 9])
+        with col_btn_verify:
+            if st.button("Verify"):
+                if otp_input == st.session_state['otp_code']:
+                    st.markdown("<p style='color:green; font-size:14px;'>Successfully</p>", unsafe_allow_html=True)
+                    st.session_state['otp_verified'] = True
+                    time.sleep(1)
+                    st.rerun()
+                else:
+                    st.markdown("<p style='color:red; font-size:14px;'>Please try again</p>", unsafe_allow_html=True)
 
     # --- SHOW FRAUD DASHBOARD ONCE LOGGED IN AND VERIFIED ---
     else:
