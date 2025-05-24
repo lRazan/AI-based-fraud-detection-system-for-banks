@@ -64,12 +64,23 @@ st.markdown("""
             margin-left: auto;
             margin-right: auto;
             display: block;
+            /* Ensure buttons are clickable and not covered */
+            position: relative;
+            z-index: 1;
         }
         .element-container > div > div {
             text-align: center !important;
         }
         th {
             text-align: center !important;
+        }
+        div[data-testid="stTextInput"] input {
+            margin: 0.2em 0;
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 6px;
+            position: relative;
+            z-index: 1;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -299,6 +310,7 @@ def fraud_detection_system():
                 font-weight: 400;
                 color: white;
                 z-index: 9999;
+                pointer-events: none;
             }
         </style>
         <div class="navbar-title">Banking Fraud Detection System</div>
@@ -607,6 +619,8 @@ def fraud_detection_system():
                 margin-left: auto;
                 margin-right: auto;
                 display: block;
+                position: relative;
+                z-index: 1;
             }
             .element-container > div > div {
                 text-align: center !important;
@@ -639,6 +653,14 @@ def fraud_detection_system():
             .stMarkdown + div {
                 margin-top: -6px !important;
                 margin-bottom: -6px !important;
+            }
+            div[data-testid="stTextInput"] input {
+                margin: 0.2em 0;
+                padding: 8px 12px;
+                font-size: 14px;
+                border-radius: 6px;
+                position: relative;
+                z-index: 1;
             }
         </style>
     """, unsafe_allow_html=True)
@@ -848,6 +870,7 @@ def main():
                     font-weight: 400;
                     color: white;
                     z-index: 9999;
+                    pointer-events: none;
                 }
             </style>
             <div class="navbar-title">Banking Fraud Detection System</div>
@@ -856,10 +879,8 @@ def main():
         st.markdown("""
             <style>
                 nav {
+                    position: relative;
                     width: 100% !important;
-                    max-width: 100% !important;
-                    left: 0 !important;
-                    right: 0 !important;
                     margin: 0 auto !important;
                     padding: 0 !important;
                 }
@@ -878,13 +899,10 @@ def main():
         st.markdown("""
     <style>
         nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw !important;
-            margin: 0 !important;
+            position: relative;
+            width: 100% !important;
+            margin: 0 auto !important;
             padding: 0 !important;
-            z-index: 9999;
         }
         .stApp {
             padding-top: 4rem !important;
@@ -1028,6 +1046,7 @@ def main():
                     font-weight: 400;
                     color: white;
                     z-index: 9999;
+                    pointer-events: none;
                 }
             </style>
             <div class="navbar-title">Banking Fraud Detection System</div>
@@ -1036,10 +1055,8 @@ def main():
         st.markdown("""
             <style>
                 nav {
+                    position: relative;
                     width: 100% !important;
-                    max-width: 100% !important;
-                    left: 0 !important;
-                    right: 0 !important;
                     margin: 0 auto !important;
                     padding: 0 !important;
                 }
@@ -1058,10 +1075,10 @@ def main():
         st.markdown("""
             <style>
                 nav {
-                    width: 100vw !important;
-                    margin: 0 !important;
+                    position: relative;
+                    width: 100% !important;
+                    margin: 0 auto !important;
                     padding: 0 !important;
-                    left: 0 !important;
                 }
                 header.css-1avcm0n.ezrtsby0 {
                     width: 100vw !important;
@@ -1113,6 +1130,9 @@ def main():
                         font-size: 14px !important;
                         padding: 8px 12px !important;
                         border-radius: 6px !important;
+                        margin: 0.2em 0;
+                        position: relative;
+                        z-index: 1;
                     }
                 </style>
             """, unsafe_allow_html=True)
