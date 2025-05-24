@@ -104,10 +104,10 @@ def login_user(email, password):
 # --------------------------------------------------------------
 def load_transactions():
     conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='User0202',
-        database='fraud_detection'
+        host="localhost",
+        user="root",
+        password="User0202",
+        database="fraud_detection"
     )
     df = pd.read_sql("SELECT * FROM transactions", conn)
     conn.close()
@@ -119,10 +119,10 @@ def load_transactions():
 # --------------------------------------------------------------
 def get_customer_info(customer_id):
     conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='User0202',
-        database='fraud_detection'
+        host="localhost",
+        user="root",
+        password="User0202",
+        database="fraud_detection"
     )
     cursor = conn.cursor()
     query = "SELECT name, phone_number, city, email FROM customers WHERE customer_id = %s"
@@ -196,7 +196,12 @@ def send_otp_email(to_email, otp_code):
 # --------------------------------------------------------------
 def save_customer_response(transaction_id, response):
     try:
-        conn = pymysql.connect(host='localhost', user='root', password='User0202', database='fraud_detection')
+        conn = pymysql.connect(
+            host="localhost",
+            user="root",
+            password="User0202",
+            database="fraud_detection"
+        )
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO transaction_feedback (transaction_id, response) VALUES (%s, %s)",
@@ -213,7 +218,12 @@ def save_customer_response(transaction_id, response):
 # Retrieves all responses for a given transaction (most recent first).
 # --------------------------------------------------------------
 def get_customer_responses(transaction_id):
-    conn = pymysql.connect(host='localhost', user='root', password='User0202', database='fraud_detection')
+    conn = pymysql.connect(
+        host="localhost",
+        user="root",
+        password="User0202",
+        database="fraud_detection"
+    )
     cursor = conn.cursor()
     cursor.execute(
         "SELECT response, created_at FROM transaction_feedback WHERE transaction_id = %s ORDER BY id DESC",
@@ -365,7 +375,12 @@ def fraud_detection_system():
                     df_csv["errorBalanceDest"] = df_csv["newbalanceDest"] - df_csv["oldbalanceDest"]
                     df_csv["email"] = None
 
-                    conn = pymysql.connect(host='localhost', user='root', password='User0202', database='fraud_detection')
+                    conn = pymysql.connect(
+                        host="localhost",
+                        user="root",
+                        password="User0202",
+                        database="fraud_detection"
+                    )
                     cursor = conn.cursor()
 
                     for _, row in df_csv.iterrows():
@@ -429,7 +444,12 @@ def fraud_detection_system():
         st.session_state['response_already_processed'] = True
         st.query_params.clear()
         # Update the transaction status (is_active) according to the response
-        conn = pymysql.connect(host='localhost', user='root', password='User0202', database='fraud_detection')
+        conn = pymysql.connect(
+            host="localhost",
+            user="root",
+            password="User0202",
+            database="fraud_detection"
+        )
         cursor = conn.cursor()
         if response == 'NO':
             cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (transaction_id,))
@@ -912,6 +932,7 @@ def main():
                 .stApp {
                     background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
                     background-attachment: fixed;
+                    pointer-events: none;
                 }
                 .stApp > header, .stApp > footer {
                     box-shadow: none !important;
@@ -1091,6 +1112,7 @@ def main():
                 .stApp {
                     background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
                     background-attachment: fixed;
+                    pointer-events: none;
                 }
                 .stApp > header, .stApp > footer {
                     box-shadow: none !important;
