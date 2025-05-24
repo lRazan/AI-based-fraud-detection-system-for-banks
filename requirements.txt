@@ -8,3 +8,4 @@ streamlit_navigation_bar
 requests
 yagmail
 keyring
+joblib
