@@ -98,10 +98,11 @@ st.markdown("""
 def login_user(email, password):
     try:
         conn = pymysql.connect(
-            host="localhost",
+            host="crossover.proxy.rlwy.net",
             user="root",
-            password="00000000",
-            database="fraud_detection"
+            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+            database="railway",
+            port=55790
         )
         cursor = conn.cursor()
         query = "SELECT * FROM users WHERE email=%s AND password=%s"
@@ -120,10 +121,11 @@ def login_user(email, password):
 # --------------------------------------------------------------
 def load_transactions():
     conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='00000000',
-        database='fraud_detection'
+        host="crossover.proxy.rlwy.net",
+        user="root",
+        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+        database="railway",
+        port=55790
     )
     df = pd.read_sql("SELECT * FROM transactions", conn)
     conn.close()
@@ -135,10 +137,11 @@ def load_transactions():
 # --------------------------------------------------------------
 def get_customer_info(customer_id):
     conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='00000000',
-        database='fraud_detection'
+        host="crossover.proxy.rlwy.net",
+        user="root",
+        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+        database="railway",
+        port=55790
     )
     cursor = conn.cursor()
     query = "SELECT name, phone_number, city, email FROM customers WHERE customer_id = %s"
@@ -213,7 +216,13 @@ def send_otp_email(to_email, otp_code):
 # --------------------------------------------------------------
 def save_customer_response(transaction_id, response):
     try:
-        conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
+        conn = pymysql.connect(
+            host="crossover.proxy.rlwy.net",
+            user="root",
+            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+            database="railway",
+            port=55790
+        )
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO transaction_feedback (transaction_id, response) VALUES (%s, %s)",
@@ -230,7 +239,13 @@ def save_customer_response(transaction_id, response):
 # Retrieves all responses for a given transaction (most recent first).
 # --------------------------------------------------------------
 def get_customer_responses(transaction_id):
-    conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
+    conn = pymysql.connect(
+        host="crossover.proxy.rlwy.net",
+        user="root",
+        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+        database="railway",
+        port=55790
+    )
     cursor = conn.cursor()
     cursor.execute(
         "SELECT response, created_at FROM transaction_feedback WHERE transaction_id = %s ORDER BY id DESC",
@@ -369,7 +384,13 @@ def fraud_detection_system():
                     df_csv["errorBalanceDest"] = df_csv["newbalanceDest"] - df_csv["oldbalanceDest"]
                     df_csv["email"] = None
 
-                    conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
+                    conn = pymysql.connect(
+                        host="crossover.proxy.rlwy.net",
+                        user="root",
+                        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+                        database="railway",
+                        port=55790
+                    )
                     cursor = conn.cursor()
 
                     for _, row in df_csv.iterrows():
@@ -433,7 +454,13 @@ def fraud_detection_system():
         st.session_state['response_already_processed'] = True
         st.query_params.clear()
         # Update the transaction status (is_active) according to the response
-        conn = pymysql.connect(host='localhost', user='root', password='00000000', database='fraud_detection')
+        conn = pymysql.connect(
+            host="crossover.proxy.rlwy.net",
+            user="root",
+            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+            database="railway",
+            port=55790
+        )
         cursor = conn.cursor()
         if response == 'NO':
             cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (transaction_id,))
