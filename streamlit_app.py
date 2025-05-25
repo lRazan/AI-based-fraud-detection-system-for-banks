@@ -268,6 +268,8 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     # TOP NAVIGATION BAR using streamlit_navigation_bar
     # ----------------------------------------------------------
+    # Initialize df_all to avoid UnboundLocalError
+    df_all = pd.DataFrame()
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     logo_path = os.path.join(parent_dir, "logo.svg")
         # Determine navbar pages based on login and OTP state
@@ -486,6 +488,8 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     try:
         df_all = load_transactions()
+        st.subheader("🔍 Debug: Preview of loaded transactions")
+        st.write(df_all.head())
         fraud_count = df_all[df_all["is_fraud"] == 1].shape[0]
         legit_count = df_all[df_all["is_fraud"] == 0].shape[0]
         total_transactions = df_all.shape[0]
