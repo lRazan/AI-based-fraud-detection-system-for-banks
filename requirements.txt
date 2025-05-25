@@ -10,3 +10,5 @@ yagmail
 keyring
 joblib
 plotly
+scikit-learn
+streamlit-autorefresh
