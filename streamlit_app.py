@@ -1,5 +1,4 @@
 import streamlit as st 
-st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
 import pandas as pd
 import pymysql
 import matplotlib.pyplot as plt 
@@ -29,11 +28,7 @@ import plotly.graph_objects as go
 # ==============================================================
 # PERFORMANCE & CACHING OPTIONS
 # ==============================================================
-@st.cache_data(ttl=300)
-def dummy_cache():
-    return None
-
-dummy_cache()
+st.cache_data(ttl=300)
 
 # ==============================================================
 # FRAUD DETECTION SYSTEM - STREAMLIT APP
@@ -43,6 +38,24 @@ dummy_cache()
 # --------------------------------------------------------------
 # PAGE CONFIGURATION & GLOBAL STYLES
 # --------------------------------------------------------------
+st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
+st.markdown("""
+    <style>
+        * {
+            pointer-events: all !important;
+            opacity: 1 !important;
+        }
+        nav, .navbar-title, header, footer {
+            display: block !important;
+            pointer-events: auto !important;
+            opacity: 1 !important;
+            z-index: 9999 !important;
+        }
+        .stApp {
+            background: none !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
 st.markdown("""
     <style>
         html, body, [class*="css"] {
@@ -64,23 +77,12 @@ st.markdown("""
             margin-left: auto;
             margin-right: auto;
             display: block;
-            /* Ensure buttons are clickable and not covered */
-            position: relative;
-            z-index: 1;
         }
         .element-container > div > div {
             text-align: center !important;
         }
         th {
             text-align: center !important;
-        }
-        div[data-testid="stTextInput"] input {
-            margin: 0.2em 0;
-            padding: 8px 12px;
-            font-size: 14px;
-            border-radius: 6px;
-            position: relative;
-            z-index: 1;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -289,8 +291,15 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     # LOAD MODEL BEFORE ANY PAGE LOGIC
     # ----------------------------------------------------------
+    import urllib.request
+    model_path = "fraud_detection_PKL1_model.pkl"
+    model_url = "https://github.com/lRazan/AI-based-fraud-detection-system-for-banks/releases/download/v1.0.0/fraud_detection_PKL1_model.pkl"
     try:
-        model = joblib.load("fraud_detection_PKL1_model.pkl")
+        if not os.path.exists(model_path):
+            with st.spinner("Downloading model..."):
+                urllib.request.urlretrieve(model_url, model_path)
+                st.success("Model downloaded.")
+        model = joblib.load(model_path)
     except Exception as e:
         st.error(f"❌ Failed to load model: {e}")
         model = None
@@ -310,7 +319,6 @@ def fraud_detection_system():
                 font-weight: 400;
                 color: white;
                 z-index: 9999;
-                pointer-events: none;
             }
         </style>
         <div class="navbar-title">Banking Fraud Detection System</div>
@@ -321,14 +329,6 @@ def fraud_detection_system():
         # ------------------------------------------------------
         # UPLOAD TRANSACTIONS PAGE
         # ------------------------------------------------------
-        st.markdown("""
-            <style>
-                .block-container {
-                    padding-top: 5rem !important;
-                    padding-bottom: 2rem !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
         uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
         if uploaded_file and model:
             try:
@@ -619,8 +619,6 @@ def fraud_detection_system():
                 margin-left: auto;
                 margin-right: auto;
                 display: block;
-                position: relative;
-                z-index: 1;
             }
             .element-container > div > div {
                 text-align: center !important;
@@ -653,14 +651,6 @@ def fraud_detection_system():
             .stMarkdown + div {
                 margin-top: -6px !important;
                 margin-bottom: -6px !important;
-            }
-            div[data-testid="stTextInput"] input {
-                margin: 0.2em 0;
-                padding: 8px 12px;
-                font-size: 14px;
-                border-radius: 6px;
-                position: relative;
-                z-index: 1;
             }
         </style>
     """, unsafe_allow_html=True)
@@ -850,6 +840,7 @@ def main():
                 },
                 "a": {
                     "color": "#2e7d32",
+                    "pointer-events": "none",
                     "padding": "0px",
                     "font-size": "1px"
                 },
@@ -870,7 +861,6 @@ def main():
                     font-weight: 400;
                     color: white;
                     z-index: 9999;
-                    pointer-events: none;
                 }
             </style>
             <div class="navbar-title">Banking Fraud Detection System</div>
@@ -879,8 +869,10 @@ def main():
         st.markdown("""
             <style>
                 nav {
-                    position: relative;
                     width: 100% !important;
+                    max-width: 100% !important;
+                    left: 0 !important;
+                    right: 0 !important;
                     margin: 0 auto !important;
                     padding: 0 !important;
                 }
@@ -899,10 +891,13 @@ def main():
         st.markdown("""
     <style>
         nav {
-            position: relative;
-            width: 100% !important;
-            margin: 0 auto !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw !important;
+            margin: 0 !important;
             padding: 0 !important;
+            z-index: 9999;
         }
         .stApp {
             padding-top: 4rem !important;
@@ -910,13 +905,7 @@ def main():
     </style>
 """, unsafe_allow_html=True)
         # Add CSS to hide navbar items (keep colored bar only)
-        st.markdown("""
-            <style>
-                /* nav ul li {
-                    display: none !important;
-                } */
-            </style>
-        """, unsafe_allow_html=True)
+
 
         # Improved login form centering and style
         st.markdown("""
@@ -1026,6 +1015,7 @@ def main():
                 },
                 "a": {
                     "color": "#2e7d32",
+                    "pointer-events": "none",
                     "padding": "0px",
                     "font-size": "1px"
                 },
@@ -1046,7 +1036,6 @@ def main():
                     font-weight: 400;
                     color: white;
                     z-index: 9999;
-                    pointer-events: none;
                 }
             </style>
             <div class="navbar-title">Banking Fraud Detection System</div>
@@ -1055,8 +1044,10 @@ def main():
         st.markdown("""
             <style>
                 nav {
-                    position: relative;
                     width: 100% !important;
+                    max-width: 100% !important;
+                    left: 0 !important;
+                    right: 0 !important;
                     margin: 0 auto !important;
                     padding: 0 !important;
                 }
@@ -1075,10 +1066,10 @@ def main():
         st.markdown("""
             <style>
                 nav {
-                    position: relative;
-                    width: 100% !important;
-                    margin: 0 auto !important;
+                    width: 100vw !important;
+                    margin: 0 !important;
                     padding: 0 !important;
+                    left: 0 !important;
                 }
                 header.css-1avcm0n.ezrtsby0 {
                     width: 100vw !important;
@@ -1090,9 +1081,9 @@ def main():
         # Add CSS to hide navbar items (keep colored bar only)
         st.markdown("""
             <style>
-                /* nav ul li {
+                nav ul li {
                     display: none !important;
-                } */
+                }
             </style>
         """, unsafe_allow_html=True)
         # Background, font, and form settings as in login page
@@ -1130,9 +1121,6 @@ def main():
                         font-size: 14px !important;
                         padding: 8px 12px !important;
                         border-radius: 6px !important;
-                        margin: 0.2em 0;
-                        position: relative;
-                        z-index: 1;
                     }
                 </style>
             """, unsafe_allow_html=True)
