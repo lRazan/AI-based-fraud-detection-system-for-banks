@@ -496,6 +496,7 @@ def fraud_detection_system():
             id_map = {}
     except:
         st.error("❌ Failed to load live data from database.")
+        df_all = pd.DataFrame()
         fraud_count = 0
         legit_count = 0
         total_transactions = 0
