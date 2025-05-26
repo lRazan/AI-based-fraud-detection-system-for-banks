@@ -610,19 +610,17 @@ def fraud_detection_system():
                             cols[5].markdown("<span style='color:green;'>Sent</span>", unsafe_allow_html=True)
                     else:
                         cols[5].markdown("<span style='color:red;'>No Email</span>", unsafe_allow_html=True)
-            # Show transaction status: Active (YES), Stopped (NO)
+            # Show transaction status: Active (YES), Stopped (NO), Legitimate (gray)
             if row['Fraud Status'] == "Fraud":
                 if responses:
                     latest_response = responses[0][0].upper()
                     if latest_response == "YES":
-                        cols[5].success("Active")
+                        cols[5].markdown("<span style='color:green;'>Active</span>", unsafe_allow_html=True)
                     elif latest_response == "NO":
-                        cols[5].error("Stopped")
-                elif not responses or responses[0][0].upper() not in ["YES", "NO"]:
-                    # Show waiting only if not responded
-                    cols[5].warning("Waiting")
+                        cols[5].markdown("<span style='color:red;'>Stopped</span>", unsafe_allow_html=True)
+                # Do NOT show 'Waiting' here per new specs
             else:
-                cols[5].info("Legitimate")
+                cols[5].markdown("<span style='color:gray;'>Legitimate</span>", unsafe_allow_html=True)
 
             # Execution Status column (cols[6])
             show_details_key = f"show_exec_{row['transaction_id']}"
@@ -632,19 +630,20 @@ def fraud_detection_system():
             if row['Fraud Status'] == "Fraud":
                 if responses:
                     latest_response, latest_time = responses[0][0].upper(), responses[0][1]
-                    if latest_response in ["YES", "NO"]:
-                        status_label = "Complete" if latest_response == "YES" else "Cancel"
-                        with cols[6]:
-                            if st.button(status_label, key=show_details_key):
-                                st.session_state[detail_toggle_key] = not st.session_state[detail_toggle_key]
-                            if st.session_state[detail_toggle_key]:
-                                st.text(f"Response: {latest_response}\n{latest_time.strftime('%Y-%m-%d %H:%M')}")
+                    if latest_response == "YES":
+                        # Green: Complete
+                        cols[6].markdown("<span style='color:green;'>Complete</span>", unsafe_allow_html=True)
+                    elif latest_response == "NO":
+                        # Red: Cancel
+                        cols[6].markdown("<span style='color:red;'>Cancel</span>", unsafe_allow_html=True)
                     else:
-                        cols[6].warning("Waiting")
+                        # Orange: Waiting
+                        cols[6].markdown("<span style='color:#c97b00;'>Waiting</span>", unsafe_allow_html=True)
                 else:
-                    cols[6].warning("Waiting")
+                    # Orange: Waiting
+                    cols[6].markdown("<span style='color:#c97b00;'>Waiting</span>", unsafe_allow_html=True)
             else:
-                cols[6].info("N/A")
+                cols[6].markdown("<span style='color:gray;'>N/A</span>", unsafe_allow_html=True)
 
     # ----------------------------------------------------------
     # PAGINATION CONTROLS
