@@ -784,7 +784,7 @@ def fraud_detection_system():
                     <strong>Name:</strong> {cust[0]}<br>
                     <strong>Phone:</strong> {cust[1]}<br>
                     <strong>City:</strong> {cust[2]}<br>
-                    <!-- <strong>Email:</strong> {cust[3]} -->
+                    <strong>Email:</strong> {cust[3]}
                     </div>
                     """, unsafe_allow_html=True)
                 else:
