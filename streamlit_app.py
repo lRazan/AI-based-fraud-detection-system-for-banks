@@ -205,15 +205,15 @@ def get_customer_info(customer_id):
 def send_email_confirmation(to_email, transaction_id):
     subject = f"Transaction #{transaction_id} Confirmation"
     body = f"""
-<html>
-  <body>
-    <p>Did you make transaction #{transaction_id}?</p>
-    <p>
-      <a href="https://banking-fraud-detection-system-6t8aztranactionhxcqctmjzdeuhjj.streamlit.app/?tx={transaction_id}&r=YES">YES - I Confirm</a><br>
-      <a href="https://banking-fraud-detection-system-6t8aztranactionhxcqctmjzdeuhjj.streamlit.app/?tx={transaction_id}&r=NO">NO - This Was Not Me</a>
-    </p>
-  </body>
-</html>
+  <html>
+    <body>
+      <p>Did you make transaction #{transaction_id}?</p>
+      <p>
+        <a href="https://banking-fraud-detection-system-6t8aztranactionhxcqctmjzdeuhjj.streamlit.app/?tx={transaction_id}&r=YES">YES - I Confirm</a><br>
+        <a href="https://banking-fraud-detection-system-6t8aztranactionhxcqctmjzdeuhjj.streamlit.app/?tx={transaction_id}&r=NO">NO - This Was Not Me</a>
+      </p>
+    </body>
+  </html>
     """
 
 
@@ -504,14 +504,7 @@ def fraud_detection_system():
         st.session_state['response_already_processed'] = True
         st.query_params.clear()
         # Update the transaction status (is_active) according to the response
-        conn = pymysql.connect(
-            host="crossover.proxy.rlwy.net",
-            user="root",
-            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
-            database="railway",
-            port=55790
-        )
-        cursor = conn.cursor()
+        conn = None
         try:
             conn = pymysql.connect(
                 host="crossover.proxy.rlwy.net",
@@ -521,16 +514,18 @@ def fraud_detection_system():
                 port=55790
             )
             cursor = conn.cursor()
+            if response == 'NO':
+                cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (transaction_id,))
+            elif response == 'YES':
+                cursor.execute("UPDATE transactions SET is_active = 1 WHERE transaction_id = %s", (transaction_id,))
+            conn.commit()
+            cursor.close()
         except Exception as e:
             st.error("Could not connect to the database. Please try again later.")
             return
-        if response == 'NO':
-            cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (transaction_id,))
-        elif response == 'YES':
-            cursor.execute("UPDATE transactions SET is_active = 1 WHERE transaction_id = %s", (transaction_id,))
-        conn.commit()
-        cursor.close()
-        conn.close()
+        finally:
+            if conn:
+                conn.close()
         st.session_state[f'alert_sent_{transaction_id}'] = True
         st.session_state[f'show_alert_{transaction_id}'] = True
         # Show confirmation message to the customer
@@ -916,93 +911,6 @@ def main():
     # LOGIN FORM FOR STAFF
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
-        # Add top navbar for login page with a hidden 'Login' link to avoid empty item error,
-        # set color same as background and font-size small to hide visually.
-        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
-        selected = st_navbar(
-            ["Login"],
-            logo_path=logo_path,
-            styles={
-                "nav": {"background-color": "#2e7d32"},
-                "img": {
-                    "margin-left": "0px",
-                    "margin-right": "auto",
-                    "display": "inline-block",
-                    "height": "40px",
-                    "position": "absolute",
-                    "top": "50%",
-                    "left": "0px",
-                    "transform": "translateY(-50%)"
-                },
-                "a": {
-                    "color": "#2e7d32",
-                    "pointer-events": "none",
-                    "padding": "0px",
-                    "font-size": "1px"
-                },
-                "active": {
-                    "background-color": "#2e7d32",
-                    "border-radius": "0px"
-                }
-            }
-        )
-        # Add navbar title and logo text beside each other (like dashboard)
-        st.markdown("""
-            <style>
-                .navbar-title {
-                    position: fixed;
-                    top: 22px;
-                    left: 90px;
-                    font-size: 13px;
-                    font-weight: 400;
-                    color: white;
-                    z-index: 9999;
-                }
-            </style>
-            <div class="navbar-title">Banking Fraud Detection System</div>
-        """, unsafe_allow_html=True)
-        # Enforce full-width top navbar
-        st.markdown("""
-            <style>
-                nav {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    left: 0 !important;
-                    right: 0 !important;
-                    margin: 0 auto !important;
-                    padding: 0 !important;
-                }
-                .css-18ni7ap.e8zbici2 {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    padding: 0 !important;
-                    margin: 0 !important;
-                }
-                .block-container {
-                    padding-top: 6rem !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-        # Ensure navbar spans full width and has no margin/padding
-        st.markdown("""
-    <style>
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            z-index: 9999;
-        }
-        .stApp {
-            padding-top: 4rem !important;
-        }
-    </style>
-""", unsafe_allow_html=True)
-        # Add CSS to hide navbar items (keep colored bar only)
-
-
         # Improved login form centering and style
         st.markdown("""
             <style>
@@ -1092,96 +1000,6 @@ def main():
     # OTP VERIFICATION FORM
     # ----------------------------------------------------------
     elif st.session_state['logged_in'] and not st.session_state['otp_verified']:
-        # Add top navbar for OTP page, hide nav items as in login page
-        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
-        st_navbar(
-            ["Login"],
-            logo_path=logo_path,
-            styles={
-                "nav": {"background-color": "#2e7d32"},
-                "img": {
-                    "margin-left": "0px",
-                    "margin-right": "auto",
-                    "display": "inline-block",
-                    "height": "40px",
-                    "position": "absolute",
-                    "top": "50%",
-                    "left": "0px",
-                    "transform": "translateY(-50%)"
-                },
-                "a": {
-                    "color": "#2e7d32",
-                    "pointer-events": "none",
-                    "padding": "0px",
-                    "font-size": "1px"
-                },
-                "active": {
-                    "background-color": "#2e7d32",
-                    "border-radius": "0px"
-                }
-            }
-        )
-        # Add navbar title and logo text beside each other (like dashboard)
-        st.markdown("""
-            <style>
-                .navbar-title {
-                    position: fixed;
-                    top: 22px;
-                    left: 90px;
-                    font-size: 13px;
-                    font-weight: 400;
-                    color: white;
-                    z-index: 9999;
-                }
-            </style>
-            <div class="navbar-title">Banking Fraud Detection System</div>
-        """, unsafe_allow_html=True)
-        # Enforce full-width top navbar on OTP screen
-        st.markdown("""
-            <style>
-                nav {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    left: 0 !important;
-                    right: 0 !important;
-                    margin: 0 auto !important;
-                    padding: 0 !important;
-                }
-                .css-18ni7ap.e8zbici2 {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    padding: 0 !important;
-                    margin: 0 !important;
-                }
-                .block-container {
-                    padding-top: 6rem !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-        # Ensure navbar spans full width and has no margin/padding
-        st.markdown("""
-            <style>
-                nav {
-                    width: 100vw !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    left: 0 !important;
-                }
-                header.css-1avcm0n.ezrtsby0 {
-                    width: 100vw !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-        # Add CSS to hide navbar items (keep colored bar only)
-        st.markdown("""
-            <style>
-                nav ul li {
-                    display: none !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
         # Background, font, and form settings as in login page
         st.markdown("""
             <style>
