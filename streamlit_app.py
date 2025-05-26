@@ -599,7 +599,7 @@ def fraud_detection_system():
 
             # Transaction Status column (cols[5])
             responses = get_customer_responses(row['transaction_id']) if row['Fraud Status'] == "Fraud" else []
-            # زر Send
+            # Only show "Send" button if not yet responded YES/NO
             if row['Fraud Status'] == "Fraud" and (not responses or responses[0][0].upper() not in ["YES", "NO"]):
                 send_key = f"send_{row['transaction_id']}"
                 if cols[5].button("Send", key=send_key):
@@ -610,27 +610,37 @@ def fraud_detection_system():
                             cols[5].markdown("<span style='color:green;'>Sent</span>", unsafe_allow_html=True)
                     else:
                         cols[5].markdown("<span style='color:red;'>No Email</span>", unsafe_allow_html=True)
-            # الحالة بناءً على الرد
-            if row['Fraud Status'] == "Fraud" and responses:
-                latest_response = responses[0][0].upper()
-                if latest_response == "YES":
-                    cols[5].markdown("<span style='color:green;'>Active</span>", unsafe_allow_html=True)
-                elif latest_response == "NO":
-                    cols[5].markdown("<span style='color:red;'>Stopped</span>", unsafe_allow_html=True)
-            elif row['Fraud Status'] != "Fraud":
-                cols[5].markdown("<span style='color:gray;'>Legitimate</span>", unsafe_allow_html=True)
-
-            # Execution Status column (cols[6])
+            # Show transaction status: Active (YES), Stopped (NO), Legitimate (gray)
             if row['Fraud Status'] == "Fraud":
                 if responses:
                     latest_response = responses[0][0].upper()
                     if latest_response == "YES":
+                        cols[5].markdown("<span style='color:green;'>Active</span>", unsafe_allow_html=True)
+                    elif latest_response == "NO":
+                        cols[5].markdown("<span style='color:red;'>Stopped</span>", unsafe_allow_html=True)
+                # Do NOT show 'Waiting' here per new specs
+            else:
+                cols[5].markdown("<span style='color:gray;'>Legitimate</span>", unsafe_allow_html=True)
+
+            # Execution Status column (cols[6])
+            show_details_key = f"show_exec_{row['transaction_id']}"
+            detail_toggle_key = f"exec_detail_toggle_{row['transaction_id']}"
+            if detail_toggle_key not in st.session_state:
+                st.session_state[detail_toggle_key] = False
+            if row['Fraud Status'] == "Fraud":
+                if responses:
+                    latest_response, latest_time = responses[0][0].upper(), responses[0][1]
+                    if latest_response == "YES":
+                        # Green: Complete
                         cols[6].markdown("<span style='color:green;'>Complete</span>", unsafe_allow_html=True)
                     elif latest_response == "NO":
+                        # Red: Cancel
                         cols[6].markdown("<span style='color:red;'>Cancel</span>", unsafe_allow_html=True)
                     else:
+                        # Orange: Waiting
                         cols[6].markdown("<span style='color:#c97b00;'>Waiting</span>", unsafe_allow_html=True)
                 else:
+                    # Orange: Waiting
                     cols[6].markdown("<span style='color:#c97b00;'>Waiting</span>", unsafe_allow_html=True)
             else:
                 cols[6].markdown("<span style='color:gray;'>N/A</span>", unsafe_allow_html=True)
