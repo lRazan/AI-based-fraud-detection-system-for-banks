@@ -269,20 +269,21 @@ def fraud_detection_system():
         unsafe_allow_html=True
     )
 
-    # Right-aligned buttons: Dashboard → Upload → Logout
-    col_spacer, col1, col2, col3 = st.columns([6, 1, 1, 1])
-    with col1:
-        if st.button("Dashboard"):
-            st.session_state["selected_page"] = "Dashboard"
-            st.rerun()
-    with col2:
-        if st.button("Upload Transactions"):
-            st.session_state["selected_page"] = "Upload Transactions"
-            st.rerun()
-    with col3:
-        if st.button("Logout"):
-            st.session_state["selected_page"] = "Logout"
-            st.rerun()
+    # Navigation buttons: Dashboard, Upload Transactions, Logout (Streamlit default buttons, no styling)
+    with st.container():
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col1:
+            if st.button("Dashboard", key="btn_dashboard"):
+                st.session_state["selected_page"] = "Dashboard"
+                st.rerun()
+        with col2:
+            if st.button("Upload Transactions", key="btn_upload"):
+                st.session_state["selected_page"] = "Upload Transactions"
+                st.rerun()
+        with col3:
+            if st.button("Logout", key="btn_logout"):
+                st.session_state["selected_page"] = "Logout"
+                st.rerun()
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
