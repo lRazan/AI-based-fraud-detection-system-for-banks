@@ -650,10 +650,17 @@ def fraud_detection_system():
                                 cursor.close()
                                 conn.close()
                                 st.session_state[f"show_yes_{row['transaction_id']}"] = True
-                            except:
-                                cols[6].markdown("<span style='color:red;'>Error</span>", unsafe_allow_html=True)
-                        if st.session_state[f"show_yes_{row['transaction_id']}"]:
-                            cols[6].markdown(f"<span style='color:green;'>YES at {latest_time}</span>", unsafe_allow_html=True)
+                                st.session_state[f"response_time_{row['transaction_id']}"] = latest_time
+                                st.session_state[f"response_value_{row['transaction_id']}"] = latest_response
+                            except Exception as e:
+                                st.session_state[f"show_yes_{row['transaction_id']}"] = True
+                                st.session_state[f"response_time_{row['transaction_id']}"] = latest_time
+                                st.session_state[f"response_value_{row['transaction_id']}"] = latest_response
+                                cols[6].markdown(f"<span style='color:red;'>Error: {e}</span>", unsafe_allow_html=True)
+                        if st.session_state.get(f"show_yes_{row['transaction_id']}"):
+                            ts = st.session_state.get(f"response_time_{row['transaction_id']}", latest_time)
+                            rv = st.session_state.get(f"response_value_{row['transaction_id']}", "YES")
+                            cols[6].markdown(f"<span style='color:green;'>{rv} at {ts}</span>", unsafe_allow_html=True)
                     elif latest_response == "NO":
                         # State for showing NO at {time}
                         if f"show_no_{row['transaction_id']}" not in st.session_state:
@@ -673,10 +680,17 @@ def fraud_detection_system():
                                 cursor.close()
                                 conn.close()
                                 st.session_state[f"show_no_{row['transaction_id']}"] = True
-                            except:
-                                cols[6].markdown("<span style='color:red;'>Error</span>", unsafe_allow_html=True)
-                        if st.session_state[f"show_no_{row['transaction_id']}"]:
-                            cols[6].markdown(f"<span style='color:red;'>NO at {latest_time}</span>", unsafe_allow_html=True)
+                                st.session_state[f"response_time_{row['transaction_id']}"] = latest_time
+                                st.session_state[f"response_value_{row['transaction_id']}"] = latest_response
+                            except Exception as e:
+                                st.session_state[f"show_no_{row['transaction_id']}"] = True
+                                st.session_state[f"response_time_{row['transaction_id']}"] = latest_time
+                                st.session_state[f"response_value_{row['transaction_id']}"] = latest_response
+                                cols[6].markdown(f"<span style='color:red;'>Error: {e}</span>", unsafe_allow_html=True)
+                        if st.session_state.get(f"show_no_{row['transaction_id']}"):
+                            ts = st.session_state.get(f"response_time_{row['transaction_id']}", latest_time)
+                            rv = st.session_state.get(f"response_value_{row['transaction_id']}", "NO")
+                            cols[6].markdown(f"<span style='color:red;'>{rv} at {ts}</span>", unsafe_allow_html=True)
                     else:
                         cols[6].markdown("<span style='color:#c97b00;'>Waiting</span>", unsafe_allow_html=True)
                 else:
