@@ -22,7 +22,7 @@ This system empowers banks to:
 ## 🔍 Features
 
 - 🧠 ML-based fraud prediction using a trained `.pkl` model  
-- 📊 KPI dashboard: Fraudulent, Legitimate, and Total counts  
+- 📊 Dashboard: Fraudulent, Legitimate, and Total counts  
 - 📂 Upload CSV files — automatically classify transactions using the ML model and insert them into the database  
 - 🔐 Secure login with OTP via email  
 - 📧 YES/NO confirmation emails for customers — responses are recorded in the database via a separate Flask API (Render-hosted)  
