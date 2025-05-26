@@ -772,7 +772,6 @@ def main():
                     "<div style='text-align:left; margin-top:-8px;'><a href='#' style='color:#14532d; font-size:12px;'>Forgot password?</a></div>",
                     unsafe_allow_html=True)
 
-
         if login_button:
             with st.spinner('Verifying credentials...'):
                 time.sleep(1.5)
