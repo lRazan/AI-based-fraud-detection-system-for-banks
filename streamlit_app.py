@@ -4,45 +4,24 @@ import streamlit as st
 # IMPORTS
 # ==============================================================
 
-# ----- Standard Library Imports -----
+# --------------------------------------------------------------
+# Standard Library Imports
+# --------------------------------------------------------------
 import os
 import time
 import numpy as np
 import pandas as pd
 
-# ----- Third Party/External Libraries -----
+# --------------------------------------------------------------
+# Third Party/External Libraries
+# --------------------------------------------------------------
 import pymysql
 import yagmail
 import joblib
 import plotly.graph_objects as go
-
-# Optionally used for navigation, autorefresh
 from streamlit_navigation_bar import st_navbar
 
-
-# TEMPORARY: Database connection test (optional, comment out in production)
-# def test_db_connection():
-#     st.title("🔌 Test MySQL Database Connection")
-#     try:
-#         conn = pymysql.connect(
-#             host="crossover.proxy.rlwy.net",
-#             user="root",
-#             password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
-#             database="railway",
-#             port=55790
-#         )
-#         cursor = conn.cursor()
-#         cursor.execute("SELECT DATABASE();")
-#         db_name = cursor.fetchone()[0]
-#         st.success(f"✅ Connected to database: {db_name}")
-#         cursor.close()
-#         conn.close()
-#     except Exception as e:
-#         st.error("❌ Failed to connect to the database.")
-#         st.code(str(e), language="bash")
-# # Uncomment the next line to run the test manually
-# # test_db_connection()
-
+# Path to logo file used in header
 logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
 
 # ==============================================================
@@ -55,7 +34,6 @@ st.cache_data(ttl=300)
 # Structured code with clear comments and logical section headers.
 # ==============================================================
 
-
 # --------------------------------------------------------------
 # PAGE CONFIGURATION & GLOBAL STYLES
 # --------------------------------------------------------------
@@ -63,7 +41,7 @@ st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", lay
 
 # --------------------------------------------------------------
 # Function: show_green_header
-# Unified green header bar with logo and title for all pages
+# Displays a unified green header bar with logo and title for all pages.
 # --------------------------------------------------------------
 def show_green_header():
     import base64
@@ -151,6 +129,7 @@ def get_customer_info(customer_id):
 # ==============================================================
 # OTP & EMAIL LOGIC
 # ==============================================================
+
 # --------------------------------------------------------------
 # Function: send_email_confirmation
 # Sends a confirmation email to the customer for a specific transaction.
@@ -168,19 +147,14 @@ def send_email_confirmation(to_email, transaction_id):
     </body>
   </html>
     """
-
-
     try:
         yag = yagmail.SMTP(
             user=st.secrets["email"]["address"],
             password=st.secrets["email"]["password"]
         )
         yag.send(to=to_email, subject=subject, contents=[body])
-        # Do not show Streamlit message here; handled in Transaction Table
         return True
     except Exception as e:
-        # Remove or comment out Streamlit error message for email sending in table context
-        # st.error(f"Email sending failed: {e}")
         return False
 
 # --------------------------------------------------------------
@@ -211,6 +185,7 @@ def send_otp_email(to_email, otp_code):
 # ==============================================================
 # CUSTOMER RESPONSE HANDLING
 # ==============================================================
+
 # --------------------------------------------------------------
 # Function: save_customer_response
 # Saves a customer's YES/NO response for a transaction in the database.
@@ -257,18 +232,21 @@ def get_customer_responses(transaction_id):
     conn.close()
     return results
 
+#
 # ==============================================================
 # FRAUD DETECTION DASHBOARD UI
 # ==============================================================
 
 # --------------------------------------------------------------
 # Function: fraud_detection_system
-# Main dashboard UI for fraud detection, staff view and customer response.
+# Main dashboard UI for fraud detection, staff view, and customer response.
 # --------------------------------------------------------------
 def fraud_detection_system():
     show_green_header()
 
-    # Navigation buttons: Dashboard, Upload Transactions, Logout (Streamlit default buttons, no styling)
+    # ----------------------------------------------------------
+    # Navigation buttons for Dashboard, Upload Transactions, Logout
+    # ----------------------------------------------------------
     with st.container():
         col1, col2, col3 = st.columns([1, 1, 1])
         with col1:
@@ -286,11 +264,12 @@ def fraud_detection_system():
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
-    # Initialize df_all to avoid UnboundLocalError
+    # Initialize DataFrame to avoid UnboundLocalError
     df_all = pd.DataFrame()
 
     # ----------------------------------------------------------
     # LOAD MODEL BEFORE ANY PAGE LOGIC
+    # Loads the fraud detection model from local file or downloads it if missing.
     # ----------------------------------------------------------
     import urllib.request
     model_path = "fraud_detection_PKL2_model.pkl"
@@ -304,10 +283,11 @@ def fraud_detection_system():
         st.error(f"❌ Failed to load model: {e}")
         model = None
 
+    # ----------------------------------------------------------
+    # UPLOAD TRANSACTIONS PAGE
+    # Allows staff to upload new transactions from CSV and store them in the database.
+    # ----------------------------------------------------------
     if selected_page == "Upload Transactions":
-        # ------------------------------------------------------
-        # UPLOAD TRANSACTIONS PAGE
-        # ------------------------------------------------------
         uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
         if uploaded_file and model:
             try:
@@ -325,9 +305,9 @@ def fraud_detection_system():
                 ]
                 df_csv["fraud_probability"] = model.predict_proba(df_csv[required_cols])[:, 1]
                 df_csv["prediction"] = df_csv["fraud_probability"].apply(lambda p: "🟥 Fraudulent" if p >= 0.9 else "🟩 Legitimate")
-                # st.success("✅ File processed successfully.")  # تم التعليق لمنع الإشعار غير الضروري
                 st.dataframe(df_csv[["transactionID", "amount", "type", "fraud_probability", "prediction"]])
 
+                # Insert uploaded transactions into the database
                 import pymysql
                 try:
                     df_csv.rename(columns={
@@ -357,7 +337,6 @@ def fraud_detection_system():
                     conn.commit()
                     cursor.close()
                     conn.close()
-                    # st.success("✅ Transactions inserted into database and reflected in dashboard.")  # تم التعليق لمنع الإشعار غير الضروري
                 except Exception as e:
                     st.error(f"❌ Failed to insert data into database: {e}")
             except Exception as e:
@@ -377,7 +356,7 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     from streamlit_autorefresh import st_autorefresh
     query_params = st.query_params
-    # Prevent duplicate processing if already handled (e.g. on auto-reload)
+    # Prevent duplicate processing if already handled (e.g., on auto-reload)
     if st.session_state.get('response_already_processed'):
         return
     if 'tx' in query_params and 'r' in query_params:
@@ -739,18 +718,19 @@ def main():
 
     # ----------------------------------------------------------
     # CUSTOMER RESPONSE HANDLING FROM EMAIL LINK (NO LOGIN REQUIRED)
+    # If a customer clicks an email link, process their response here, no login needed.
     # ----------------------------------------------------------
     query_params = st.query_params
     if 'tx' in query_params and 'r' in query_params:
-        # Handle response from email link without requiring login
         show_green_header()
         fraud_detection_system()
 
     # ----------------------------------------------------------
     # LOGIN FORM FOR STAFF
+    # Collects email and password for staff login, sends OTP if credentials are valid.
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
-        # Add custom CSS for login background and button (updated Unsplash image)
+        # Custom CSS for login background and button
         st.markdown(
             """
             <style>
@@ -763,7 +743,7 @@ def main():
             """,
             unsafe_allow_html=True
         )
-        # Add green button CSS before login form
+        # Green button styling
         st.markdown(
             """
             <style>
@@ -791,7 +771,7 @@ def main():
                     "<div style='text-align:left; margin-top:-8px;'><a href='#' style='color:#14532d; font-size:12px;'>Forgot password?</a></div>",
                     unsafe_allow_html=True)
 
-        # Direct Access button aligned left only
+        # Direct Access button for bypassing login/OTP (demo/testing)
         col_direct, _ = st.columns([1, 10])
         with col_direct:
             if st.button("Direct"):
@@ -820,9 +800,10 @@ def main():
 
     # ----------------------------------------------------------
     # OTP VERIFICATION FORM
+    # Displays OTP input after successful login; verifies OTP for access.
     # ----------------------------------------------------------
     elif st.session_state['logged_in'] and not st.session_state['otp_verified']:
-        # Add custom CSS for green background and button, same as login page, during OTP form
+        # Custom CSS for green background and button styling during OTP form
         st.markdown(
             """
             <style>
@@ -842,7 +823,7 @@ def main():
             unsafe_allow_html=True
         )
         show_green_header()
-        # OTP check after login; user must enter OTP sent to email
+        # OTP input field and verify button
         col_otp, _ = st.columns([5, 5])
         with col_otp:
             otp_input = st.text_input("Enter OTP", key="otp_input")
@@ -859,6 +840,7 @@ def main():
 
     # ----------------------------------------------------------
     # SHOW FRAUD DASHBOARD ONCE LOGGED IN AND VERIFIED
+    # Displays the main dashboard after successful login and OTP verification.
     # ----------------------------------------------------------
     else:
         show_green_header()
