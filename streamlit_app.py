@@ -270,50 +270,20 @@ def fraud_detection_system():
     )
 
 
-    # Right-aligned horizontal button stack: Dashboard > Upload > Logout (transparent style)
-    st.markdown(
-        """
-        <style>
-            .nav-buttons {
-                display: flex;
-                justify-content: flex-end;
-                gap: 15px;
-                margin-top: 10px;
-                margin-right: 30px;
-            }
-            .nav-buttons button {
-                background: none;
-                border: none;
-                color: white;
-                font-weight: bold;
-                font-size: 15px;
-                cursor: pointer;
-            }
-            .nav-buttons button:hover {
-                text-decoration: underline;
-            }
-        </style>
-        <div class="nav-buttons">
-            <form action="" method="post">
-                <button type="submit" name="dashboard">Dashboard</button>
-                <button type="submit" name="upload">Upload Transactions</button>
-                <button type="submit" name="logout">Logout</button>
-            </form>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Handle button logic
-    if "dashboard" in st.session_state:
-        st.session_state["selected_page"] = "Dashboard"
-        st.rerun()
-    elif "upload" in st.session_state:
-        st.session_state["selected_page"] = "Upload Transactions"
-        st.rerun()
-    elif "logout" in st.session_state:
-        st.session_state["selected_page"] = "Logout"
-        st.rerun()
+    # Right-aligned navigation buttons using Streamlit columns
+    spacer1, col1, col2, col3 = st.columns([6, 1, 1, 1])
+    with col1:
+        if st.button("Dashboard"):
+            st.session_state["selected_page"] = "Dashboard"
+            st.rerun()
+    with col2:
+        if st.button("Upload Transactions"):
+            st.session_state["selected_page"] = "Upload Transactions"
+            st.rerun()
+    with col3:
+        if st.button("Logout"):
+            st.session_state["selected_page"] = "Logout"
+            st.rerun()
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
