@@ -247,59 +247,51 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     # TOP NAVIGATION BAR (Streamlit + custom CSS)
     # ----------------------------------------------------------
-    st.markdown("""
-        <style>
-            .custom-nav {
-                background-color: #2e7d32;
-                padding: 12px 25px;
-                border-radius: 0 0 8px 8px;
-                margin-bottom: 20px;
-                color: white;
-            }
-            .custom-nav .nav-title {
-                font-size: 20px;
-                font-weight: bold;
-                display: inline-block;
-                vertical-align: middle;
-                margin-left: 15px;
-            }
-            .custom-nav .nav-buttons {
-                margin-top: 10px;
-            }
-            .custom-nav .nav-buttons button {
-                background-color: white;
-                color: #2e7d32;
-                border: none;
-                border-radius: 6px;
-                padding: 6px 12px;
-                margin-right: 10px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
     with st.container():
-        st.markdown('<div class="custom-nav">', unsafe_allow_html=True)
-        col_logo, col_title = st.columns([1, 9])
+        st.markdown("""
+            <style>
+                .main-header {
+                    background-color: #2e7d32;
+                    padding: 15px 25px;
+                    border-radius: 0 0 10px 10px;
+                    margin-bottom: 30px;
+                }
+                .main-header h1 {
+                    color: white;
+                    display: inline;
+                    font-size: 22px;
+                    vertical-align: middle;
+                    margin-left: 15px;
+                }
+                .stButton>button {
+                    background-color: white;
+                    color: #2e7d32;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 6px 16px;
+                    margin-right: 12px;
+                    font-weight: bold;
+                }
+            </style>
+        """, unsafe_allow_html=True)
+
+        col_logo, col_title, col_buttons = st.columns([1, 5, 4])
         with col_logo:
             st.image("logo.svg", width=40)
         with col_title:
-            st.markdown('<span class="nav-title">Banking Fraud Detection System</span>', unsafe_allow_html=True)
-
-        col_btn1, col_btn2, col_btn3 = st.columns(3)
-        with col_btn1:
-            if st.button("Dashboard"):
-                st.session_state["selected_page"] = "Dashboard"
-        with col_btn2:
-            if st.button("Upload Transactions"):
-                st.session_state["selected_page"] = "Upload Transactions"
-        with col_btn3:
-            if st.button("Logout"):
-                st.session_state.clear()
-                st.rerun()
-
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('<div class="main-header"><h1>Banking Fraud Detection System</h1></div>', unsafe_allow_html=True)
+        with col_buttons:
+            b1, b2, b3 = st.columns(3)
+            with b1:
+                if st.button("Dashboard"):
+                    st.session_state["selected_page"] = "Dashboard"
+            with b2:
+                if st.button("Upload Transactions"):
+                    st.session_state["selected_page"] = "Upload Transactions"
+            with b3:
+                if st.button("Logout"):
+                    st.session_state.clear()
+                    st.rerun()
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
