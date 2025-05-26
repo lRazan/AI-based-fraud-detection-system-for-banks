@@ -274,8 +274,8 @@ def fraud_detection_system():
     st.markdown(
         """
         <style>
-            section[data-testid="stHorizontalBlock"] > div {
-                background-color: #2e7d32;
+            section[data-testid="stHorizontalBlock"] {
+                background-color: #2e7d32 !important;
                 padding: 10px 30px;
                 border-radius: 0 0 10px 10px;
             }
