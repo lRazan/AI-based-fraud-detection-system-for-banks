@@ -925,7 +925,7 @@ def main():
             <style>
                 .stApp {
                     background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
-                    background-attachment: fixed;
+                    background-attachment: scroll;
                 }
                 .stApp > header, .stApp > footer {
                     box-shadow: none !important;
@@ -1104,7 +1104,7 @@ def main():
             <style>
                 .stApp {
                     background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
-                    background-attachment: fixed;
+                    background-attachment: scroll;
                 }
                 .stApp > header, .stApp > footer {
                     box-shadow: none !important;
