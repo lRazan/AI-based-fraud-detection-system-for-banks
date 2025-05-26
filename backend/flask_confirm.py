@@ -48,4 +48,6 @@ def confirm():
         return "Invalid transaction reference. Please verify your link or contact support.", 400
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5050)
+    import os
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port)
