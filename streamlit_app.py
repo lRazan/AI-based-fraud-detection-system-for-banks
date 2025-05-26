@@ -763,30 +763,7 @@ def main():
     # LOGIN FORM FOR STAFF
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
-        # Improved login form centering and style
-        st.markdown("""
-            <style>
-                .stApp {
-                    background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
-                    background-attachment: fixed;
-                }
-                .stApp > header, .stApp > footer {
-                    box-shadow: none !important;
-                }
-                form {
-                    max-width: 360px;
-                    margin: auto;
-                    background: rgba(255, 255, 255, 0.75);
-                    padding: 1.2rem;
-                    border-radius: 10px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-                }
-                .block-container {
-                    padding-top: 7rem !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-
+        # Login form with NO custom CSS for backgrounds or forms
         with st.form("login_form"):
             email = st.text_input("Email", key="email_input")
             password = st.text_input("Password", type="password", key="pass_input")
@@ -797,11 +774,9 @@ def main():
 
             col_forgot, _ = st.columns([1, 5])
             with col_forgot:
-                st.markdown("""
-                <div style='text-align:left; margin-top:-8px;'>
-                    <a href='#' style='color:#14532d; font-size:12px;'>Forgot password?</a>
-                </div>
-                """, unsafe_allow_html=True)
+                st.markdown(
+                    "<div style='text-align:left; margin-top:-8px;'><a href='#' style='color:#14532d; font-size:12px;'>Forgot password?</a></div>",
+                    unsafe_allow_html=True)
 
         # Direct Access button aligned left only
         col_direct, _ = st.columns([1, 10])
@@ -810,24 +785,6 @@ def main():
                 st.session_state['logged_in'] = True
                 st.session_state['otp_verified'] = True
                 st.rerun()
-
-        # Custom button color
-        st.markdown("""
-            <style>
-                div.stButton > button:first-child {
-                    background-color: #81c784;
-                    color: white;
-                    height: 38px;
-                    font-size: 14px;
-                    border-radius: 8px;
-                    border: none;
-                }
-                div.stTextInput > div > input {
-                    height: 36px;
-                    font-size: 14px;
-                }
-            </style>
-        """, unsafe_allow_html=True)
 
         if login_button:
             with st.spinner('Verifying credentials...'):
@@ -852,44 +809,10 @@ def main():
     # OTP VERIFICATION FORM
     # ----------------------------------------------------------
     elif st.session_state['logged_in'] and not st.session_state['otp_verified']:
-        # Background, font, and form settings as in login page
-        st.markdown("""
-            <style>
-                .stApp {
-                    background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
-                    background-attachment: fixed;
-                }
-                .stApp > header, .stApp > footer {
-                    box-shadow: none !important;
-                }
-                form {
-                    max-width: 360px;
-                    margin: auto;
-                    background: rgba(255, 255, 255, 0.75);
-                    padding: 1.2rem;
-                    border-radius: 10px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-                }
-                .block-container {
-                    padding-top: 7rem !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
         # OTP check after login; user must enter OTP sent to email
         col_otp, _ = st.columns([5, 5])
         with col_otp:
             otp_input = st.text_input("Enter OTP", key="otp_input")
-            st.markdown("""
-                <style>
-                    div[data-testid="stTextInput"] input {
-                        background-color: white !important;
-                        height: 36px !important;
-                        font-size: 14px !important;
-                        padding: 8px 12px !important;
-                        border-radius: 6px !important;
-                    }
-                </style>
-            """, unsafe_allow_html=True)
         col_btn_verify, _ = st.columns([1, 9])
         with col_btn_verify:
             if st.button("Verify"):
