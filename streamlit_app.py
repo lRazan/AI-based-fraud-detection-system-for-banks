@@ -245,35 +245,47 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (Unified for all pages) - HTML/CSS
+    # TOP NAVIGATION BAR (Unified for all pages) - HTML/CSS (NEW VERSION)
     # ----------------------------------------------------------
     st.markdown("""
         <style>
             .top-nav {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
                 background-color: #2e7d32;
                 padding: 10px 30px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
                 color: white;
             }
-            .top-nav .nav-title {
-                font-size: 16px;
-                font-weight: bold;
+            .top-nav .nav-left {
+                display: flex;
+                align-items: center;
             }
-            .top-nav a {
+            .top-nav .nav-left img {
+                height: 36px;
+                margin-right: 15px;
+            }
+            .top-nav .nav-left .title {
+                font-size: 18px;
+                font-weight: bold;
+                color: white;
+            }
+            .top-nav .nav-right a {
                 color: white;
                 text-decoration: none;
-                margin: 0 20px;
-                font-weight: bold;
+                margin: 0 12px;
+                font-weight: 500;
             }
-            .top-nav a:hover {
+            .top-nav .nav-right a:hover {
                 text-decoration: underline;
             }
         </style>
         <div class="top-nav">
-            <div class="nav-title">🛡️ Banking Fraud Detection System</div>
-            <div>
+            <div class="nav-left">
+                <img src="logo.svg" alt="Logo">
+                <span class="title">Banking Fraud Detection System</span>
+            </div>
+            <div class="nav-right">
                 <a href="/?nav=Dashboard">Dashboard</a>
                 <a href="/?nav=Upload">Upload Transactions</a>
                 <a href="/?nav=Logout">Logout</a>
