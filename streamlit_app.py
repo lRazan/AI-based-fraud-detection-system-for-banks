@@ -1,4 +1,5 @@
 import streamlit as st 
+import base64
  # TEMPORARY: Database connection test
 def test_db_connection():
     st.title("🔌 Test MySQL Database Connection")
@@ -248,39 +249,32 @@ def fraud_detection_system():
     # Use absolute path for logo
     logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (Streamlit columns and image for green bar)
+    # TOP NAVIGATION BAR (All-in-one green bar with logo, title, and buttons)
     # ----------------------------------------------------------
     st.markdown(
-        """
-        <div style='background-color: #2e7d32; padding: 15px 30px; border-radius: 0 0 10px 10px; margin-bottom: 25px;'>
-        <style>
-            .streamlit-button {
-                background-color: white !important;
-                color: #2e7d32 !important;
-                font-weight: bold;
-                border-radius: 6px;
-            }
-        </style>
-        """, unsafe_allow_html=True
+        f"""
+        <div style='
+            background-color: #2e7d32;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 0 0 10px 10px;
+            margin-bottom: 25px;
+        '>
+            <div style='display: flex; align-items: center;'>
+                <img src="data:image/svg+xml;base64,{base64.b64encode(open(logo_path, "rb").read()).decode()}" width="28" style="margin-right:10px;" />
+                <span style='color:white; font-size:15px;'>Banking Fraud Detection System</span>
+            </div>
+            <div>
+                <button onclick="window.location.reload(true)" style='margin-right:10px; background:white; border:none; padding:5px 10px; border-radius:5px;'>Dashboard</button>
+                <button onclick="window.location.href='/?selected_page=Upload Transactions'" style='margin-right:10px; background:white; border:none; padding:5px 10px; border-radius:5px;'>Upload Transactions</button>
+                <button onclick="window.location.href='/?selected_page=Logout'" style='background:white; border:none; padding:5px 10px; border-radius:5px;'>Logout</button>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
-
-    nav_logo, nav_title, nav_btn1, nav_btn2, nav_btn3 = st.columns([0.4, 2.5, 1.2, 1.2, 1.2])
-    with nav_logo:
-        st.image(logo_path, width=28)
-    with nav_title:
-        st.markdown("<span style='color:white; font-size:14px;'>Banking Fraud Detection System</span>", unsafe_allow_html=True)
-    with nav_btn1:
-        if st.button("Dashboard"):
-            st.session_state["selected_page"] = "Dashboard"
-    with nav_btn2:
-        if st.button("Upload Transactions"):
-            st.session_state["selected_page"] = "Upload Transactions"
-    with nav_btn3:
-        if st.button("Logout"):
-            st.session_state.clear()
-            st.rerun()
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
