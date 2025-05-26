@@ -12,4 +12,3 @@ joblib
 plotly
 scikit-learn
 streamlit-autorefresh
-scikit-learn==1.3.2
