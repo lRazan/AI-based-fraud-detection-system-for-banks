@@ -339,14 +339,9 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     # TOP NAVIGATION BAR using streamlit_navigation_bar
     # ----------------------------------------------------------
-    # Initialize df_all to avoid UnboundLocalError
-    df_all = pd.DataFrame()
+    from streamlit_navigation_bar import st_navbar
     logo_path = "logo.svg"
-        # Determine navbar pages based on login and OTP state
-    if st.session_state.get("logged_in") and st.session_state.get("otp_verified"):
-        pages = ["Dashboard", "Upload Transactions", "Logout"]
-    else:
-        pages = ["Login"]
+    pages = ["Dashboard", "Upload Transactions", "Logout"]
     styles = {
         "nav": {"background-color": "#2e7d32"},
         "img": {
@@ -378,6 +373,24 @@ def fraud_detection_system():
             "margin-left": "12px"
         }
     }
+    selected = st_navbar(pages, logo_path=logo_path, styles=styles)
+    st.markdown("""
+        <style>
+            .navbar-title {
+                position: fixed;
+                top: 22px;
+                left: 90px;
+                font-size: 13px;
+                font-weight: 400;
+                color: white;
+                z-index: 9999;
+            }
+        </style>
+        <div class="navbar-title">Banking Fraud Detection System</div>
+    """, unsafe_allow_html=True)
+    selected_page = selected.strip().lower()
+    # Initialize df_all to avoid UnboundLocalError
+    df_all = pd.DataFrame()
 
     # ----------------------------------------------------------
     # LOAD MODEL BEFORE ANY PAGE LOGIC
@@ -394,27 +407,6 @@ def fraud_detection_system():
     except Exception as e:
         st.error(f"❌ Failed to load model: {e}")
         model = None
-
-    selected = st_navbar(
-        pages,
-        logo_path=logo_path,
-        styles=styles
-    )
-    st.markdown("""
-        <style>
-            .navbar-title {
-                position: fixed;
-                top: 22px;
-                left: 90px;
-                font-size: 13px;
-                font-weight: 400;
-                color: white;
-                z-index: 9999;
-            }
-        </style>
-        <div class="navbar-title">Banking Fraud Detection System</div>
-    """, unsafe_allow_html=True)
-    selected_page = selected.strip().lower()
 
     if "upload transactions" in selected_page:
         # ------------------------------------------------------
