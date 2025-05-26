@@ -412,11 +412,11 @@ def fraud_detection_system():
     # Allows customer to respond YES/NO via email link; processes the response.
     # ----------------------------------------------------------
     from streamlit_autorefresh import st_autorefresh
-    query_params = st.query_params
-    # Prevent duplicate processing if already handled (e.g. on auto-reload)
-    # if st.session_state.get('response_already_processed'):
-    #     return
-    if 'tx' in query_params and 'r' in query_params:
+    # Customer response handling via email link
+    if 'tx' in st.query_params and 'r' in st.query_params:
+        query_params = st.query_params
+        if st.session_state.get('response_already_processed'):
+            return
         try:
             # Convert tx value from URL to transaction_id as integer
             transaction_id_raw = query_params['tx'][0]
@@ -824,8 +824,8 @@ def main():
     # ----------------------------------------------------------
     # CUSTOMER RESPONSE HANDLING FROM EMAIL LINK (NO LOGIN REQUIRED)
     # ----------------------------------------------------------
-    query_params = st.query_params
-    if 'tx' in query_params and 'r' in query_params:
+    if 'tx' in st.query_params and 'r' in st.query_params:
+        query_params = st.query_params
         # Handle response from email link without requiring login
         fraud_detection_system()
 
