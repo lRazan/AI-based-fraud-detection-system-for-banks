@@ -807,6 +807,17 @@ def fraud_detection_system():
             st.rerun()
     with col_page:
         st.markdown(f"<div style='text-align:center;'>Page {st.session_state.dashboard_page} of {total_pages}</div>", unsafe_allow_html=True)
+    # Ensure the page is always interactive and scrollable (not "frozen" visually)
+    st.markdown("""
+        <style>
+            html, body, [class*="css"] {
+                pointer-events: auto !important;
+                opacity: 1 !important;
+                overflow: auto !important;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+    st.markdown("<div style='height: 100px'></div>", unsafe_allow_html=True)
     return
 
 # ==============================================================
