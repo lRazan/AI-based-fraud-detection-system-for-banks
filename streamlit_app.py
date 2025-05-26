@@ -613,9 +613,8 @@ def fraud_detection_system():
             if row['Fraud Status'] == "Fraud":
                 if responses:
                     latest_response, latest_time = responses[0][0].upper(), responses[0][1]
-                    # Show buttons and YES/NO only after button pressed, not immediately
+                    # YES branch
                     if latest_response == "YES":
-                        # State for showing YES at {time}
                         if f"show_yes_{row['transaction_id']}" not in st.session_state:
                             st.session_state[f"show_yes_{row['transaction_id']}"] = False
                         if cols[6].button("Complete", key=f"complete_{row['transaction_id']}"):
@@ -636,20 +635,17 @@ def fraud_detection_system():
                                 conn.commit()
                                 cursor.close()
                                 conn.close()
-                                st.session_state[f"show_yes_{row['transaction_id']}"] = True
-                                st.session_state[f"response_time_{row['transaction_id']}"] = latest_time
-                                st.session_state[f"response_value_{row['transaction_id']}"] = latest_response
-                            except Exception as e:
-                                st.session_state[f"show_yes_{row['transaction_id']}"] = True
-                                st.session_state[f"response_time_{row['transaction_id']}"] = latest_time
-                                st.session_state[f"response_value_{row['transaction_id']}"] = latest_response
-                                cols[6].markdown(f"<span style='color:red;'>Error: {e}</span>", unsafe_allow_html=True)
+                            except:
+                                pass
+                            st.session_state[f"show_yes_{row['transaction_id']}"] = True
+                            st.session_state[f"response_time_{row['transaction_id']}"] = latest_time
+                            st.session_state[f"response_value_{row['transaction_id']}"] = latest_response
                         if st.session_state.get(f"show_yes_{row['transaction_id']}"):
                             ts = st.session_state.get(f"response_time_{row['transaction_id']}", latest_time)
                             rv = st.session_state.get(f"response_value_{row['transaction_id']}", "YES")
                             cols[6].markdown(f"<span style='color:green;'>{rv} at {ts}</span>", unsafe_allow_html=True)
+                    # NO branch
                     elif latest_response == "NO":
-                        # State for showing NO at {time}
                         if f"show_no_{row['transaction_id']}" not in st.session_state:
                             st.session_state[f"show_no_{row['transaction_id']}"] = False
                         if cols[6].button("Cancel", key=f"cancel_{row['transaction_id']}"):
@@ -670,14 +666,11 @@ def fraud_detection_system():
                                 conn.commit()
                                 cursor.close()
                                 conn.close()
-                                st.session_state[f"show_no_{row['transaction_id']}"] = True
-                                st.session_state[f"response_time_{row['transaction_id']}"] = latest_time
-                                st.session_state[f"response_value_{row['transaction_id']}"] = latest_response
-                            except Exception as e:
-                                st.session_state[f"show_no_{row['transaction_id']}"] = True
-                                st.session_state[f"response_time_{row['transaction_id']}"] = latest_time
-                                st.session_state[f"response_value_{row['transaction_id']}"] = latest_response
-                                cols[6].markdown(f"<span style='color:red;'>Error: {e}</span>", unsafe_allow_html=True)
+                            except:
+                                pass
+                            st.session_state[f"show_no_{row['transaction_id']}"] = True
+                            st.session_state[f"response_time_{row['transaction_id']}"] = latest_time
+                            st.session_state[f"response_value_{row['transaction_id']}"] = latest_response
                         if st.session_state.get(f"show_no_{row['transaction_id']}"):
                             ts = st.session_state.get(f"response_time_{row['transaction_id']}", latest_time)
                             rv = st.session_state.get(f"response_value_{row['transaction_id']}", "NO")
