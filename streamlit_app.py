@@ -276,9 +276,14 @@ def fraud_detection_system():
                 font-weight: 600;
                 font-size: 17px;
             }
-            .custom-header .right {
-                display: flex;
-                align-items: center;
+            .custom-header .right a {
+                color: white;
+                text-decoration: none;
+                margin-left: 20px;
+                font-weight: 500;
+            }
+            .custom-header .right a:hover {
+                text-decoration: underline;
             }
             .main {
                 margin-top: 75px;
@@ -290,29 +295,18 @@ def fraud_detection_system():
                 <span>Banking Fraud Detection System</span>
             </div>
             <div class="right">
-                <form action="#" method="post" style="display:inline;">
-                    <button name="nav" value="Dashboard" type="submit" style="background:none; border:none; color:white; font-weight:500; margin-left:20px; cursor:pointer;">Dashboard</button>
-                </form>
-                <form action="#" method="post" style="display:inline;">
-                    <button name="nav" value="Upload" type="submit" style="background:none; border:none; color:white; font-weight:500; margin-left:20px; cursor:pointer;">Upload Transactions</button>
-                </form>
-                <form action="#" method="post" style="display:inline;">
-                    <button name="nav" value="Logout" type="submit" style="background:none; border:none; color:white; font-weight:500; margin-left:20px; cursor:pointer;">Logout</button>
-                </form>
+                <a href="/?nav=Dashboard">Dashboard</a>
+                <a href="/?nav=Upload Transactions">Upload Transactions</a>
+                <a href="/?nav=Logout">Logout</a>
             </div>
         </div>
         <div class="main"></div>
     """, unsafe_allow_html=True)
 
-    # --- Navigation state handling with POST buttons ---
-    # After reading query_params, handle POST navigation logic
-    if st.session_state.get("nav_button_clicked"):
-        nav = st.session_state["nav_button_clicked"]
-    else:
-        nav = st.query_params.get("nav", ["Dashboard"])[0]
-
+    # Read navigation selection from query params
+    nav = st.query_params.get("nav", ["Dashboard"])[0]
+    st.session_state.selected_page = nav
     selected_page = nav
-    st.session_state.selected_page = selected_page
     # Initialize df_all to avoid UnboundLocalError
     df_all = pd.DataFrame()
 
@@ -332,7 +326,7 @@ def fraud_detection_system():
         st.error(f"❌ Failed to load model: {e}")
         model = None
 
-    if selected_page == "Upload":
+    if selected_page == "Upload Transactions":
         # ------------------------------------------------------
         # UPLOAD TRANSACTIONS PAGE
         # ------------------------------------------------------
@@ -803,12 +797,6 @@ def main():
 # ==============================================================
 # MAIN ENTRY POINT
 # ==============================================================
-
-import streamlit as st
-
-# Set nav_button_clicked from POST if present
-if "nav" in st.experimental_get_query_params():
-    st.session_state["nav_button_clicked"] = st.experimental_get_query_params()["nav"][0]
 
 if __name__ == "__main__":
     main()
