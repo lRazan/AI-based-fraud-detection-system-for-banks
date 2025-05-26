@@ -264,11 +264,11 @@ def fraud_detection_system():
         """, unsafe_allow_html=True
     )
 
-    nav_logo, nav_title, nav_btn1, nav_btn2, nav_btn3 = st.columns([0.5, 3, 1, 2, 1])
+    nav_logo, nav_title, nav_btn1, nav_btn2, nav_btn3 = st.columns([0.4, 2.5, 1.2, 1.2, 1.2])
     with nav_logo:
-        st.image(logo_path, width=36)
+        st.image(logo_path, width=28)
     with nav_title:
-        st.markdown("<span style='color:white; font-size:16px;'>Banking Fraud Detection System</span>", unsafe_allow_html=True)
+        st.markdown("<span style='color:white; font-size:14px;'>Banking Fraud Detection System</span>", unsafe_allow_html=True)
     with nav_btn1:
         if st.button("Dashboard"):
             st.session_state["selected_page"] = "Dashboard"
