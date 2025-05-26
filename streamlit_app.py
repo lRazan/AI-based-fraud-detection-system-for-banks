@@ -245,6 +245,8 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     import pymysql
+    # Use absolute path for logo
+    logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
     # ----------------------------------------------------------
     # TOP NAVIGATION BAR (Streamlit columns and image for green bar)
     # ----------------------------------------------------------
@@ -264,7 +266,7 @@ def fraud_detection_system():
 
     nav_logo, nav_title, nav_btn1, nav_btn2, nav_btn3 = st.columns([1, 4, 1, 2, 1])
     with nav_logo:
-        st.image("logo.svg", width=36)
+        st.image(logo_path, width=36)
     with nav_title:
         st.markdown("<h3 style='color:white; padding-top: 5px;'>Banking Fraud Detection System</h3>", unsafe_allow_html=True)
     with nav_btn1:
@@ -295,7 +297,6 @@ def fraud_detection_system():
         if not os.path.exists(model_path):
             with st.spinner("Downloading model..."):
                 urllib.request.urlretrieve(model_url, model_path)
-                st.success("Model downloaded.")
         model = joblib.load(model_path)
     except Exception as e:
         st.error(f"❌ Failed to load model: {e}")
