@@ -188,7 +188,8 @@ def get_customer_info(customer_id):
         port=55790
     )
     cursor = conn.cursor()
-    query = "SELECT name, phone_number, city, email FROM customers WHERE customer_id = %s"
+    # query = "SELECT name, phone_number, city, email FROM customers WHERE customer_id = %s"
+    query = "SELECT name, phone_number, city FROM customers WHERE customer_id = %s"
     cursor.execute(query, (customer_id,))
     customer = cursor.fetchone()
     cursor.close()
@@ -784,7 +785,7 @@ def fraud_detection_system():
                     <strong>Name:</strong> {cust[0]}<br>
                     <strong>Phone:</strong> {cust[1]}<br>
                     <strong>City:</strong> {cust[2]}<br>
-                    <strong>Email:</strong> {cust[3]}
+                     <!-- <strong>Email:</strong> {cust[3]} -->
                     </div>
                     """, unsafe_allow_html=True)
                 else:
