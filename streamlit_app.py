@@ -21,7 +21,6 @@ from streamlit_navigation_bar import st_navbar
 # ----- Third Party/External Libraries -----
 # (Removed duplicate imports)
 import yagmail
-import keyring
 import joblib
 import plotly.graph_objects as go
 
@@ -219,8 +218,10 @@ def send_email_confirmation(to_email, transaction_id):
 
 
     try:
-        password = keyring.get_password("yagmail", "a89984679@gmail.com")
-        yag = yagmail.SMTP("aa89984679@gmail.com", password)
+        yag = yagmail.SMTP(
+            user=st.secrets["email"]["address"],
+            password=st.secrets["email"]["password"]
+        )
         yag.send(to=to_email, subject=subject, contents=[body])
         # Do not show Streamlit message here; handled in Transaction Table
         return True
@@ -244,8 +245,10 @@ def send_otp_email(to_email, otp_code):
     </html>
     """
     try:
-        password = keyring.get_password("yagmail", "a89984679@gmail.com")
-        yag = yagmail.SMTP("a89984679@gmail.com", password)
+        yag = yagmail.SMTP(
+            user=st.secrets["email"]["address"],
+            password=st.secrets["email"]["password"]
+        )
         yag.send(to=to_email, subject=subject, contents=[body])
         return True
     except Exception as e:
