@@ -249,28 +249,27 @@ def fraud_detection_system():
     # Use absolute path for logo
     logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR: Green bar with logo and title ONLY, then buttons below
+    # TOP NAVIGATION BAR: Green bar with logo and title ONLY
     # ----------------------------------------------------------
     import base64
     st.markdown(
         f"""
         <div style='
             background-color: #2e7d32;
-            padding: 10px 30px;
+            padding: 12px 30px;
             display: flex;
             align-items: center;
-            justify-content: flex-start;
             border-radius: 0 0 10px 10px;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         '>
-            <img src="data:image/svg+xml;base64,{base64.b64encode(open(logo_path, "rb").read()).decode()}" width="28" style="margin-right:10px;" />
-            <span style='color:white; font-size:15px;'>Banking Fraud Detection System</span>
+            <img src="data:image/svg+xml;base64,{base64.b64encode(open(logo_path, "rb").read()).decode()}" width="30" style="margin-right:12px;" />
+            <span style='color:white; font-size:16px; font-weight:bold;'>Banking Fraud Detection System</span>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    # Buttons row below the green bar
+    # BUTTONS ROW: Below the green bar
     btn_col1, btn_col2, btn_col3 = st.columns([1, 2, 1])
     with btn_col1:
         if st.button("Dashboard"):
