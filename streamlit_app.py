@@ -209,8 +209,8 @@ def send_email_confirmation(to_email, transaction_id):
   <body>
     <p>Did you make transaction #{transaction_id}?</p>
     <p>
-      <a href="https://banking-fraud-detection-system-6t8aztranactionhxcqctmjzdeuhjj.streamlit.app/?tx={transaction_id}&r=YES">YES - I Confirm</a><br>
-      <a href="https://banking-fraud-detection-system-6t8aztranactionhxcqctmjzdeuhjj.streamlit.app/?tx={transaction_id}&r=NO">NO - This Was Not Me</a>
+      <a href="http://localhost:5050/confirm?tx={transaction_id}&r=YES">YES - I Confirm</a><br>
+      <a href="http://localhost:5050/confirm?tx={transaction_id}&r=NO">NO - This Was Not Me</a>
     </p>
   </body>
 </html>
@@ -512,18 +512,6 @@ def fraud_detection_system():
             port=55790
         )
         cursor = conn.cursor()
-        try:
-            conn = pymysql.connect(
-                host="crossover.proxy.rlwy.net",
-                user="root",
-                password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
-                database="railway",
-                port=55790
-            )
-            cursor = conn.cursor()
-        except Exception as e:
-            st.error("Could not connect to the database. Please try again later.")
-            return
         if response == 'NO':
             cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (transaction_id,))
         elif response == 'YES':
@@ -796,7 +784,7 @@ def fraud_detection_system():
                     <strong>Name:</strong> {cust[0]}<br>
                     <strong>Phone:</strong> {cust[1]}<br>
                     <strong>City:</strong> {cust[2]}<br>
-                    <strong>Email:</strong> {cust[3]}
+                    <!-- <strong>Email:</strong> {cust[3]} -->
                     </div>
                     """, unsafe_allow_html=True)
                 else:
