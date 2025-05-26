@@ -250,61 +250,49 @@ def fraud_detection_system():
     with st.container():
         st.markdown("""
             <style>
-                .main-nav {
+                .custom-header {
                     background-color: #2e7d32;
-                    padding: 15px 30px;
-                    border-radius: 8px;
+                    padding: 18px 30px;
+                    border-radius: 0 0 10px 10px;
                     margin-bottom: 25px;
-                }
-                .main-nav-content {
                     display: flex;
-                    align-items: center;
                     justify-content: space-between;
+                    align-items: center;
                 }
-                .main-nav-title {
+                .custom-header h1 {
+                    color: white;
+                    font-size: 20px;
+                    margin: 0;
                     display: flex;
                     align-items: center;
-                    color: white;
-                    font-weight: bold;
-                    font-size: 20px;
                 }
-                .main-nav-title img {
+                .custom-header h1 img {
                     height: 36px;
                     margin-right: 15px;
                 }
-                .main-nav-buttons button {
-                    background-color: white;
-                    color: #2e7d32;
-                    border: none;
-                    border-radius: 6px;
-                    padding: 6px 14px;
-                    margin-left: 12px;
-                    font-weight: bold;
-                    cursor: pointer;
+                .custom-header .buttons {
+                    display: flex;
+                    gap: 10px;
                 }
             </style>
-            <div class="main-nav">
-                <div class="main-nav-content">
-                    <div class="main-nav-title">
-                        <img src="logo.svg" alt="Logo">
-                        Banking Fraud Detection System
-                    </div>
-                    <div class="main-nav-buttons">
+            <div class="custom-header">
+                <h1><img src="logo.svg" alt="Logo"> Banking Fraud Detection System</h1>
+                <div class="buttons">
         """, unsafe_allow_html=True)
 
-        col1, col2, col3 = st.columns([1,1,1])
-        with col1:
+        col_a, col_b, col_c = st.columns(3)
+        with col_a:
             if st.button("Dashboard"):
                 st.session_state["selected_page"] = "Dashboard"
-        with col2:
+        with col_b:
             if st.button("Upload Transactions"):
                 st.session_state["selected_page"] = "Upload Transactions"
-        with col3:
+        with col_c:
             if st.button("Logout"):
                 st.session_state.clear()
                 st.rerun()
 
-        st.markdown("</div></div></div>", unsafe_allow_html=True)
+        st.markdown("</div></div>", unsafe_allow_html=True)
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
