@@ -282,27 +282,7 @@ def fraud_detection_system():
         }
     }
     selected = st_navbar(pages, logo_path=logo_path, styles=styles)
-    st.markdown("""
-        <style>
-            nav {
-                background-color: #2e7d32 !important;
-            }
-        </style>
-    """, unsafe_allow_html=True)
-    st.markdown("""
-        <style>
-            .navbar-title {
-                position: fixed;
-                top: 22px;
-                left: 90px;
-                font-size: 13px;
-                font-weight: 400;
-                color: white;
-                z-index: 9999;
-            }
-        </style>
-        <div class="navbar-title">Banking Fraud Detection System</div>
-    """, unsafe_allow_html=True)
+    # Removed custom nav and navbar-title CSS to prevent page freezing in Streamlit Cloud
     selected_page = selected.strip().lower()
     # Initialize df_all to avoid UnboundLocalError
     df_all = pd.DataFrame()
@@ -613,67 +593,7 @@ def fraud_detection_system():
     # TRANSACTION TABLE
     # Table columns: Transaction ID, Amount, Type, Fraud Status, Customer Details, Transaction Status, Execution Status
     # ----------------------------------------------------------
-    st.markdown("""
-        <style>
-            .block-container {
-                padding-top: 1rem;
-            }
-            .element-container {
-                margin-bottom: 0.2rem !important;
-            }
-            .css-1r6slb0 {
-                padding: 0.25rem !important;
-            }
-            .stDataFrame div {
-                font-size: 13px;
-            }
-            .row-container:hover {
-                background-color: #f3f4f6;
-                border-radius: 8px;
-            }
-            div.stButton > button {
-                padding: 6px 16px;
-                font-size: 13px;
-                border-radius: 10px;
-                width: 100px;
-                margin-left: auto;
-                margin-right: auto;
-                display: block;
-            }
-            .element-container > div > div {
-                text-align: center !important;
-            }
-            th {
-                text-align: center !important;
-            }
-            .stDataFrame tbody tr td {
-                border-right: 1px solid #ccc;
-            }
-            .stDataFrame tbody tr td:last-child {
-                border-right: none;
-            }
-            .stDataFrame thead tr th {
-                border-right: 1px solid #ccc;
-            }
-            .stDataFrame thead tr th:last-child {
-                border-right: none;
-            }
-            /* Adjust the vertical height and padding of transaction table cells */
-            .stDataFrame tbody tr {
-                height: 10px;
-            }
-            .stDataFrame tbody tr td {
-                padding-top: 0px;
-                padding-bottom: 0px;
-                line-height: 1;
-            }
-            /* Reduce the space between rows of the manual transaction table */
-            .stMarkdown + div {
-                margin-top: -6px !important;
-                margin-bottom: -6px !important;
-            }
-        </style>
-    """, unsafe_allow_html=True)
+    # Removed custom CSS block for table and container styling to prevent page freezing in Streamlit Cloud
     header1, header2, header3, header4, header5, header6, header7 = st.columns([0.9, 0.9, 1.2, 1.1, 1.1, 1.2, 1.2])
     header1.markdown("**Transaction ID**")  # Unique ID for transaction
     header2.markdown("**Amount**")          # Transaction amount
@@ -808,15 +728,7 @@ def fraud_detection_system():
     with col_page:
         st.markdown(f"<div style='text-align:center;'>Page {st.session_state.dashboard_page} of {total_pages}</div>", unsafe_allow_html=True)
     # Ensure the page is always interactive and scrollable (not "frozen" visually)
-    st.markdown("""
-        <style>
-            html, body, [class*="css"] {
-                pointer-events: auto !important;
-                opacity: 1 !important;
-                overflow: auto !important;
-            }
-        </style>
-    """, unsafe_allow_html=True)
+    # Removed forced html/body/[class*="css"] CSS to prevent page freezing in Streamlit Cloud
     st.markdown("<div style='height: 100px'></div>", unsafe_allow_html=True)
     return
 
