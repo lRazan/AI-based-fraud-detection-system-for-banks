@@ -763,6 +763,25 @@ def main():
             """,
             unsafe_allow_html=True
         )
+        # Add green bar with logo and title (same as dashboard)
+        import base64
+        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
+        st.markdown(
+            f"""
+            <div style='
+                background-color: #2e7d32;
+                padding: 12px 30px;
+                display: flex;
+                align-items: center;
+                border-radius: 0 0 10px 10px;
+                margin-bottom: 10px;
+            '>
+                <img src="data:image/svg+xml;base64,{base64.b64encode(open(logo_path, "rb").read()).decode()}" width="30" style="margin-right:12px;" />
+                <span style='color:white; font-size:16px; font-weight:bold;'>Banking Fraud Detection System</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
         # Add green button CSS before login form
         st.markdown(
             """
@@ -838,6 +857,25 @@ def main():
                     border-radius: 6px;
                 }
             </style>
+            """,
+            unsafe_allow_html=True
+        )
+        # Add green bar with logo and title (same as dashboard)
+        import base64
+        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
+        st.markdown(
+            f"""
+            <div style='
+                background-color: #2e7d32;
+                padding: 12px 30px;
+                display: flex;
+                align-items: center;
+                border-radius: 0 0 10px 10px;
+                margin-bottom: 10px;
+            '>
+                <img src="data:image/svg+xml;base64,{base64.b64encode(open(logo_path, "rb").read()).decode()}" width="30" style="margin-right:12px;" />
+                <span style='color:white; font-size:16px; font-weight:bold;'>Banking Fraud Detection System</span>
+            </div>
             """,
             unsafe_allow_html=True
         )
