@@ -269,38 +269,21 @@ def fraud_detection_system():
         unsafe_allow_html=True
     )
 
-    # Container for aligned navigation buttons (right-aligned)
-    st.markdown(
-        """
-        <style>
-            .nav-container {
-                display: flex;
-                justify-content: flex-end;
-                gap: 12px;
-                margin: -20px 30px 10px 0;
-            }
-        </style>
-        <div class="nav-container">
-            <form action="" method="post">
-                <button name="dashboard" type="submit">Dashboard</button>
-                <button name="upload" type="submit">Upload Transactions</button>
-                <button name="logout" type="submit">Logout</button>
-            </form>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Detect which button was clicked
-    if "dashboard" in st.query_params:
-        st.session_state["selected_page"] = "Dashboard"
-        st.rerun()
-    elif "upload" in st.query_params:
-        st.session_state["selected_page"] = "Upload Transactions"
-        st.rerun()
-    elif "logout" in st.query_params:
-        st.session_state["selected_page"] = "Logout"
-        st.rerun()
+    # Navigation buttons: Dashboard, Upload Transactions, Logout (Streamlit default buttons, no styling)
+    with st.container():
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col1:
+            if st.button("Dashboard", key="btn_dashboard"):
+                st.session_state["selected_page"] = "Dashboard"
+                st.rerun()
+        with col2:
+            if st.button("Upload Transactions", key="btn_upload"):
+                st.session_state["selected_page"] = "Upload Transactions"
+                st.rerun()
+        with col3:
+            if st.button("Logout", key="btn_logout"):
+                st.session_state["selected_page"] = "Logout"
+                st.rerun()
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
