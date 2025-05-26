@@ -244,6 +244,7 @@ def get_customer_responses(transaction_id):
 # Main dashboard UI for fraud detection, staff view and customer response.
 # --------------------------------------------------------------
 def fraud_detection_system():
+    import pymysql
     # ----------------------------------------------------------
     # TOP NAVIGATION BAR (Streamlit columns and image for green bar)
     # ----------------------------------------------------------
