@@ -245,30 +245,67 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (Streamlit columns, elegant layout)
+    # TOP NAVIGATION BAR (Custom HTML/CSS for green background, logo, title, and buttons)
     # ----------------------------------------------------------
-    # شريط علوي أنيق باستخدام أعمدة Streamlit
-    st.markdown("### ")
-    nav_logo_col, nav_title_col = st.columns([0.5, 2])
-    with nav_logo_col:
-        st.image("logo.svg", width=40)
-    with nav_title_col:
-        st.markdown("<h5 style='color:#2e7d32; margin-top: 15px;'>Banking Fraud Detection System</h5>", unsafe_allow_html=True)
+    with st.container():
+        st.markdown("""
+            <style>
+                .main-nav {
+                    background-color: #2e7d32;
+                    padding: 15px 30px;
+                    border-radius: 8px;
+                    margin-bottom: 25px;
+                }
+                .main-nav-content {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+                .main-nav-title {
+                    display: flex;
+                    align-items: center;
+                    color: white;
+                    font-weight: bold;
+                    font-size: 20px;
+                }
+                .main-nav-title img {
+                    height: 36px;
+                    margin-right: 15px;
+                }
+                .main-nav-buttons button {
+                    background-color: white;
+                    color: #2e7d32;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 6px 14px;
+                    margin-left: 12px;
+                    font-weight: bold;
+                    cursor: pointer;
+                }
+            </style>
+            <div class="main-nav">
+                <div class="main-nav-content">
+                    <div class="main-nav-title">
+                        <img src="logo.svg" alt="Logo">
+                        Banking Fraud Detection System
+                    </div>
+                    <div class="main-nav-buttons">
+        """, unsafe_allow_html=True)
 
-    # أزرار الشريط العلوي باستخدام أعمدة Streamlit (بدون HTML أو form)
-    nav_col1, nav_col2, nav_col3 = st.columns(3)
-    with nav_col1:
-        if st.button("Dashboard"):
-            st.session_state["selected_page"] = "Dashboard"
-    with nav_col2:
-        if st.button("Upload Transactions"):
-            st.session_state["selected_page"] = "Upload Transactions"
-    with nav_col3:
-        if st.button("Logout"):
-            st.session_state.clear()
-            st.rerun()
+        col1, col2, col3 = st.columns([1,1,1])
+        with col1:
+            if st.button("Dashboard"):
+                st.session_state["selected_page"] = "Dashboard"
+        with col2:
+            if st.button("Upload Transactions"):
+                st.session_state["selected_page"] = "Upload Transactions"
+        with col3:
+            if st.button("Logout"):
+                st.session_state.clear()
+                st.rerun()
 
-    # استخدم هذه القيمة لبقية الصفحة
+        st.markdown("</div></div></div>", unsafe_allow_html=True)
+
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
     # Initialize df_all to avoid UnboundLocalError
