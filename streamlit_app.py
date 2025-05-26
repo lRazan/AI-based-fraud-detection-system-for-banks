@@ -140,8 +140,9 @@ def send_email_confirmation(to_email, transaction_id):
     <body>
       <p>Did you make transaction #{transaction_id}?</p>
       <p>
-        <a href="https://flask-confirm-api.onrender.com/confirm?tx={transaction_id}&r=YES">YES - I Confirm</a>
-        <a href="https://flask-confirm-api.onrender.com/confirm?tx={transaction_id}&r=NO">NO - This Was Not Me</a>  </p>
+<a href="https://flask-confirm-api.onrender.com/confirm?tx={transaction_id}&r=YES">YES - I Confirm</a>
+<a href="https://flask-confirm-api.onrender.com/confirm?tx={transaction_id}&r=NO">NO - This Was Not Me</a>
+      </p>
     </body>
   </html>
     """
@@ -244,45 +245,45 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR using streamlit_navigation_bar
+    # TOP NAVIGATION BAR temporarily disabled for debugging freeze
     # ----------------------------------------------------------
-    from streamlit_navigation_bar import st_navbar
-    logo_path = "logo.svg"
-    pages = ["Dashboard", "Upload Transactions", "Logout"]
-    styles = {
-        "nav": {"background-color": "#2e7d32", "height": "64px", "border-bottom": "1px solid #ccc"},
-        "img": {
-            "margin-left": "0px",
-            "margin-right": "auto",
-            "display": "inline-block",
-            "height": "40px",
-            "position": "absolute",
-            "top": "50%",
-            "left": "0px",
-            "transform": "translateY(-50%)"
-        },
-        "a": {
-            "color": "white",
-            "padding": "8px 20px",
-            "text-decoration": "none",
-            "font-size": "16px",
-            "font-weight": "400"
-        },
-        "active": {
-            "color": "#2e7d32",
-            "background-color": "white",
-            "border-radius": "0px"
-        },
-        "span": {
-            "color": "white",
-            "font-size": "16px",
-            "font-weight": "500",
-            "margin-left": "12px"
-        }
-    }
-    selected = st_navbar(pages, logo_path=logo_path, styles=styles)
-    # Removed custom nav and navbar-title CSS to prevent page freezing in Streamlit Cloud
-    selected_page = selected.strip().lower()
+    # from streamlit_navigation_bar import st_navbar
+    # logo_path = "logo.svg"
+    # pages = ["Dashboard", "Upload Transactions", "Logout"]
+    # styles = {
+    #     "nav": {"background-color": "#2e7d32", "height": "64px", "border-bottom": "1px solid #ccc"},
+    #     "img": {
+    #         "margin-left": "0px",
+    #         "margin-right": "auto",
+    #         "display": "inline-block",
+    #         "height": "40px",
+    #         "position": "absolute",
+    #         "top": "50%",
+    #         "left": "0px",
+    #         "transform": "translateY(-50%)"
+    #     },
+    #     "a": {
+    #         "color": "white",
+    #         "padding": "8px 20px",
+    #         "text-decoration": "none",
+    #         "font-size": "16px",
+    #         "font-weight": "400"
+    #     },
+    #     "active": {
+    #         "color": "#2e7d32",
+    #         "background-color": "white",
+    #         "border-radius": "0px"
+    #     },
+    #     "span": {
+    #         "color": "white",
+    #         "font-size": "16px",
+    #         "font-weight": "500",
+    #         "margin-left": "12px"
+    #     }
+    # }
+    # selected = st_navbar(pages, logo_path=logo_path, styles=styles)
+    # selected_page = selected.strip().lower()
+    selected_page = "dashboard"
     # Initialize df_all to avoid UnboundLocalError
     df_all = pd.DataFrame()
 
@@ -592,7 +593,6 @@ def fraud_detection_system():
     # TRANSACTION TABLE
     # Table columns: Transaction ID, Amount, Type, Fraud Status, Customer Details, Transaction Status, Execution Status
     # ----------------------------------------------------------
-    # Removed custom CSS block for table and container styling to prevent page freezing in Streamlit Cloud
     header1, header2, header3, header4, header5, header6, header7 = st.columns([0.9, 0.9, 1.2, 1.1, 1.1, 1.2, 1.2])
     header1.markdown("**Transaction ID**")  # Unique ID for transaction
     header2.markdown("**Amount**")          # Transaction amount
@@ -727,7 +727,6 @@ def fraud_detection_system():
     with col_page:
         st.markdown(f"<div style='text-align:center;'>Page {st.session_state.dashboard_page} of {total_pages}</div>", unsafe_allow_html=True)
     # Ensure the page is always interactive and scrollable (not "frozen" visually)
-    # Removed forced html/body/[class*="css"] CSS to prevent page freezing in Streamlit Cloud
     st.markdown("<div style='height: 100px'></div>", unsafe_allow_html=True)
     return
 
