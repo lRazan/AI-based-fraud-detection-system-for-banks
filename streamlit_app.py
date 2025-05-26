@@ -209,8 +209,8 @@ def send_email_confirmation(to_email, transaction_id):
   <body>
     <p>Did you make transaction #{transaction_id}?</p>
     <p>
-      <a href="http://localhost:5050/confirm?tx={transaction_id}&r=YES">YES - I Confirm</a><br>
-      <a href="http://localhost:5050/confirm?tx={transaction_id}&r=NO">NO - This Was Not Me</a>
+      <a href="https://banking-fraud-detection-system-6t8aztranactionhxcqctmjzdeuhjj.streamlit.app/?tx={transaction_id}&r=YES">YES - I Confirm</a><br>
+      <a href="https://banking-fraud-detection-system-6t8aztranactionhxcqctmjzdeuhjj.streamlit.app/?tx={transaction_id}&r=NO">NO - This Was Not Me</a>
     </p>
   </body>
 </html>
