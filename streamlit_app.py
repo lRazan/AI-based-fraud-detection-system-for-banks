@@ -772,7 +772,7 @@ def main():
                     "<div style='text-align:left; margin-top:-8px;'><a href='#' style='color:#14532d; font-size:12px;'>Forgot password?</a></div>",
                     unsafe_allow_html=True)
 
-        # Removed Direct Access button (col_direct, st.button("Direct")) for production
+        # Direct Access button removed
 
         if login_button:
             with st.spinner('Verifying credentials...'):
