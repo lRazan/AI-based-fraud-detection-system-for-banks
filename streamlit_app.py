@@ -376,6 +376,13 @@ def fraud_detection_system():
     selected = st_navbar(pages, logo_path=logo_path, styles=styles)
     st.markdown("""
         <style>
+            nav {
+                background-color: #2e7d32 !important;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+    st.markdown("""
+        <style>
             .navbar-title {
                 position: fixed;
                 top: 22px;
