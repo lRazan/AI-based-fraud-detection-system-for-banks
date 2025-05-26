@@ -245,49 +245,87 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (NEW VERSION)
+    # TOP NAVIGATION BAR (Always visible, with margin to avoid Streamlit bar overlap)
     # ----------------------------------------------------------
     st.markdown("""
         <style>
-            .nav-bar {
+            .custom-navbar {
+                position: sticky;
+                top: 0;
+                z-index: 999;
                 background-color: #2e7d32;
-                padding: 10px 20px;
+                padding: 12px 30px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-radius: 0 0 6px 6px;
+                box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
                 margin-bottom: 20px;
-                border-radius: 0 0 8px 8px;
+                margin-top: 55px;
             }
-            .nav-bar h5 {
+            .custom-navbar .left {
+                display: flex;
+                align-items: center;
+            }
+            .custom-navbar .left img {
+                height: 36px;
+                margin-right: 15px;
+            }
+            .custom-navbar .left span {
+                font-size: 18px;
+                font-weight: bold;
                 color: white;
-                margin: 0;
-                line-height: 40px;
             }
-            .stButton>button {
+            .custom-navbar .right button {
                 background-color: white;
                 color: #2e7d32;
                 border: none;
                 border-radius: 4px;
-                padding: 6px 12px;
-                margin-left: 8px;
-                font-weight: bold;
+                padding: 8px 14px;
+                margin-left: 10px;
+                font-weight: 500;
+                cursor: pointer;
             }
         </style>
+        <div class="custom-navbar">
+            <div class="left">
+                <img src="logo.svg" alt="Logo">
+                <span>Banking Fraud Detection System</span>
+            </div>
+            <div class="right">
+                <form method="post">
+                    <button name="nav_choice" value="Dashboard">Dashboard</button>
+                    <button name="nav_choice" value="Upload Transactions">Upload Transactions</button>
+                    <button name="nav_choice" value="Logout">Logout</button>
+                </form>
+            </div>
+        </div>
     """, unsafe_allow_html=True)
 
-    with st.container():
-        nav1, nav2, nav3, nav4 = st.columns([1, 4, 2, 3])
-        with nav1:
-            st.image("logo.svg", width=36)
-        with nav2:
-            st.markdown('<div class="nav-bar"><h5>Banking Fraud Detection System</h5></div>', unsafe_allow_html=True)
-        with nav3:
-            if st.button("Dashboard"):
-                st.session_state["selected_page"] = "Dashboard"
-        with nav4:
-            if st.button("Upload Transactions"):
-                st.session_state["selected_page"] = "Upload Transactions"
-            if st.button("Logout"):
-                st.session_state["selected_page"] = "Logout"
+    # استقبل الضغط من الأزرار في الشريط العلوي
+    if "selected_page" not in st.session_state:
+        st.session_state["selected_page"] = "Dashboard"
 
-    selected_page = st.session_state.get("selected_page", "Dashboard")
+    nav_col1, nav_col2, nav_col3 = st.columns([1, 1, 1])
+    with nav_col1:
+        if st.button("Dashboard"):
+            st.session_state["selected_page"] = "Dashboard"
+    with nav_col2:
+        if st.button("Upload Transactions"):
+            st.session_state["selected_page"] = "Upload Transactions"
+    with nav_col3:
+        if st.button("Logout"):
+            st.session_state.clear()
+            st.success("You have been logged out.")
+            st.rerun()
+
+    selected_page = st.session_state["selected_page"]
+
+    # هامش علوي إضافي لتجنب التداخل مع شريط Streamlit
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+    # Container واضح بعد الشريط العلوي
+    with st.container():
+        pass  # يمكنك وضع محتوى إضافي هنا إذا رغبت
     # Initialize df_all to avoid UnboundLocalError
     df_all = pd.DataFrame()
 
