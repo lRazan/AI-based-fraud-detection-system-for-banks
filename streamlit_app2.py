@@ -929,7 +929,8 @@ def main():
                 .stApp > header, .stApp > footer {
                     box-shadow: none !important;
                 }
-                form {
+                /* Replacing form style with .login-box */
+                .login-box {
                     max-width: 360px;
                     margin: auto;
                     background: #ffffff;
@@ -945,6 +946,8 @@ def main():
             </style>
         """, unsafe_allow_html=True)
 
+        # Surround the login form with .login-box div
+        st.markdown("<div class='login-box'>", unsafe_allow_html=True)
         with st.form("login_form"):
             email = st.text_input("Email", key="email_input")
             password = st.text_input("Password", type="password", key="pass_input")
@@ -960,6 +963,7 @@ def main():
                     <a href='#' style='color:#14532d; font-size:12px;'>Forgot password?</a>
                 </div>
                 """, unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
         # Direct Access button aligned left only
         col_direct, _ = st.columns([1, 10])
@@ -1100,7 +1104,7 @@ def main():
                 }
             </style>
         """, unsafe_allow_html=True)
-        # Background, font, and form settings as in login page
+        # Background, font, and form settings as in login page, replace form with .login-box
         st.markdown("""
             <style>
                 .stApp {
@@ -1109,7 +1113,7 @@ def main():
                 .stApp > header, .stApp > footer {
                     box-shadow: none !important;
                 }
-                form {
+                .login-box {
                     max-width: 360px;
                     margin: auto;
                     background: #ffffff;
