@@ -269,9 +269,8 @@ def fraud_detection_system():
         unsafe_allow_html=True
     )
 
-
-    # Right-aligned navigation buttons using Streamlit columns
-    spacer1, col1, col2, col3 = st.columns([6, 1, 1, 1])
+    # Right-aligned buttons: Dashboard → Upload → Logout
+    col_spacer, col1, col2, col3 = st.columns([6, 1, 1, 1])
     with col1:
         if st.button("Dashboard"):
             st.session_state["selected_page"] = "Dashboard"
