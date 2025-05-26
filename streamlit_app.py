@@ -746,15 +746,23 @@ def main():
     # LOGIN FORM FOR STAFF
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
-        # Add custom CSS for login background and button
+        # Add custom CSS for login background and button (updated Unsplash image)
         st.markdown(
             """
             <style>
                 .stApp {
-                    background-image: url("https://i.ibb.co/zsZP0y4/bg-login2.jpg");
+                    background-image: url("https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80");
                     background-size: cover;
                     background-position: center;
                 }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+        # Add green button CSS before login form
+        st.markdown(
+            """
+            <style>
                 div.stButton > button {
                     background-color: #2e7d32;
                     color: white;
@@ -810,6 +818,25 @@ def main():
     # OTP VERIFICATION FORM
     # ----------------------------------------------------------
     elif st.session_state['logged_in'] and not st.session_state['otp_verified']:
+        # Add custom CSS for green background and button, same as login page, during OTP form
+        st.markdown(
+            """
+            <style>
+                .stApp {
+                    background-image: url("https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80");
+                    background-size: cover;
+                    background-position: center;
+                }
+                div.stButton > button {
+                    background-color: #2e7d32;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 6px;
+                }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
         # OTP check after login; user must enter OTP sent to email
         col_otp, _ = st.columns([5, 5])
         with col_otp:
