@@ -270,14 +270,34 @@ def fraud_detection_system():
     )
 
 
-    # Right-aligned horizontal button stack: Dashboard > Upload > Logout
+    # Right-aligned horizontal button stack: Dashboard > Upload > Logout (transparent style)
     st.markdown(
         """
-        <div style='display: flex; justify-content: flex-end; gap: 15px; margin-top: 10px; margin-right: 30px;'>
+        <style>
+            .nav-buttons {
+                display: flex;
+                justify-content: flex-end;
+                gap: 15px;
+                margin-top: 10px;
+                margin-right: 30px;
+            }
+            .nav-buttons button {
+                background: none;
+                border: none;
+                color: white;
+                font-weight: bold;
+                font-size: 15px;
+                cursor: pointer;
+            }
+            .nav-buttons button:hover {
+                text-decoration: underline;
+            }
+        </style>
+        <div class="nav-buttons">
             <form action="" method="post">
-                <button type="submit" name="dashboard" style="padding:8px 16px; border-radius:6px; font-weight:bold;">Dashboard</button>
-                <button type="submit" name="upload" style="padding:8px 16px; border-radius:6px; font-weight:bold;">Upload Transactions</button>
-                <button type="submit" name="logout" style="padding:8px 16px; border-radius:6px; font-weight:bold;">Logout</button>
+                <button type="submit" name="dashboard">Dashboard</button>
+                <button type="submit" name="upload">Upload Transactions</button>
+                <button type="submit" name="logout">Logout</button>
             </form>
         </div>
         """,
