@@ -512,6 +512,18 @@ def fraud_detection_system():
             port=55790
         )
         cursor = conn.cursor()
+        try:
+            conn = pymysql.connect(
+                host="crossover.proxy.rlwy.net",
+                user="root",
+                password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+                database="railway",
+                port=55790
+            )
+            cursor = conn.cursor()
+        except Exception as e:
+            st.error("Could not connect to the database. Please try again later.")
+            return
         if response == 'NO':
             cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (transaction_id,))
         elif response == 'YES':
