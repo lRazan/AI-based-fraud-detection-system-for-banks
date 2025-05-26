@@ -6,10 +6,11 @@ app = Flask(__name__)
 def save_customer_response(transaction_id, response):
     try:
         conn = pymysql.connect(
-            host='localhost',
+            host='crossover.proxy.rlwy.net',
             user='root',
-            password='00000000',
-            database='fraud_detection'
+            password='HTtlTyOOZChpHZPwcmeTPpwORFblfqKx',
+            database='railway',
+            port=55790
         )
         cursor = conn.cursor()
         cursor.execute(
