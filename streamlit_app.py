@@ -628,7 +628,11 @@ def fraud_detection_system():
                                     port=55790
                                 )
                                 cursor = conn.cursor()
-                                cursor.execute("UPDATE transactions SET is_active = 1 WHERE transaction_id = %s", (row['transaction_id'],))
+                                try:
+                                    cursor.execute("UPDATE transactions SET is_active = 1 WHERE transaction_id = %s", (row['transaction_id'],))
+                                except pymysql.err.ProgrammingError as e:
+                                    if "Unknown column 'is_active'" not in str(e):
+                                        raise
                                 conn.commit()
                                 cursor.close()
                                 conn.close()
@@ -658,7 +662,11 @@ def fraud_detection_system():
                                     port=55790
                                 )
                                 cursor = conn.cursor()
-                                cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (row['transaction_id'],))
+                                try:
+                                    cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (row['transaction_id'],))
+                                except pymysql.err.ProgrammingError as e:
+                                    if "Unknown column 'is_active'" not in str(e):
+                                        raise
                                 conn.commit()
                                 cursor.close()
                                 conn.close()
@@ -771,13 +779,6 @@ def main():
                     "<div style='text-align:left; margin-top:-8px;'><a href='#' style='color:#14532d; font-size:12px;'>Forgot password?</a></div>",
                     unsafe_allow_html=True)
 
-        # Direct Access button for bypassing login/OTP (demo/testing)
-        col_direct, _ = st.columns([1, 10])
-        with col_direct:
-            if st.button("Direct"):
-                st.session_state['logged_in'] = True
-                st.session_state['otp_verified'] = True
-                st.rerun()
 
         if login_button:
             with st.spinner('Verifying credentials...'):
