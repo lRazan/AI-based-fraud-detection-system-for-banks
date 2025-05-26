@@ -925,51 +925,6 @@ def main():
     # LOGIN FORM FOR STAFF
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
-        # Show navigation bar with logo and system title (login page)
-        from streamlit_navigation_bar import st_navbar
-        logo_path = "logo.svg"
-        selected = st_navbar(
-            ["Login"],
-            logo_path=logo_path,
-            styles={
-                "nav": {"background-color": "#2e7d32"},
-                "img": {
-                    "margin-left": "0px",
-                    "margin-right": "auto",
-                    "display": "inline-block",
-                    "height": "40px",
-                    "position": "absolute",
-                    "top": "50%",
-                    "left": "0px",
-                    "transform": "translateY(-50%)"
-                },
-                "a": {
-                    "color": "#2e7d32",
-                    "pointer-events": "none",
-                    "padding": "0px",
-                    "font-size": "1px"
-                },
-                "active": {
-                    "background-color": "#2e7d32",
-                    "border-radius": "0px"
-                }
-            }
-        )
-        st.markdown("""
-            <style>
-                .navbar-title {
-                    position: fixed;
-                    top: 22px;
-                    left: 90px;
-                    font-size: 13px;
-                    font-weight: 400;
-                    color: white;
-                    z-index: 9999;
-                }
-            </style>
-            <div class="navbar-title">Banking Fraud Detection System</div>
-        """, unsafe_allow_html=True)
-
         # Improved login form centering and style
         st.markdown("""
             <style>
@@ -1059,51 +1014,6 @@ def main():
     # OTP VERIFICATION FORM
     # ----------------------------------------------------------
     elif st.session_state['logged_in'] and not st.session_state['otp_verified']:
-        # Show navigation bar with logo and system title (OTP page)
-        from streamlit_navigation_bar import st_navbar
-        logo_path = "logo.svg"
-        selected = st_navbar(
-            ["Login"],
-            logo_path=logo_path,
-            styles={
-                "nav": {"background-color": "#2e7d32"},
-                "img": {
-                    "margin-left": "0px",
-                    "margin-right": "auto",
-                    "display": "inline-block",
-                    "height": "40px",
-                    "position": "absolute",
-                    "top": "50%",
-                    "left": "0px",
-                    "transform": "translateY(-50%)"
-                },
-                "a": {
-                    "color": "#2e7d32",
-                    "pointer-events": "none",
-                    "padding": "0px",
-                    "font-size": "1px"
-                },
-                "active": {
-                    "background-color": "#2e7d32",
-                    "border-radius": "0px"
-                }
-            }
-        )
-        st.markdown("""
-            <style>
-                .navbar-title {
-                    position: fixed;
-                    top: 22px;
-                    left: 90px;
-                    font-size: 13px;
-                    font-weight: 400;
-                    color: white;
-                    z-index: 9999;
-                }
-            </style>
-            <div class="navbar-title">Banking Fraud Detection System</div>
-        """, unsafe_allow_html=True)
-
         # Background, font, and form settings as in login page
         st.markdown("""
             <style>
