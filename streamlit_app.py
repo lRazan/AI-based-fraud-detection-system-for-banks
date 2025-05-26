@@ -599,15 +599,17 @@ def fraud_detection_system():
 
             # Transaction Status column (cols[5])
             responses = get_customer_responses(row['transaction_id']) if row['Fraud Status'] == "Fraud" else []
+            # Only show "Send" button if not yet responded YES/NO
             if row['Fraud Status'] == "Fraud" and (not responses or responses[0][0].upper() not in ["YES", "NO"]):
+                send_key = f"send_{row['transaction_id']}"
                 if cols[5].button("Send", key=send_key):
                     cust = get_customer_info(customer_id)
                     if cust and cust[3]:
                         success = send_email_confirmation(cust[3], row['transaction_id'])
                         if success:
-                            cols[5].success("Sent successfully")
+                            cols[5].markdown("<span style='color:green;'>Sent</span>", unsafe_allow_html=True)
                     else:
-                        cols[5].error("No email found.")
+                        cols[5].markdown("<span style='color:red;'>No Email</span>", unsafe_allow_html=True)
             # Show transaction status: Active (YES), Stopped (NO)
             if row['Fraud Status'] == "Fraud":
                 if responses:
@@ -616,7 +618,8 @@ def fraud_detection_system():
                         cols[5].success("Active")
                     elif latest_response == "NO":
                         cols[5].error("Stopped")
-                else:
+                elif not responses or responses[0][0].upper() not in ["YES", "NO"]:
+                    # Show waiting only if not responded
                     cols[5].warning("Waiting")
             else:
                 cols[5].info("Legitimate")
