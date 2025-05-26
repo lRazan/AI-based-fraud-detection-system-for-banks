@@ -249,47 +249,41 @@ def fraud_detection_system():
     # Use absolute path for logo
     logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (Green bar with logo, title, and real Streamlit buttons)
+    # TOP NAVIGATION BAR: Green bar with logo and title ONLY, then buttons below
     # ----------------------------------------------------------
-    logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
-    nav_logo, nav_title, nav_btn1, nav_btn2, nav_btn3 = st.columns([0.6, 2.5, 1.2, 1.6, 1.2])
-    with nav_logo:
-        st.image(logo_path, width=28)
-    with nav_title:
-        st.markdown("<span style='color:white; font-size:15px;'>Banking Fraud Detection System</span>", unsafe_allow_html=True)
-    with nav_btn1:
-        if st.button("Dashboard"):
-            st.session_state["selected_page"] = "Dashboard"
-            st.rerun()
-    with nav_btn2:
-        if st.button("Upload Transactions"):
-            st.session_state["selected_page"] = "Upload Transactions"
-            st.rerun()
-    with nav_btn3:
-        if st.button("Logout"):
-            st.session_state["selected_page"] = "Logout"
-            st.rerun()
-
-    # Add CSS to make the navigation bar green and style buttons
+    import base64
     st.markdown(
-        """
-        <style>
-            section[data-testid="stHorizontalBlock"] {
-                background-color: #2e7d32 !important;
-                padding: 10px 30px;
-                border-radius: 0 0 10px 10px;
-            }
-            div.stButton > button {
-                background-color: white;
-                border: none;
-                padding: 5px 10px;
-                border-radius: 5px;
-                color: black;
-            }
-        </style>
+        f"""
+        <div style='
+            background-color: #2e7d32;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            border-radius: 0 0 10px 10px;
+            margin-bottom: 5px;
+        '>
+            <img src="data:image/svg+xml;base64,{base64.b64encode(open(logo_path, "rb").read()).decode()}" width="28" style="margin-right:10px;" />
+            <span style='color:white; font-size:15px;'>Banking Fraud Detection System</span>
+        </div>
         """,
         unsafe_allow_html=True
     )
+
+    # Buttons row below the green bar
+    btn_col1, btn_col2, btn_col3 = st.columns([1, 2, 1])
+    with btn_col1:
+        if st.button("Dashboard"):
+            st.session_state["selected_page"] = "Dashboard"
+            st.rerun()
+    with btn_col2:
+        if st.button("Upload Transactions"):
+            st.session_state["selected_page"] = "Upload Transactions"
+            st.rerun()
+    with btn_col3:
+        if st.button("Logout"):
+            st.session_state["selected_page"] = "Logout"
+            st.rerun()
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
