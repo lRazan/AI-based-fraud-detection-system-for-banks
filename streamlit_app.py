@@ -269,44 +269,21 @@ def fraud_detection_system():
         unsafe_allow_html=True
     )
 
-    # BUTTONS ROW: Improved layout with equal spacing and horizontal alignment
-    st.markdown(
-        """
-        <style>
-            .button-container {
-                display: flex;
-                justify-content: center;
-                gap: 30px;
-                margin-bottom: 20px;
-            }
-            .button-container > div {
-                flex: 1;
-                max-width: 220px;
-            }
-            .stButton > button {
-                width: 100%;
-                font-weight: bold;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("<div class='button-container'>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns(3)
-    with col1:
+    # Unified horizontal button row: Dashboard, Upload Transactions, Logout
+    st.markdown("<br>", unsafe_allow_html=True)
+    btn_col1, btn_col2, btn_col3, btn_col4, btn_col5 = st.columns([1, 2, 2, 2, 1])
+    with btn_col2:
         if st.button("Dashboard"):
             st.session_state["selected_page"] = "Dashboard"
             st.rerun()
-    with col2:
+    with btn_col3:
         if st.button("Upload Transactions"):
             st.session_state["selected_page"] = "Upload Transactions"
             st.rerun()
-    with col3:
+    with btn_col4:
         if st.button("Logout"):
             st.session_state["selected_page"] = "Logout"
             st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
