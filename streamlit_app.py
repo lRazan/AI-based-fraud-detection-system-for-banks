@@ -276,15 +276,6 @@ def fraud_detection_system():
                 font-weight: 600;
                 font-size: 17px;
             }
-            .custom-header .right a {
-                color: white;
-                text-decoration: none;
-                margin-left: 20px;
-                font-weight: 500;
-            }
-            .custom-header .right a:hover {
-                text-decoration: underline;
-            }
             .main {
                 margin-top: 75px;
             }
@@ -295,16 +286,18 @@ def fraud_detection_system():
                 <span>Banking Fraud Detection System</span>
             </div>
             <div class="right">
-                <a href="/?nav=Dashboard">Dashboard</a>
-                <a href="/?nav=Upload Transactions">Upload Transactions</a>
-                <a href="/?nav=Logout">Logout</a>
+                <form action="" method="post">
+                    <button type="submit" name="nav_button" value="Dashboard" style="background:none; border:none; color:white; font-weight:500; margin-left:15px; cursor:pointer;">Dashboard</button>
+                    <button type="submit" name="nav_button" value="Upload Transactions" style="background:none; border:none; color:white; font-weight:500; margin-left:15px; cursor:pointer;">Upload Transactions</button>
+                    <button type="submit" name="nav_button" value="Logout" style="background:none; border:none; color:white; font-weight:500; margin-left:15px; cursor:pointer;">Logout</button>
+                </form>
             </div>
         </div>
         <div class="main"></div>
     """, unsafe_allow_html=True)
 
-    # Read navigation selection from query params
-    nav = st.query_params.get("nav", ["Dashboard"])[0]
+    # بعد عرض الشريط مباشرة، أضف هذا الكود لقراءة قيمة الزر
+    nav = st.session_state.get("nav_button", st.query_params.get("nav", ["Dashboard"])[0])
     st.session_state.selected_page = nav
     selected_page = nav
     # Initialize df_all to avoid UnboundLocalError
