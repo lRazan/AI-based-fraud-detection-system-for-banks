@@ -245,25 +245,46 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (Unified for all pages)
+    # TOP NAVIGATION BAR (Unified for all pages) - HTML/CSS
     # ----------------------------------------------------------
-    pages = ["Dashboard", "Upload Transactions", "Logout"]
-    nav_col1, nav_col2, nav_col3 = st.columns([1, 2, 1])
-    with nav_col1:
-        if st.button("🏠 Dashboard"):
-            st.session_state.selected_page = "Dashboard"
-    with nav_col2:
-        if st.button("📂 Upload Transactions"):
-            st.session_state.selected_page = "Upload Transactions"
-    with nav_col3:
-        if st.button("🚪 Logout"):
-            st.session_state.selected_page = "Logout"
+    st.markdown("""
+        <style>
+            .top-nav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background-color: #2e7d32;
+                padding: 10px 30px;
+                color: white;
+            }
+            .top-nav .nav-title {
+                font-size: 16px;
+                font-weight: bold;
+            }
+            .top-nav a {
+                color: white;
+                text-decoration: none;
+                margin: 0 20px;
+                font-weight: bold;
+            }
+            .top-nav a:hover {
+                text-decoration: underline;
+            }
+        </style>
+        <div class="top-nav">
+            <div class="nav-title">🛡️ Banking Fraud Detection System</div>
+            <div>
+                <a href="/?nav=Dashboard">Dashboard</a>
+                <a href="/?nav=Upload">Upload Transactions</a>
+                <a href="/?nav=Logout">Logout</a>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-    # Initialize selected_page if not set
-    if 'selected_page' not in st.session_state:
-        st.session_state.selected_page = "Dashboard"
-
-    selected_page = st.session_state.selected_page
+    # Read navigation selection from query params
+    nav = st.query_params.get("nav", ["Dashboard"])[0]
+    st.session_state.selected_page = nav
+    selected_page = nav
     # Initialize df_all to avoid UnboundLocalError
     df_all = pd.DataFrame()
 
@@ -283,7 +304,7 @@ def fraud_detection_system():
         st.error(f"❌ Failed to load model: {e}")
         model = None
 
-    if selected_page == "Upload Transactions":
+    if selected_page == "Upload":
         # ------------------------------------------------------
         # UPLOAD TRANSACTIONS PAGE
         # ------------------------------------------------------
