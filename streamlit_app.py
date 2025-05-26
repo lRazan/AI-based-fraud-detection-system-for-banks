@@ -245,61 +245,49 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (Unified for all pages) - HTML/CSS (UPDATED VERSION)
+    # TOP NAVIGATION BAR (NEW VERSION)
     # ----------------------------------------------------------
     st.markdown("""
         <style>
-            .custom-header {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                z-index: 1000;
+            .nav-bar {
                 background-color: #2e7d32;
+                padding: 10px 20px;
+                margin-bottom: 20px;
+                border-radius: 0 0 8px 8px;
+            }
+            .nav-bar h5 {
                 color: white;
-                padding: 14px 30px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                height: 60px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                margin: 0;
+                line-height: 40px;
             }
-            .custom-header .left {
-                display: flex;
-                align-items: center;
-            }
-            .custom-header .left img {
-                height: 36px;
-                margin-right: 12px;
-            }
-            .custom-header .left span {
-                font-weight: 600;
-                font-size: 17px;
-            }
-            .main {
-                margin-top: 75px;
+            .stButton>button {
+                background-color: white;
+                color: #2e7d32;
+                border: none;
+                border-radius: 4px;
+                padding: 6px 12px;
+                margin-left: 8px;
+                font-weight: bold;
             }
         </style>
-        <div class="custom-header">
-            <div class="left">
-                <img src="logo.svg" alt="Logo">
-                <span>Banking Fraud Detection System</span>
-            </div>
-            <div class="right">
-                <form action="" method="post">
-                    <button type="submit" name="nav_button" value="Dashboard" style="background:none; border:none; color:white; font-weight:500; margin-left:15px; cursor:pointer;">Dashboard</button>
-                    <button type="submit" name="nav_button" value="Upload Transactions" style="background:none; border:none; color:white; font-weight:500; margin-left:15px; cursor:pointer;">Upload Transactions</button>
-                    <button type="submit" name="nav_button" value="Logout" style="background:none; border:none; color:white; font-weight:500; margin-left:15px; cursor:pointer;">Logout</button>
-                </form>
-            </div>
-        </div>
-        <div class="main"></div>
     """, unsafe_allow_html=True)
 
-    # بعد عرض الشريط مباشرة، أضف هذا الكود لقراءة قيمة الزر
-    nav = st.session_state.get("nav_button", st.query_params.get("nav", ["Dashboard"])[0])
-    st.session_state.selected_page = nav
-    selected_page = nav
+    with st.container():
+        nav1, nav2, nav3, nav4 = st.columns([1, 4, 2, 3])
+        with nav1:
+            st.image("logo.svg", width=36)
+        with nav2:
+            st.markdown('<div class="nav-bar"><h5>Banking Fraud Detection System</h5></div>', unsafe_allow_html=True)
+        with nav3:
+            if st.button("Dashboard"):
+                st.session_state["selected_page"] = "Dashboard"
+        with nav4:
+            if st.button("Upload Transactions"):
+                st.session_state["selected_page"] = "Upload Transactions"
+            if st.button("Logout"):
+                st.session_state["selected_page"] = "Logout"
+
+    selected_page = st.session_state.get("selected_page", "Dashboard")
     # Initialize df_all to avoid UnboundLocalError
     df_all = pd.DataFrame()
 
