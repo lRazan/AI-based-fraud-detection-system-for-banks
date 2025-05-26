@@ -938,7 +938,8 @@ def main():
         # Show navigation bar with logo and system title (login page)
         from streamlit_navigation_bar import st_navbar
         import os
-        logo_path = "https://raw.githubusercontent.com/dalal560/ai-based-fraud-detection-system-for-banks/main/logo.svg"
+        parent_dir = os.path.dirname(os.path.abspath(__file__))
+        logo_path = os.path.join(parent_dir, "logo.svg")
         selected = st_navbar(
             ["Login"],
             logo_path=logo_path,
@@ -1073,7 +1074,8 @@ def main():
         # Show navigation bar with logo and system title (OTP page)
         from streamlit_navigation_bar import st_navbar
         import os
-        logo_path = "https://raw.githubusercontent.com/dalal560/ai-based-fraud-detection-system-for-banks/main/logo.svg"
+        parent_dir = os.path.dirname(os.path.abspath(__file__))
+        logo_path = os.path.join(parent_dir, "logo.svg")
         selected = st_navbar(
             ["Login"],
             logo_path=logo_path,
