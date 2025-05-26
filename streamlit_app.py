@@ -271,7 +271,7 @@ def fraud_detection_system():
 
     # Navigation buttons: Dashboard, Upload Transactions, Logout (Streamlit default buttons, no styling)
     with st.container():
-        col1, col2, col3 = st.columns([1, 1, 1])
+        col1, col2, col3 = st.columns([6, 1, 1,1])
         with col1:
             if st.button("Dashboard", key="btn_dashboard"):
                 st.session_state["selected_page"] = "Dashboard"
