@@ -269,21 +269,31 @@ def fraud_detection_system():
         unsafe_allow_html=True
     )
 
-    # Unified horizontal button row: Dashboard, Upload Transactions, Logout
-    st.markdown("<br>", unsafe_allow_html=True)
-    btn_col1, btn_col2, btn_col3, btn_col4, btn_col5 = st.columns([1, 2, 2, 2, 1])
-    with btn_col2:
-        if st.button("Dashboard"):
-            st.session_state["selected_page"] = "Dashboard"
-            st.rerun()
-    with btn_col3:
-        if st.button("Upload Transactions"):
-            st.session_state["selected_page"] = "Upload Transactions"
-            st.rerun()
-    with btn_col4:
-        if st.button("Logout"):
-            st.session_state["selected_page"] = "Logout"
-            st.rerun()
+
+    # Right-aligned horizontal button stack: Dashboard > Upload > Logout
+    st.markdown(
+        """
+        <div style='display: flex; justify-content: flex-end; gap: 15px; margin-top: 10px; margin-right: 30px;'>
+            <form action="" method="post">
+                <button type="submit" name="dashboard" style="padding:8px 16px; border-radius:6px; font-weight:bold;">Dashboard</button>
+                <button type="submit" name="upload" style="padding:8px 16px; border-radius:6px; font-weight:bold;">Upload Transactions</button>
+                <button type="submit" name="logout" style="padding:8px 16px; border-radius:6px; font-weight:bold;">Logout</button>
+            </form>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Handle button logic
+    if "dashboard" in st.session_state:
+        st.session_state["selected_page"] = "Dashboard"
+        st.rerun()
+    elif "upload" in st.session_state:
+        st.session_state["selected_page"] = "Upload Transactions"
+        st.rerun()
+    elif "logout" in st.session_state:
+        st.session_state["selected_page"] = "Logout"
+        st.rerun()
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
