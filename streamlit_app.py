@@ -245,22 +245,62 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (Simple columns with navigation buttons)
+    # TOP NAVIGATION BAR (Green, with logo, title, and navigation buttons)
     # ----------------------------------------------------------
-    st.markdown("## Banking Fraud Detection System")
+    st.markdown("""
+        <style>
+            .green-navbar {
+                background-color: #2e7d32;
+                padding: 12px 25px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                color: white;
+                border-radius: 0 0 8px 8px;
+                margin-bottom: 20px;
+            }
+            .green-navbar .left {
+                display: flex;
+                align-items: center;
+            }
+            .green-navbar .left img {
+                height: 36px;
+                margin-right: 15px;
+            }
+            .green-navbar .left span {
+                font-size: 18px;
+                font-weight: bold;
+            }
+            .green-navbar .right button {
+                margin-left: 15px;
+                background-color: white;
+                color: #2e7d32;
+                border: none;
+                border-radius: 5px;
+                padding: 6px 16px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+        </style>
+        <div class="green-navbar">
+            <div class="left">
+                <img src="logo.svg" alt="Logo">
+                <span>Banking Fraud Detection System</span>
+            </div>
+            <div class="right">
+                <form method="post">
+                    <button name="nav_button" value="Dashboard">Dashboard</button>
+                    <button name="nav_button" value="Upload Transactions">Upload Transactions</button>
+                    <button name="nav_button" value="Logout">Logout</button>
+                </form>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-    nav_col1, nav_col2, nav_col3 = st.columns(3)
-    with nav_col1:
-        if st.button("Dashboard"):
-            st.session_state["selected_page"] = "Dashboard"
-    with nav_col2:
-        if st.button("Upload Transactions"):
-            st.session_state["selected_page"] = "Upload Transactions"
-    with nav_col3:
-        if st.button("Logout"):
-            st.session_state.clear()
-            st.success("You have been logged out.")
-            st.rerun()
+    # التعامل مع التنقل
+    nav_button = st.experimental_get_query_params().get("nav_button", [None])[0]
+    if nav_button:
+        st.session_state["selected_page"] = nav_button
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
