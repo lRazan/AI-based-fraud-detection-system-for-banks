@@ -570,7 +570,11 @@ def fraud_detection_system():
             # Transaction Type column
             cols[2].text(str(row['Transaction Type']))
             # Fraud Status column
-            cols[3].text(str(row['Fraud Status']))
+            fraud_status = str(row['Fraud Status'])
+            if fraud_status == "Fraud":
+                cols[3].markdown("<span style='color:red;'>Fraud</span>", unsafe_allow_html=True)
+            else:
+                cols[3].markdown("<span style='color:green;'>Not Fraud</span>", unsafe_allow_html=True)
 
             detail_key = f"detail_{row['transaction_id']}"
             alert_key = f"alert_{row['transaction_id']}"
@@ -623,24 +627,50 @@ def fraud_detection_system():
                 cols[5].markdown("<span style='color:gray;'>Legitimate</span>", unsafe_allow_html=True)
 
             # Execution Status column (cols[6])
-            show_details_key = f"show_exec_{row['transaction_id']}"
-            detail_toggle_key = f"exec_detail_toggle_{row['transaction_id']}"
-            if detail_toggle_key not in st.session_state:
-                st.session_state[detail_toggle_key] = False
             if row['Fraud Status'] == "Fraud":
                 if responses:
                     latest_response, latest_time = responses[0][0].upper(), responses[0][1]
                     if latest_response == "YES":
-                        # Green: Complete
-                        cols[6].markdown("<span style='color:green;'>Complete</span>", unsafe_allow_html=True)
+                        if cols[6].button("Complete", key=f"complete_{row['transaction_id']}"):
+                            try:
+                                conn = pymysql.connect(
+                                    host="crossover.proxy.rlwy.net",
+                                    user="root",
+                                    password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+                                    database="railway",
+                                    port=55790
+                                )
+                                cursor = conn.cursor()
+                                cursor.execute("UPDATE transactions SET is_active = 1 WHERE transaction_id = %s", (row['transaction_id'],))
+                                conn.commit()
+                                cursor.close()
+                                conn.close()
+                                st.rerun()
+                            except:
+                                cols[6].markdown("<span style='color:red;'>Error</span>", unsafe_allow_html=True)
+                        cols[6].markdown(f"<span style='color:green;'>YES at {latest_time}</span>", unsafe_allow_html=True)
                     elif latest_response == "NO":
-                        # Red: Cancel
-                        cols[6].markdown("<span style='color:red;'>Cancel</span>", unsafe_allow_html=True)
+                        if cols[6].button("Cancel", key=f"cancel_{row['transaction_id']}"):
+                            try:
+                                conn = pymysql.connect(
+                                    host="crossover.proxy.rlwy.net",
+                                    user="root",
+                                    password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+                                    database="railway",
+                                    port=55790
+                                )
+                                cursor = conn.cursor()
+                                cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (row['transaction_id'],))
+                                conn.commit()
+                                cursor.close()
+                                conn.close()
+                                st.rerun()
+                            except:
+                                cols[6].markdown("<span style='color:red;'>Error</span>", unsafe_allow_html=True)
+                        cols[6].markdown(f"<span style='color:red;'>NO at {latest_time}</span>", unsafe_allow_html=True)
                     else:
-                        # Orange: Waiting
                         cols[6].markdown("<span style='color:#c97b00;'>Waiting</span>", unsafe_allow_html=True)
                 else:
-                    # Orange: Waiting
                     cols[6].markdown("<span style='color:#c97b00;'>Waiting</span>", unsafe_allow_html=True)
             else:
                 cols[6].markdown("<span style='color:gray;'>N/A</span>", unsafe_allow_html=True)
