@@ -341,8 +341,7 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     # Initialize df_all to avoid UnboundLocalError
     df_all = pd.DataFrame()
-    parent_dir = os.path.dirname(os.path.abspath(__file__))
-    logo_path = os.path.join(parent_dir, "logo.svg")
+    logo_path = "https://img.icons8.com/ios-filled/100/shield.png"
         # Determine navbar pages based on login and OTP state
     if st.session_state.get("logged_in") and st.session_state.get("otp_verified"):
         pages = ["Dashboard", "Upload Transactions", "Logout"]
