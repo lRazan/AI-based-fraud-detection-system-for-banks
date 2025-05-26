@@ -470,46 +470,21 @@ def fraud_detection_system():
         total_transactions = 0
 
     # ----------------------------------------------------------
-    # KPI Cards: Only Number + Arrow/Percentage (all in one card div)
+    # KPI Cards: Use st.metric for summary metrics
     # ----------------------------------------------------------
     col1, col2, col3 = st.columns(3, gap="large")
     with col1:
-        st.markdown(
-            f"""
-            <div style='padding:28px 28px 18px 28px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.03); border:1px solid #f1f1f1; min-height:140px;'>
-                <div style='font-size:17px; color:#2c3e50; font-weight:600; margin-bottom:7px; text-align:left;'>Fraudulent</div>
-                <div style='font-size:30px; font-weight:800; color:#212121; text-align:center; margin-bottom:2px; letter-spacing:1px;'>{fraud_count:,}</div>
-                <div style='text-align:center; font-size:13px; color:#FF1744; font-weight:600;'>▲ 2.15%</div>
-            </div>
-            """, unsafe_allow_html=True
-        )
+        st.metric(label="Fraudulent", value=f"{fraud_count:,}", delta="▲ 2.15%", delta_color="inverse")
     with col2:
-        st.markdown(
-            f"""
-            <div style='padding:28px 28px 18px 28px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.03); border:1px solid #f1f1f1; min-height:140px;'>
-                <div style='font-size:17px; color:#2c3e50; font-weight:600; margin-bottom:7px; text-align:left;'>Legitimate</div>
-                <div style='font-size:30px; font-weight:800; color:#212121; text-align:center; margin-bottom:2px; letter-spacing:1px;'>{legit_count:,}</div>
-                <div style='text-align:center; font-size:13px; color:#00C853; font-weight:600;'>▲ 1.07%</div>
-            </div>
-            """, unsafe_allow_html=True
-        )
+        st.metric(label="Legitimate", value=f"{legit_count:,}", delta="▲ 1.07%", delta_color="normal")
     with col3:
-        st.markdown(
-            f"""
-            <div style='padding:28px 28px 18px 28px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.03); border:1px solid #f1f1f1; min-height:140px;'>
-                <div style='font-size:17px; color:#2c3e50; font-weight:600; margin-bottom:7px; text-align:left;'>Total</div>
-                <div style='font-size:30px; font-weight:800; color:#212121; text-align:center; margin-bottom:16px; letter-spacing:1px;'>{total_transactions:,}</div>
-                <div style='text-align:center; font-size:13px; color:#999; font-weight:600;'>&nbsp;</div>
-            </div>
-            """, unsafe_allow_html=True
-        )
-    st.markdown("<div style='margin-bottom:10px;'></div>", unsafe_allow_html=True)
+        st.metric(label="Total", value=f"{total_transactions:,}", delta="")
 
     # ----------------------------------------------------------
     # PERFORMANCE CHART
     # Displays a stacked bar chart of fraudulent vs. legitimate transactions over months (green theme).
     # ----------------------------------------------------------
-    st.markdown("<h4 style='color:#2c3e50; font-size:16px; margin-top:0px; margin-bottom:0px; text-align:left;'>Performance Overview</h4>", unsafe_allow_html=True)
+    st.subheader("Performance Overview")
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
     fraud_data = [v * 8 for v in [1.2, 1.8, 1.5, 1.6, 1.9, 1.4, 2.2]]
     legit_data = [v * 8 for v in [2.2, 2.5, 2.4, 1.6, 1.7, 2, 2.9]]
@@ -531,7 +506,7 @@ def fraud_detection_system():
     # TRANSACTION FILTERING & TABLE
     # Allows filtering by Transaction ID, Type, and Fraud Status. Table displays main transaction details.
     # ----------------------------------------------------------
-    st.markdown("<h4 style='color:#2c3e50; font-size:18px; margin-bottom:10px; text-align:left;'>Transaction Table</h4>", unsafe_allow_html=True)
+    st.subheader("Transaction Table")
     # Compact row for search/type/fraud filters (no refresh)
     with st.container():
         col_search, col_filter1, col_filter2 = st.columns([2, 2, 2])
@@ -594,29 +569,25 @@ def fraud_detection_system():
     # Table columns: Transaction ID, Amount, Type, Fraud Status, Customer Details, Transaction Status, Execution Status
     # ----------------------------------------------------------
     header1, header2, header3, header4, header5, header6, header7 = st.columns([0.9, 0.9, 1.2, 1.1, 1.1, 1.2, 1.2])
-    header1.markdown("**Transaction ID**")  # Unique ID for transaction
-    header2.markdown("**Amount**")          # Transaction amount
-    header3.markdown("**Transaction Type**")# Type: CASH_OUT, PAYMENT, etc.
-    header4.markdown("**Fraud Status**")    # Whether transaction is flagged as fraud
-    header5.markdown("**Customer Details**")# Button to view customer info
-    header6.markdown("**Transaction Status**") # Status: Waiting/Active/Stopped
-    header7.markdown("**Execution Status**")   # Status: Completed/Cancelled/N/A
-    # Horizontal rule after headers
-    st.markdown("<hr>", unsafe_allow_html=True)
+    header1.text("Transaction ID")
+    header2.text("Amount")
+    header3.text("Transaction Type")
+    header4.text("Fraud Status")
+    header5.text("Customer Details")
+    header6.text("Transaction Status")
+    header7.text("Execution Status")
 
     for idx, row in page_data.iterrows():
         with st.container():
-            st.markdown("<div style='margin-bottom:-16px'></div>", unsafe_allow_html=True)
             cols = st.columns([0.9, 0.9, 1.2, 1.1, 1.1, 1.2, 1.2])
             # Transaction ID column
-            cols[0].markdown(f"<div style='text-align:center;'>{row['transaction_id']}</div>", unsafe_allow_html=True)
+            cols[0].text(str(row['transaction_id']))
             # Amount column
-            cols[1].markdown(f"<div style='text-align:center;'>{row['amount']:.2f}</div>", unsafe_allow_html=True)
+            cols[1].text(f"{row['amount']:.2f}")
             # Transaction Type column
-            cols[2].markdown(f"<div style='text-align:center;'>{row['Transaction Type']}</div>", unsafe_allow_html=True)
-            # Fraud Status column, styled
-            bg_color = '#f8d7da' if row['Fraud Status']=='Fraud' else '#d0f0c0'
-            cols[3].markdown(f"<div style='background-color:{bg_color};padding:5px 10px;border-radius:20px;display:inline-block;text-align:center'>{row['Fraud Status']}</div>", unsafe_allow_html=True)
+            cols[2].text(str(row['Transaction Type']))
+            # Fraud Status column
+            cols[3].text(str(row['Fraud Status']))
 
             detail_key = f"detail_{row['transaction_id']}"
             alert_key = f"alert_{row['transaction_id']}"
@@ -634,53 +605,40 @@ def fraud_detection_system():
                 else:
                     cust = None
                 if cust:
-                    st.markdown(f"""
-                    <div style='background-color:#eef2f7; padding:10px; border-radius:8px;'>
-                    <strong>Name:</strong> {cust[0]}<br>
-                    <strong>Phone:</strong> {cust[1]}<br>
-                    <strong>City:</strong> {cust[2]}<br>
-                    <strong>Email:</strong> {cust[3]}
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.text(f"Name: {cust[0]}")
+                    st.text(f"Phone: {cust[1]}")
+                    st.text(f"City: {cust[2]}")
+                    st.text(f"Email: {cust[3]}")
                 else:
                     st.warning("No customer info found.")
             else:
-                # Empty cell for alignment
-                cols[4].markdown(f"<div style='text-align:center;'>&nbsp;</div>", unsafe_allow_html=True)
+                cols[4].text("")
 
-            # ----------------------------------------------------------
             # Transaction Status column (cols[5])
-            # If fraudulent, allow sending confirmation email and show status based on response
-            # ----------------------------------------------------------
             responses = get_customer_responses(row['transaction_id']) if row['Fraud Status'] == "Fraud" else []
-            # Show Send button only if not Active or Stopped
             if row['Fraud Status'] == "Fraud" and (not responses or responses[0][0].upper() not in ["YES", "NO"]):
                 if cols[5].button("Send", key=send_key):
                     cust = get_customer_info(customer_id)
                     if cust and cust[3]:
                         success = send_email_confirmation(cust[3], row['transaction_id'])
                         if success:
-                            cols[5].markdown("<span style='color:green; font-size:12px;'>Sent successfully</span>", unsafe_allow_html=True)
-                        # st.success() or st.error() messages related to email sending removed here
+                            cols[5].success("Sent successfully")
                     else:
                         cols[5].error("No email found.")
             # Show transaction status: Active (YES), Stopped (NO)
             if row['Fraud Status'] == "Fraud":
                 if responses:
                     latest_response = responses[0][0].upper()
-                    # YES: Active, NO: Stopped
                     if latest_response == "YES":
-                        cols[5].markdown("<div style='background-color:#d0f0c0; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>Active</div>", unsafe_allow_html=True)
+                        cols[5].success("Active")
                     elif latest_response == "NO":
-                        cols[5].markdown("<div style='background-color:#f8d7da; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>Stopped</div>", unsafe_allow_html=True)
+                        cols[5].error("Stopped")
+                else:
+                    cols[5].warning("Waiting")
             else:
-                # Not fraudulent: show Legitimate
-                cols[5].markdown("<div style='background-color:#e2e3e5; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>Legitimate</div>", unsafe_allow_html=True)
+                cols[5].info("Legitimate")
 
-            # ----------------------------------------------------------
             # Execution Status column (cols[6])
-            # Shows Completed/Cancelled if response received, Waiting otherwise
-            # ----------------------------------------------------------
             show_details_key = f"show_exec_{row['transaction_id']}"
             detail_toggle_key = f"exec_detail_toggle_{row['transaction_id']}"
             if detail_toggle_key not in st.session_state:
@@ -694,23 +652,13 @@ def fraud_detection_system():
                             if st.button(status_label, key=show_details_key):
                                 st.session_state[detail_toggle_key] = not st.session_state[detail_toggle_key]
                             if st.session_state[detail_toggle_key]:
-                                # Show response details with timestamp
-                                st.markdown(
-                                    f"<div style='background-color:#f0f0f0; padding:6px 12px; border-radius:15px; display:inline-block; font-size:13px; margin-top:5px; text-align:center;'>Response: <strong>{latest_response}</strong><br><small>{latest_time.strftime('%Y-%m-%d %H:%M')}</small></div>",
-                                    unsafe_allow_html=True
-                                )
+                                st.text(f"Response: {latest_response}\n{latest_time.strftime('%Y-%m-%d %H:%M')}")
                     else:
-                        # Waiting for response
-                        cols[6].markdown("<div style='background-color:#fff3cd; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>Waiting</div>", unsafe_allow_html=True)
+                        cols[6].warning("Waiting")
                 else:
-                    # Waiting for response
-                    cols[6].markdown("<div style='background-color:#fff3cd; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>Waiting</div>", unsafe_allow_html=True)
+                    cols[6].warning("Waiting")
             else:
-                # Not applicable for legitimate transactions
-                cols[6].markdown("<div style='background-color:#e2e3e5; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>N/A</div>", unsafe_allow_html=True)
-
-            # Add horizontal rule after each row for clarity
-            st.markdown("<hr style='margin-top:5px; margin-bottom:5px; border-color:#ddd;'>", unsafe_allow_html=True)
+                cols[6].info("N/A")
 
     # ----------------------------------------------------------
     # PAGINATION CONTROLS
@@ -725,9 +673,7 @@ def fraud_detection_system():
             st.session_state.dashboard_page += 1
             st.rerun()
     with col_page:
-        st.markdown(f"<div style='text-align:center;'>Page {st.session_state.dashboard_page} of {total_pages}</div>", unsafe_allow_html=True)
-    # Ensure the page is always interactive and scrollable (not "frozen" visually)
-    st.markdown("<div style='height: 100px'></div>", unsafe_allow_html=True)
+        st.text(f"Page {st.session_state.dashboard_page} of {total_pages}")
     return
 
 # ==============================================================
