@@ -245,52 +245,62 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (Unified for all pages) - HTML/CSS (NEW VERSION)
+    # TOP NAVIGATION BAR (Unified for all pages) - HTML/CSS (UPDATED VERSION)
     # ----------------------------------------------------------
     st.markdown("""
         <style>
-            .top-nav {
+            .custom-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
                 background-color: #2e7d32;
-                padding: 10px 30px;
+                color: white;
+                padding: 14px 30px;
                 display: flex;
-                align-items: center;
                 justify-content: space-between;
-                color: white;
+                align-items: center;
+                height: 60px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             }
-            .top-nav .nav-left {
+            .custom-header .left {
                 display: flex;
                 align-items: center;
             }
-            .top-nav .nav-left img {
+            .custom-header .left img {
                 height: 36px;
-                margin-right: 15px;
+                margin-right: 12px;
             }
-            .top-nav .nav-left .title {
-                font-size: 18px;
-                font-weight: bold;
-                color: white;
+            .custom-header .left span {
+                font-weight: 600;
+                font-size: 17px;
             }
-            .top-nav .nav-right a {
+            .custom-header .right a {
                 color: white;
                 text-decoration: none;
-                margin: 0 12px;
+                margin-left: 20px;
                 font-weight: 500;
             }
-            .top-nav .nav-right a:hover {
+            .custom-header .right a:hover {
                 text-decoration: underline;
             }
+            .main {
+                margin-top: 75px;
+            }
         </style>
-        <div class="top-nav">
-            <div class="nav-left">
+        <div class="custom-header">
+            <div class="left">
                 <img src="logo.svg" alt="Logo">
-                <span class="title">Banking Fraud Detection System</span>
+                <span>Banking Fraud Detection System</span>
             </div>
-            <div class="nav-right">
+            <div class="right">
                 <a href="/?nav=Dashboard">Dashboard</a>
                 <a href="/?nav=Upload">Upload Transactions</a>
                 <a href="/?nav=Logout">Logout</a>
             </div>
         </div>
+        <div class="main"></div>
     """, unsafe_allow_html=True)
 
     # Read navigation selection from query params
@@ -304,8 +314,8 @@ def fraud_detection_system():
     # LOAD MODEL BEFORE ANY PAGE LOGIC
     # ----------------------------------------------------------
     import urllib.request
-    model_path = "fraud_detection_PKL1_model.pkl"
-    model_url = "https://github.com/lRazan/AI-based-fraud-detection-system-for-banks/releases/download/v1.0.0/fraud_detection_PKL1_model.pkl"
+    model_path = "fraud_detection_PKL2_model.pkl"
+    model_url = "https://github.com/lRazan/AI-based-fraud-detection-system-for-banks/releases/download/v1.0.0/fraud_detection_PKL2_model.pkl"
     try:
         if not os.path.exists(model_path):
             with st.spinner("Downloading model..."):
