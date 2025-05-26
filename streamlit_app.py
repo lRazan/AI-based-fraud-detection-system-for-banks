@@ -248,24 +248,22 @@ def fraud_detection_system():
     # TOP NAVIGATION BAR (Unified for all pages)
     # ----------------------------------------------------------
     pages = ["Dashboard", "Upload Transactions", "Logout"]
-    selected_page = st.selectbox("Navigation", pages, index=0, key="dashboard_nav")
-    st.markdown("""
-        <style>
-            div[data-baseweb="select"] {
-                margin-bottom: 20px;
-            }
-            .stSelectbox > div {
-                background-color: #2e7d32;
-                color: white;
-                border-radius: 6px;
-                font-weight: bold;
-            }
-            .stSelectbox label {
-                font-weight: bold;
-                color: #2e7d32;
-            }
-        </style>
-    """, unsafe_allow_html=True)
+    nav_col1, nav_col2, nav_col3 = st.columns([1, 2, 1])
+    with nav_col1:
+        if st.button("🏠 Dashboard"):
+            st.session_state.selected_page = "Dashboard"
+    with nav_col2:
+        if st.button("📂 Upload Transactions"):
+            st.session_state.selected_page = "Upload Transactions"
+    with nav_col3:
+        if st.button("🚪 Logout"):
+            st.session_state.selected_page = "Logout"
+
+    # Initialize selected_page if not set
+    if 'selected_page' not in st.session_state:
+        st.session_state.selected_page = "Dashboard"
+
+    selected_page = st.session_state.selected_page
     # Initialize df_all to avoid UnboundLocalError
     df_all = pd.DataFrame()
 
