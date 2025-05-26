@@ -1,0 +1,15 @@
+streamlit
+flask
+pandas
+pymysql
+matplotlib
+numpy
+altair
+streamlit_navigation_bar
+requests
+yagmail
+keyring
+joblib
+plotly
+streamlit-autorefresh
+scikit-learn==1.5.1
