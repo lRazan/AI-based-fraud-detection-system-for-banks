@@ -247,60 +247,27 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     # TOP NAVIGATION BAR (Modern CSS Navigation Bar, full width)
     # ----------------------------------------------------------
-    st.markdown("""
-        <style>
-            .nav-container {
-                background-color: #2e7d32;
-                padding: 15px 30px;
-                border-radius: 8px;
-                margin-top: 0px;
-                margin-bottom: 30px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-            .nav-left {
-                display: flex;
-                align-items: center;
-            }
-            .nav-left img {
-                height: 40px;
-                margin-right: 15px;
-            }
-            .nav-title {
-                font-size: 22px;
-                font-weight: bold;
-                color: white;
-            }
-            .nav-buttons button {
-                background-color: white;
-                color: #2e7d32;
-                border: none;
-                border-radius: 6px;
-                padding: 6px 16px;
-                margin-left: 10px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-        </style>
-        <div class="nav-container">
-            <div class="nav-left">
-                <img src="logo.svg" alt="Logo">
-                <span class="nav-title">Banking Fraud Detection System</span>
-            </div>
-            <div class="nav-buttons">
-                <form method="post">
-                    <button name="nav_button" value="Dashboard">Dashboard</button>
-                    <button name="nav_button" value="Upload Transactions">Upload Transactions</button>
-                    <button name="nav_button" value="Logout">Logout</button>
-                </form>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-    nav_clicked = st.query_params.get("nav_button", [None])[0]
-    if nav_clicked:
-        st.session_state["selected_page"] = nav_clicked
+    # --- Custom Navigation Bar using Streamlit widgets instead of HTML form ---
+    nav_bar_col1, nav_bar_col2 = st.columns([0.08, 0.92])
+    with nav_bar_col1:
+        st.image("logo.svg", width=40)
+    with nav_bar_col2:
+        st.markdown(
+            "<span style='font-size:22px; font-weight:bold; color:#2e7d32;'>Banking Fraud Detection System</span>",
+            unsafe_allow_html=True
+        )
+    st.markdown("<div style='margin-bottom: 10px;'></div>", unsafe_allow_html=True)
+    col_btn1, col_btn2, col_btn3 = st.columns(3)
+    with col_btn1:
+        if st.button("Dashboard"):
+            st.session_state["selected_page"] = "Dashboard"
+    with col_btn2:
+        if st.button("Upload Transactions"):
+            st.session_state["selected_page"] = "Upload Transactions"
+    with col_btn3:
+        if st.button("Logout"):
+            st.session_state.clear()
+            st.rerun()
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
     # Initialize df_all to avoid UnboundLocalError
