@@ -245,62 +245,25 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (Always visible, with margin to avoid Streamlit bar overlap)
+    # TOP NAVIGATION BAR (Simple columns with navigation buttons)
     # ----------------------------------------------------------
-    st.markdown("""
-        <style>
-            .nav-header {
-                background-color: #2e7d32;
-                padding: 15px 25px;
-                border-radius: 0 0 10px 10px;
-                margin-bottom: 20px;
-            }
-            .nav-header h3 {
-                color: white;
-                margin: 0;
-                font-size: 20px;
-                display: inline-block;
-                vertical-align: middle;
-            }
-            .nav-buttons button {
-                background-color: white;
-                color: #2e7d32;
-                border: none;
-                border-radius: 5px;
-                padding: 6px 16px;
-                margin-left: 12px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-        </style>
-        <div class="nav-header">
-            <h3>🛡️ Banking Fraud Detection System</h3>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown("## Banking Fraud Detection System")
 
-    if "selected_page" not in st.session_state:
-        st.session_state["selected_page"] = "Dashboard"
-
-    nav1, nav2, nav3 = st.columns([1, 1, 1])
-    with nav1:
+    nav_col1, nav_col2, nav_col3 = st.columns(3)
+    with nav_col1:
         if st.button("Dashboard"):
             st.session_state["selected_page"] = "Dashboard"
-    with nav2:
+    with nav_col2:
         if st.button("Upload Transactions"):
             st.session_state["selected_page"] = "Upload Transactions"
-    with nav3:
+    with nav_col3:
         if st.button("Logout"):
             st.session_state.clear()
             st.success("You have been logged out.")
             st.rerun()
 
-    selected_page = st.session_state["selected_page"]
+    selected_page = st.session_state.get("selected_page", "Dashboard")
 
-    # هامش علوي إضافي لتجنب التداخل مع شريط Streamlit
-    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
-    # Container واضح بعد الشريط العلوي
-    with st.container():
-        pass  # يمكنك وضع محتوى إضافي هنا إذا رغبت
     # Initialize df_all to avoid UnboundLocalError
     df_all = pd.DataFrame()
 
