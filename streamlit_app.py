@@ -245,29 +245,32 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (Modern CSS Navigation Bar, full width)
+    # TOP NAVIGATION BAR (Streamlit columns, elegant layout)
     # ----------------------------------------------------------
-    # --- Custom Navigation Bar using Streamlit widgets instead of HTML form ---
-    nav_bar_col1, nav_bar_col2 = st.columns([0.08, 0.92])
-    with nav_bar_col1:
+    # شريط علوي أنيق باستخدام أعمدة Streamlit
+    st.markdown("### ")
+    nav_logo_col, nav_title_col, nav_btn_col1, nav_btn_col2, nav_btn_col3 = st.columns([0.5, 2, 1, 1.5, 1])
+
+    with nav_logo_col:
         st.image("logo.svg", width=40)
-    with nav_bar_col2:
-        st.markdown(
-            "<span style='font-size:22px; font-weight:bold; color:#2e7d32;'>Banking Fraud Detection System</span>",
-            unsafe_allow_html=True
-        )
-    st.markdown("<div style='margin-bottom: 10px;'></div>", unsafe_allow_html=True)
-    col_btn1, col_btn2, col_btn3 = st.columns(3)
-    with col_btn1:
+
+    with nav_title_col:
+        st.markdown("<h5 style='color:#2e7d32; margin-top: 15px;'>Banking Fraud Detection System</h5>", unsafe_allow_html=True)
+
+    with nav_btn_col1:
         if st.button("Dashboard"):
             st.session_state["selected_page"] = "Dashboard"
-    with col_btn2:
+
+    with nav_btn_col2:
         if st.button("Upload Transactions"):
             st.session_state["selected_page"] = "Upload Transactions"
-    with col_btn3:
+
+    with nav_btn_col3:
         if st.button("Logout"):
             st.session_state.clear()
             st.rerun()
+
+    # استخدم هذه القيمة لبقية الصفحة
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
     # Initialize df_all to avoid UnboundLocalError
