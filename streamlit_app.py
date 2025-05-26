@@ -41,6 +41,51 @@ st.cache_data(ttl=300)
 st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
 st.markdown("""
     <style>
+        div[data-testid="collapsedControl"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+st.markdown("""
+    <style>
+        div[data-testid="collapsedControl"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+st.markdown("""
+    <style>
+        /* إخفاء الشريط الجانبي بالكامل */
+        section[data-testid="stSidebar"],
+        div[data-testid="collapsedControl"],
+        aside,
+        nav[aria-label="Sidebar"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+            pointer-events: none !important;
+        }
+
+        /* منع أي توسعة للمساحة الجانبية */
+        .css-18e3th9 {
+            padding-left: 0 !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+st.markdown("""
+    <style>
         * {
             pointer-events: all !important;
             opacity: 1 !important;
@@ -174,8 +219,8 @@ def send_email_confirmation(to_email, transaction_id):
 
 
     try:
-        password = keyring.get_password("yagmail", "addminn332005@gmail.com")
-        yag = yagmail.SMTP("addminn332005@gmail.com", password)
+        password = keyring.get_password("yagmail", "a89984679@gmail.com")
+        yag = yagmail.SMTP("aa89984679@gmail.com", password)
         yag.send(to=to_email, subject=subject, contents=[body])
         # Do not show Streamlit message here; handled in Transaction Table
         return True
@@ -199,8 +244,8 @@ def send_otp_email(to_email, otp_code):
     </html>
     """
     try:
-        password = keyring.get_password("yagmail", "addminn332005@gmail.com")
-        yag = yagmail.SMTP("addminn332005@gmail.com", password)
+        password = keyring.get_password("yagmail", "a89984679@gmail.com")
+        yag = yagmail.SMTP("a89984679@gmail.com", password)
         yag.send(to=to_email, subject=subject, contents=[body])
         return True
     except Exception as e:
@@ -488,8 +533,8 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     try:
         df_all = load_transactions()
-        st.subheader("🔍 Debug: Preview of loaded transactions")
-        st.write(df_all.head())
+        #st.subheader("🔍 Debug: Preview of loaded transactions")
+        #st.write(df_all.head())
         fraud_count = df_all[df_all["is_fraud"] == 1].shape[0]
         legit_count = df_all[df_all["is_fraud"] == 0].shape[0]
         total_transactions = df_all.shape[0]
