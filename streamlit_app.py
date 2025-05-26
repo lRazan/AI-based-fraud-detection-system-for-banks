@@ -140,9 +140,8 @@ def send_email_confirmation(to_email, transaction_id):
     <body>
       <p>Did you make transaction #{transaction_id}?</p>
       <p>
-        <a href="https://banking-fraud-detection-system-6t8aztranactionhxcqctmjzdeuhjj.streamlit.app/?tx={transaction_id}&r=YES">YES - I Confirm</a><br>
-        <a href="https://banking-fraud-detection-system-6t8aztranactionhxcqctmjzdeuhjj.streamlit.app/?tx={transaction_id}&r=NO">NO - This Was Not Me</a>
-      </p>
+        <a href="https://flask-confirm-api.onrender.com/confirm?tx={transaction_id}&r=YES">YES - I Confirm</a>
+        <a href="https://flask-confirm-api.onrender.com/confirm?tx={transaction_id}&r=NO">NO - This Was Not Me</a>  </p>
     </body>
   </html>
     """
