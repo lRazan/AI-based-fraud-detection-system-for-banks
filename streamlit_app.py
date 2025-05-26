@@ -1,4 +1,27 @@
 import streamlit as st 
+ # TEMPORARY: Database connection test
+def test_db_connection():
+    st.title("🔌 Test MySQL Database Connection")
+    try:
+        conn = pymysql.connect(
+            host="crossover.proxy.rlwy.net",
+            user="root",
+            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+            database="railway",
+            port=55790
+        )
+        cursor = conn.cursor()
+        cursor.execute("SELECT DATABASE();")
+        db_name = cursor.fetchone()[0]
+        st.success(f"✅ Connected to database: {db_name}")
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        st.error("❌ Failed to connect to the database.")
+        st.code(str(e), language="bash")
+
+# Uncomment the next line to run the test manually
+# test_db_connection()
 import pandas as pd
 import pymysql
 import matplotlib.pyplot as plt 
@@ -911,6 +934,51 @@ def main():
     # LOGIN FORM FOR STAFF
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
+        # Show navigation bar with logo and system title (login page)
+        from streamlit_navigation_bar import st_navbar
+        logo_path = "https://img.icons8.com/ios-filled/100/shield.png"
+        selected = st_navbar(
+            ["Login"],
+            logo_path=logo_path,
+            styles={
+                "nav": {"background-color": "#2e7d32"},
+                "img": {
+                    "margin-left": "0px",
+                    "margin-right": "auto",
+                    "display": "inline-block",
+                    "height": "40px",
+                    "position": "absolute",
+                    "top": "50%",
+                    "left": "0px",
+                    "transform": "translateY(-50%)"
+                },
+                "a": {
+                    "color": "#2e7d32",
+                    "pointer-events": "none",
+                    "padding": "0px",
+                    "font-size": "1px"
+                },
+                "active": {
+                    "background-color": "#2e7d32",
+                    "border-radius": "0px"
+                }
+            }
+        )
+        st.markdown("""
+            <style>
+                .navbar-title {
+                    position: fixed;
+                    top: 22px;
+                    left: 90px;
+                    font-size: 13px;
+                    font-weight: 400;
+                    color: white;
+                    z-index: 9999;
+                }
+            </style>
+            <div class="navbar-title">Banking Fraud Detection System</div>
+        """, unsafe_allow_html=True)
+
         # Improved login form centering and style
         st.markdown("""
             <style>
@@ -1000,6 +1068,51 @@ def main():
     # OTP VERIFICATION FORM
     # ----------------------------------------------------------
     elif st.session_state['logged_in'] and not st.session_state['otp_verified']:
+        # Show navigation bar with logo and system title (OTP page)
+        from streamlit_navigation_bar import st_navbar
+        logo_path = "https://img.icons8.com/ios-filled/100/shield.png"
+        selected = st_navbar(
+            ["Login"],
+            logo_path=logo_path,
+            styles={
+                "nav": {"background-color": "#2e7d32"},
+                "img": {
+                    "margin-left": "0px",
+                    "margin-right": "auto",
+                    "display": "inline-block",
+                    "height": "40px",
+                    "position": "absolute",
+                    "top": "50%",
+                    "left": "0px",
+                    "transform": "translateY(-50%)"
+                },
+                "a": {
+                    "color": "#2e7d32",
+                    "pointer-events": "none",
+                    "padding": "0px",
+                    "font-size": "1px"
+                },
+                "active": {
+                    "background-color": "#2e7d32",
+                    "border-radius": "0px"
+                }
+            }
+        )
+        st.markdown("""
+            <style>
+                .navbar-title {
+                    position: fixed;
+                    top: 22px;
+                    left: 90px;
+                    font-size: 13px;
+                    font-weight: 400;
+                    color: white;
+                    z-index: 9999;
+                }
+            </style>
+            <div class="navbar-title">Banking Fraud Detection System</div>
+        """, unsafe_allow_html=True)
+
         # Background, font, and form settings as in login page
         st.markdown("""
             <style>
