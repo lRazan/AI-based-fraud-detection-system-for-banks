@@ -343,7 +343,7 @@ def fraud_detection_system():
     logo_path = "logo.svg"
     pages = ["Dashboard", "Upload Transactions", "Logout"]
     styles = {
-        "nav": {"background-color": "#2e7d32"},
+        "nav": {"background-color": "#2e7d32", "height": "64px", "border-bottom": "1px solid #ccc"},
         "img": {
             "margin-left": "0px",
             "margin-right": "auto",
