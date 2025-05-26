@@ -249,23 +249,21 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     # شريط علوي أنيق باستخدام أعمدة Streamlit
     st.markdown("### ")
-    nav_logo_col, nav_title_col, nav_btn_col1, nav_btn_col2, nav_btn_col3 = st.columns([0.5, 2, 1, 1.5, 1])
-
+    nav_logo_col, nav_title_col = st.columns([0.5, 2])
     with nav_logo_col:
         st.image("logo.svg", width=40)
-
     with nav_title_col:
         st.markdown("<h5 style='color:#2e7d32; margin-top: 15px;'>Banking Fraud Detection System</h5>", unsafe_allow_html=True)
 
-    with nav_btn_col1:
+    # أزرار الشريط العلوي باستخدام أعمدة Streamlit (بدون HTML أو form)
+    nav_col1, nav_col2, nav_col3 = st.columns(3)
+    with nav_col1:
         if st.button("Dashboard"):
             st.session_state["selected_page"] = "Dashboard"
-
-    with nav_btn_col2:
+    with nav_col2:
         if st.button("Upload Transactions"):
             st.session_state["selected_page"] = "Upload Transactions"
-
-    with nav_btn_col3:
+    with nav_col3:
         if st.button("Logout"):
             st.session_state.clear()
             st.rerun()
