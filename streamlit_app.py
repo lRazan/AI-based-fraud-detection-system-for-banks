@@ -245,45 +245,27 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR temporarily disabled for debugging freeze
+    # TOP NAVIGATION BAR (Unified for all pages)
     # ----------------------------------------------------------
-    # from streamlit_navigation_bar import st_navbar
-    # logo_path = "logo.svg"
-    # pages = ["Dashboard", "Upload Transactions", "Logout"]
-    # styles = {
-    #     "nav": {"background-color": "#2e7d32", "height": "64px", "border-bottom": "1px solid #ccc"},
-    #     "img": {
-    #         "margin-left": "0px",
-    #         "margin-right": "auto",
-    #         "display": "inline-block",
-    #         "height": "40px",
-    #         "position": "absolute",
-    #         "top": "50%",
-    #         "left": "0px",
-    #         "transform": "translateY(-50%)"
-    #     },
-    #     "a": {
-    #         "color": "white",
-    #         "padding": "8px 20px",
-    #         "text-decoration": "none",
-    #         "font-size": "16px",
-    #         "font-weight": "400"
-    #     },
-    #     "active": {
-    #         "color": "#2e7d32",
-    #         "background-color": "white",
-    #         "border-radius": "0px"
-    #     },
-    #     "span": {
-    #         "color": "white",
-    #         "font-size": "16px",
-    #         "font-weight": "500",
-    #         "margin-left": "12px"
-    #     }
-    # }
-    # selected = st_navbar(pages, logo_path=logo_path, styles=styles)
-    # selected_page = selected.strip().lower()
-    selected_page = "dashboard"
+    pages = ["Dashboard", "Upload Transactions", "Logout"]
+    selected_page = st.selectbox("Navigation", pages, index=0, key="dashboard_nav")
+    st.markdown("""
+        <style>
+            div[data-baseweb="select"] {
+                margin-bottom: 20px;
+            }
+            .stSelectbox > div {
+                background-color: #2e7d32;
+                color: white;
+                border-radius: 6px;
+                font-weight: bold;
+            }
+            .stSelectbox label {
+                font-weight: bold;
+                color: #2e7d32;
+            }
+        </style>
+    """, unsafe_allow_html=True)
     # Initialize df_all to avoid UnboundLocalError
     df_all = pd.DataFrame()
 
@@ -303,7 +285,7 @@ def fraud_detection_system():
         st.error(f"❌ Failed to load model: {e}")
         model = None
 
-    if "upload transactions" in selected_page:
+    if selected_page == "Upload Transactions":
         # ------------------------------------------------------
         # UPLOAD TRANSACTIONS PAGE
         # ------------------------------------------------------
@@ -373,12 +355,9 @@ def fraud_detection_system():
             except Exception as e:
                 st.error(f"Error processing uploaded file: {e}")
         return
-    elif "dashboard" in selected_page:
+    elif selected_page == "Dashboard":
         selected_page = "dashboard"
-    elif "settings" in selected_page:
-        st.markdown("## ⚙️ Settings Page (Coming Soon)")
-        return
-    elif "logout" in selected_page:
+    elif selected_page == "Logout":
         st.session_state.clear()
         st.success("You have been logged out.")
         st.rerun()
