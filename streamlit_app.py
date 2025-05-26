@@ -1,52 +1,49 @@
-import streamlit as st 
-import base64
- # TEMPORARY: Database connection test
-def test_db_connection():
-    st.title("🔌 Test MySQL Database Connection")
-    try:
-        conn = pymysql.connect(
-            host="crossover.proxy.rlwy.net",
-            user="root",
-            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
-            database="railway",
-            port=55790
-        )
-        cursor = conn.cursor()
-        cursor.execute("SELECT DATABASE();")
-        db_name = cursor.fetchone()[0]
-        st.success(f"✅ Connected to database: {db_name}")
-        cursor.close()
-        conn.close()
-    except Exception as e:
-        st.error("❌ Failed to connect to the database.")
-        st.code(str(e), language="bash")
-
-# Uncomment the next line to run the test manually
-# test_db_connection()
-import pandas as pd
-import pymysql
-import matplotlib.pyplot as plt 
-import numpy as np 
-import time 
-import smtplib
-from email.mime.text import MIMEText
-import altair as alt
-
-import os
-from streamlit_navigation_bar import st_navbar
+import streamlit as st
 
 # ==============================================================
 # IMPORTS
 # ==============================================================
 
 # ----- Standard Library Imports -----
-# (Removed duplicate imports)
+import os
+import time
+import numpy as np
+import pandas as pd
 
 # ----- Third Party/External Libraries -----
-# (Removed duplicate imports)
+import pymysql
 import yagmail
 import joblib
 import plotly.graph_objects as go
+
+# Optionally used for navigation, autorefresh
+from streamlit_navigation_bar import st_navbar
+
+
+# TEMPORARY: Database connection test (optional, comment out in production)
+# def test_db_connection():
+#     st.title("🔌 Test MySQL Database Connection")
+#     try:
+#         conn = pymysql.connect(
+#             host="crossover.proxy.rlwy.net",
+#             user="root",
+#             password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+#             database="railway",
+#             port=55790
+#         )
+#         cursor = conn.cursor()
+#         cursor.execute("SELECT DATABASE();")
+#         db_name = cursor.fetchone()[0]
+#         st.success(f"✅ Connected to database: {db_name}")
+#         cursor.close()
+#         conn.close()
+#     except Exception as e:
+#         st.error("❌ Failed to connect to the database.")
+#         st.code(str(e), language="bash")
+# # Uncomment the next line to run the test manually
+# # test_db_connection()
+
+logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
 
 # ==============================================================
 # PERFORMANCE & CACHING OPTIONS
@@ -58,10 +55,34 @@ st.cache_data(ttl=300)
 # Structured code with clear comments and logical section headers.
 # ==============================================================
 
+
 # --------------------------------------------------------------
 # PAGE CONFIGURATION & GLOBAL STYLES
 # --------------------------------------------------------------
 st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
+
+# --------------------------------------------------------------
+# Function: show_green_header
+# Unified green header bar with logo and title for all pages
+# --------------------------------------------------------------
+def show_green_header():
+    import base64
+    st.markdown(
+        f'''
+        <div style='
+            background-color: #2e7d32;
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            border-radius: 0 0 10px 10px;
+            margin-bottom: 10px;
+        '>
+            <img src="data:image/svg+xml;base64,{base64.b64encode(open(logo_path, "rb").read()).decode()}" width="30" style="margin-right:12px;" />
+            <span style='color:white; font-size:16px; font-weight:bold;'>Banking Fraud Detection System</span>
+        </div>
+        ''',
+        unsafe_allow_html=True
+    )
 
 # ==============================================================
 # DATABASE FUNCTIONS
@@ -245,29 +266,7 @@ def get_customer_responses(transaction_id):
 # Main dashboard UI for fraud detection, staff view and customer response.
 # --------------------------------------------------------------
 def fraud_detection_system():
-    import pymysql
-    # Use absolute path for logo
-    logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
-    # ----------------------------------------------------------
-    # TOP NAVIGATION BAR: Green bar with logo and title ONLY
-    # ----------------------------------------------------------
-    import base64
-    st.markdown(
-        f"""
-        <div style='
-            background-color: #2e7d32;
-            padding: 12px 30px;
-            display: flex;
-            align-items: center;
-            border-radius: 0 0 10px 10px;
-            margin-bottom: 10px;
-        '>
-            <img src="data:image/svg+xml;base64,{base64.b64encode(open(logo_path, "rb").read()).decode()}" width="30" style="margin-right:12px;" />
-            <span style='color:white; font-size:16px; font-weight:bold;'>Banking Fraud Detection System</span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    show_green_header()
 
     # Navigation buttons: Dashboard, Upload Transactions, Logout (Streamlit default buttons, no styling)
     with st.container():
@@ -744,6 +743,7 @@ def main():
     query_params = st.query_params
     if 'tx' in query_params and 'r' in query_params:
         # Handle response from email link without requiring login
+        show_green_header()
         fraud_detection_system()
 
     # ----------------------------------------------------------
@@ -760,23 +760,6 @@ def main():
                     background-position: center;
                 }
             </style>
-            """,
-            unsafe_allow_html=True
-        )
-        # Add green bar with logo and title (same as dashboard) - USE GITHUB LINK
-        st.markdown(
-            f"""
-            <div style='
-                background-color: #2e7d32;
-                padding: 12px 30px;
-                display: flex;
-                align-items: center;
-                border-radius: 0 0 10px 10px;
-                margin-bottom: 10px;
-            '>
-                <img src="https://raw.githubusercontent.com/dalal560/ai-based-fraud-detection-system-for-banks/main/logo.svg" width="30" style="margin-right:12px;" />
-                <span style='color:white; font-size:16px; font-weight:bold;'>Banking Fraud Detection System</span>
-            </div>
             """,
             unsafe_allow_html=True
         )
@@ -858,23 +841,7 @@ def main():
             """,
             unsafe_allow_html=True
         )
-        # Add green bar with logo and title (same as dashboard) - USE GITHUB LINK
-        st.markdown(
-            f"""
-            <div style='
-                background-color: #2e7d32;
-                padding: 12px 30px;
-                display: flex;
-                align-items: center;
-                border-radius: 0 0 10px 10px;
-                margin-bottom: 10px;
-            '>
-                <img src="https://raw.githubusercontent.com/dalal560/ai-based-fraud-detection-system-for-banks/main/logo.svg" width="30" style="margin-right:12px;" />
-                <span style='color:white; font-size:16px; font-weight:bold;'>Banking Fraud Detection System</span>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        show_green_header()
         # OTP check after login; user must enter OTP sent to email
         col_otp, _ = st.columns([5, 5])
         with col_otp:
@@ -894,6 +861,7 @@ def main():
     # SHOW FRAUD DASHBOARD ONCE LOGGED IN AND VERIFIED
     # ----------------------------------------------------------
     else:
+        show_green_header()
         fraud_detection_system()
 
 # ==============================================================
