@@ -626,11 +626,15 @@ def fraud_detection_system():
             else:
                 cols[5].markdown("<span style='color:gray;'>Legitimate</span>", unsafe_allow_html=True)
 
-            # Execution Status column (cols[6])
+            # Execution Status column (cols[6]) - refactored for button logic
             if row['Fraud Status'] == "Fraud":
                 if responses:
                     latest_response, latest_time = responses[0][0].upper(), responses[0][1]
+                    # Show buttons and YES/NO only after button pressed, not immediately
                     if latest_response == "YES":
+                        # State for showing YES at {time}
+                        if f"show_yes_{row['transaction_id']}" not in st.session_state:
+                            st.session_state[f"show_yes_{row['transaction_id']}"] = False
                         if cols[6].button("Complete", key=f"complete_{row['transaction_id']}"):
                             try:
                                 conn = pymysql.connect(
@@ -645,11 +649,15 @@ def fraud_detection_system():
                                 conn.commit()
                                 cursor.close()
                                 conn.close()
-                                st.rerun()
+                                st.session_state[f"show_yes_{row['transaction_id']}"] = True
                             except:
                                 cols[6].markdown("<span style='color:red;'>Error</span>", unsafe_allow_html=True)
-                        cols[6].markdown(f"<span style='color:green;'>YES at {latest_time}</span>", unsafe_allow_html=True)
+                        if st.session_state[f"show_yes_{row['transaction_id']}"]:
+                            cols[6].markdown(f"<span style='color:green;'>YES at {latest_time}</span>", unsafe_allow_html=True)
                     elif latest_response == "NO":
+                        # State for showing NO at {time}
+                        if f"show_no_{row['transaction_id']}" not in st.session_state:
+                            st.session_state[f"show_no_{row['transaction_id']}"] = False
                         if cols[6].button("Cancel", key=f"cancel_{row['transaction_id']}"):
                             try:
                                 conn = pymysql.connect(
@@ -664,10 +672,11 @@ def fraud_detection_system():
                                 conn.commit()
                                 cursor.close()
                                 conn.close()
-                                st.rerun()
+                                st.session_state[f"show_no_{row['transaction_id']}"] = True
                             except:
                                 cols[6].markdown("<span style='color:red;'>Error</span>", unsafe_allow_html=True)
-                        cols[6].markdown(f"<span style='color:red;'>NO at {latest_time}</span>", unsafe_allow_html=True)
+                        if st.session_state[f"show_no_{row['transaction_id']}"]:
+                            cols[6].markdown(f"<span style='color:red;'>NO at {latest_time}</span>", unsafe_allow_html=True)
                     else:
                         cols[6].markdown("<span style='color:#c97b00;'>Waiting</span>", unsafe_allow_html=True)
                 else:
