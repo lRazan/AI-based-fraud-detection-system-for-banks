@@ -746,7 +746,25 @@ def main():
     # LOGIN FORM FOR STAFF
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
-        # Login form with NO custom CSS for backgrounds or forms
+        # Add custom CSS for login background and button
+        st.markdown(
+            """
+            <style>
+                .stApp {
+                    background-image: url("https://i.ibb.co/zsZP0y4/bg-login2.jpg");
+                    background-size: cover;
+                    background-position: center;
+                }
+                div.stButton > button {
+                    background-color: #2e7d32;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 6px;
+                }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
         with st.form("login_form"):
             email = st.text_input("Email", key="email_input")
             password = st.text_input("Password", type="password", key="pass_input")
