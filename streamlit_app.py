@@ -269,20 +269,27 @@ def fraud_detection_system():
         unsafe_allow_html=True
     )
 
-    # BUTTONS ROW: Below the green bar
-    btn_col1, btn_col2, btn_col3 = st.columns([1, 2, 1])
+    # BUTTONS ROW: Improved layout with equal spacing and horizontal alignment
+    st.markdown("<br>", unsafe_allow_html=True)
+    btn_col1, btn_col2, btn_col3 = st.columns([1, 1, 1])
     with btn_col1:
+        st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
         if st.button("Dashboard"):
             st.session_state["selected_page"] = "Dashboard"
             st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
     with btn_col2:
+        st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
         if st.button("Upload Transactions"):
             st.session_state["selected_page"] = "Upload Transactions"
             st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
     with btn_col3:
+        st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
         if st.button("Logout"):
             st.session_state["selected_page"] = "Logout"
             st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
