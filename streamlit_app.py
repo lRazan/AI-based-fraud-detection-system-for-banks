@@ -414,8 +414,8 @@ def fraud_detection_system():
     from streamlit_autorefresh import st_autorefresh
     query_params = st.query_params
     # Prevent duplicate processing if already handled (e.g. on auto-reload)
-    if st.session_state.get('response_already_processed'):
-        return
+    # if st.session_state.get('response_already_processed'):
+    #     return
     if 'tx' in query_params and 'r' in query_params:
         try:
             # Convert tx value from URL to transaction_id as integer
@@ -434,7 +434,7 @@ def fraud_detection_system():
         # Save the response in transaction_feedback table
         save_customer_response(transaction_id, response)
         st.session_state['response_already_processed'] = True
-        st.query_params.clear()
+        # st.query_params.clear()
         # Update the transaction status (is_active) according to the response
         conn = pymysql.connect(
             host=os.environ.get("DB_HOST"),
