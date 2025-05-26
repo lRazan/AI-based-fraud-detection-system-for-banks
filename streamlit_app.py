@@ -763,9 +763,7 @@ def main():
             """,
             unsafe_allow_html=True
         )
-        # Add green bar with logo and title (same as dashboard)
-        import base64
-        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
+        # Add green bar with logo and title (same as dashboard) - USE GITHUB LINK
         st.markdown(
             f"""
             <div style='
@@ -776,7 +774,7 @@ def main():
                 border-radius: 0 0 10px 10px;
                 margin-bottom: 10px;
             '>
-                <img src="data:image/svg+xml;base64,{base64.b64encode(open(logo_path, "rb").read()).decode()}" width="30" style="margin-right:12px;" />
+                <img src="https://raw.githubusercontent.com/dalal560/ai-based-fraud-detection-system-for-banks/main/logo.svg" width="30" style="margin-right:12px;" />
                 <span style='color:white; font-size:16px; font-weight:bold;'>Banking Fraud Detection System</span>
             </div>
             """,
@@ -860,9 +858,7 @@ def main():
             """,
             unsafe_allow_html=True
         )
-        # Add green bar with logo and title (same as dashboard)
-        import base64
-        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
+        # Add green bar with logo and title (same as dashboard) - USE GITHUB LINK
         st.markdown(
             f"""
             <div style='
@@ -873,7 +869,7 @@ def main():
                 border-radius: 0 0 10px 10px;
                 margin-bottom: 10px;
             '>
-                <img src="data:image/svg+xml;base64,{base64.b64encode(open(logo_path, "rb").read()).decode()}" width="30" style="margin-right:12px;" />
+                <img src="https://raw.githubusercontent.com/dalal560/ai-based-fraud-detection-system-for-banks/main/logo.svg" width="30" style="margin-right:12px;" />
                 <span style='color:white; font-size:16px; font-weight:bold;'>Banking Fraud Detection System</span>
             </div>
             """,
