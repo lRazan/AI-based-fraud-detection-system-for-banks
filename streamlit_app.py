@@ -245,24 +245,61 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR (Streamlit columns only, no HTML/CSS)
+    # TOP NAVIGATION BAR (Streamlit + custom CSS)
     # ----------------------------------------------------------
+    st.markdown("""
+        <style>
+            .custom-nav {
+                background-color: #2e7d32;
+                padding: 12px 25px;
+                border-radius: 0 0 8px 8px;
+                margin-bottom: 20px;
+                color: white;
+            }
+            .custom-nav .nav-title {
+                font-size: 20px;
+                font-weight: bold;
+                display: inline-block;
+                vertical-align: middle;
+                margin-left: 15px;
+            }
+            .custom-nav .nav-buttons {
+                margin-top: 10px;
+            }
+            .custom-nav .nav-buttons button {
+                background-color: white;
+                color: #2e7d32;
+                border: none;
+                border-radius: 6px;
+                padding: 6px 12px;
+                margin-right: 10px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
     with st.container():
-        st.markdown("### Banking Fraud Detection System")
-        col1, col2, col3, col4 = st.columns([1, 3, 2, 2])
-        with col1:
+        st.markdown('<div class="custom-nav">', unsafe_allow_html=True)
+        col_logo, col_title = st.columns([1, 9])
+        with col_logo:
             st.image("logo.svg", width=40)
-        with col2:
-            st.markdown("")  # العنوان مذكور في الأعلى
-        with col3:
+        with col_title:
+            st.markdown('<span class="nav-title">Banking Fraud Detection System</span>', unsafe_allow_html=True)
+
+        col_btn1, col_btn2, col_btn3 = st.columns(3)
+        with col_btn1:
             if st.button("Dashboard"):
                 st.session_state["selected_page"] = "Dashboard"
-        with col4:
+        with col_btn2:
             if st.button("Upload Transactions"):
                 st.session_state["selected_page"] = "Upload Transactions"
+        with col_btn3:
             if st.button("Logout"):
                 st.session_state.clear()
                 st.rerun()
+
+        st.markdown('</div>', unsafe_allow_html=True)
 
     selected_page = st.session_state.get("selected_page", "Dashboard")
 
@@ -306,7 +343,7 @@ def fraud_detection_system():
                 ]
                 df_csv["fraud_probability"] = model.predict_proba(df_csv[required_cols])[:, 1]
                 df_csv["prediction"] = df_csv["fraud_probability"].apply(lambda p: "🟥 Fraudulent" if p >= 0.9 else "🟩 Legitimate")
-                st.success("✅ File processed successfully.")
+                # st.success("✅ File processed successfully.")  # تم التعليق لمنع الإشعار غير الضروري
                 st.dataframe(df_csv[["transactionID", "amount", "type", "fraud_probability", "prediction"]])
 
                 import pymysql
@@ -338,7 +375,7 @@ def fraud_detection_system():
                     conn.commit()
                     cursor.close()
                     conn.close()
-                    st.success("✅ Transactions inserted into database and reflected in dashboard.")
+                    # st.success("✅ Transactions inserted into database and reflected in dashboard.")  # تم التعليق لمنع الإشعار غير الضروري
                 except Exception as e:
                     st.error(f"❌ Failed to insert data into database: {e}")
             except Exception as e:
