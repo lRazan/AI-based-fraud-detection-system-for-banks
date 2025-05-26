@@ -342,7 +342,7 @@ def fraud_detection_system():
     # Initialize df_all to avoid UnboundLocalError
     df_all = pd.DataFrame()
     import os
-         logo_path = os.path.join(parent_dir, "logo.svg")
+    logo_path = os.path.join(os.path.dirname(__file__), "logo.svg")
         # Determine navbar pages based on login and OTP state
     if st.session_state.get("logged_in") and st.session_state.get("otp_verified"):
         pages = ["Dashboard", "Upload Transactions", "Logout"]
@@ -937,7 +937,7 @@ def main():
         # Show navigation bar with logo and system title (login page)
         from streamlit_navigation_bar import st_navbar
         import os
-        logo_path = os.path.join(os.path.dirname(__file__), "logo.svg")
+        logo_path = "https://raw.githubusercontent.com/dalal560/ai-based-fraud-detection-system-for-banks/main/logo.svg"
         selected = st_navbar(
             ["Login"],
             logo_path=logo_path,
@@ -1072,7 +1072,7 @@ def main():
         # Show navigation bar with logo and system title (OTP page)
         from streamlit_navigation_bar import st_navbar
         import os
-        logo_path = os.path.join(os.path.dirname(__file__), "logo.svg")
+        logo_path = "https://raw.githubusercontent.com/dalal560/ai-based-fraud-detection-system-for-banks/main/logo.svg"
         selected = st_navbar(
             ["Login"],
             logo_path=logo_path,
