@@ -1,4 +1,27 @@
 import streamlit as st 
+ # TEMPORARY: Database connection test
+def test_db_connection():
+    st.title("🔌 Test MySQL Database Connection")
+    try:
+        conn = pymysql.connect(
+            host="crossover.proxy.rlwy.net",
+            user="root",
+            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+            database="railway",
+            port=55790
+        )
+        cursor = conn.cursor()
+        cursor.execute("SELECT DATABASE();")
+        db_name = cursor.fetchone()[0]
+        st.success(f"✅ Connected to database: {db_name}")
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        st.error("❌ Failed to connect to the database.")
+        st.code(str(e), language="bash")
+
+# Uncomment the next line to run the test manually
+# test_db_connection()
 import pandas as pd
 import pymysql
 import matplotlib.pyplot as plt 
@@ -38,36 +61,6 @@ st.cache_data(ttl=300)
 # PAGE CONFIGURATION & GLOBAL STYLES
 # --------------------------------------------------------------
 st.set_page_config(page_title="Fraud Detection System", page_icon="🛡️", layout="wide")
-st.markdown("""
-    <style>
-        html, body, [class*="css"] {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f9f9f9;
-        }
-        h1, h2, h3, h4 {
-            color: #2c3e50;
-        }
-        .block-container {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-        }
-        div.stButton > button {
-            padding: 6px 16px;
-            font-size: 13px;
-            border-radius: 10px;
-            width: 100px;
-            margin-left: auto;
-            margin-right: auto;
-            display: block;
-        }
-        .element-container > div > div {
-            text-align: center !important;
-        }
-        th {
-            text-align: center !important;
-        }
-    </style>
-""", unsafe_allow_html=True)
 
 # ==============================================================
 # DATABASE FUNCTIONS
@@ -80,11 +73,11 @@ st.markdown("""
 def login_user(email, password):
     try:
         conn = pymysql.connect(
-            host=os.environ.get("DB_HOST"),
-            user=os.environ.get("DB_USER"),
-            password=os.environ.get("DB_PASSWORD"),
-            database=os.environ.get("DB_NAME"),
-            port=int(os.environ.get("DB_PORT"))
+            host="crossover.proxy.rlwy.net",
+            user="root",
+            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+            database="railway",
+            port=55790
         )
         cursor = conn.cursor()
         query = "SELECT * FROM users WHERE email=%s AND password=%s"
@@ -103,11 +96,11 @@ def login_user(email, password):
 # --------------------------------------------------------------
 def load_transactions():
     conn = pymysql.connect(
-        host=os.environ.get("DB_HOST"),
-        user=os.environ.get("DB_USER"),
-        password=os.environ.get("DB_PASSWORD"),
-        database=os.environ.get("DB_NAME"),
-        port=int(os.environ.get("DB_PORT"))
+        host="crossover.proxy.rlwy.net",
+        user="root",
+        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+        database="railway",
+        port=55790
     )
     df = pd.read_sql("SELECT * FROM transactions", conn)
     conn.close()
@@ -119,11 +112,11 @@ def load_transactions():
 # --------------------------------------------------------------
 def get_customer_info(customer_id):
     conn = pymysql.connect(
-        host=os.environ.get("DB_HOST"),
-        user=os.environ.get("DB_USER"),
-        password=os.environ.get("DB_PASSWORD"),
-        database=os.environ.get("DB_NAME"),
-        port=int(os.environ.get("DB_PORT"))
+        host="crossover.proxy.rlwy.net",
+        user="root",
+        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+        database="railway",
+        port=55790
     )
     cursor = conn.cursor()
     query = "SELECT name, phone_number, city, email FROM customers WHERE customer_id = %s"
@@ -143,16 +136,17 @@ def get_customer_info(customer_id):
 def send_email_confirmation(to_email, transaction_id):
     subject = f"Transaction #{transaction_id} Confirmation"
     body = f"""
-    <html>
-      <body>
-        <p>Did you make transaction #{transaction_id}?</p>
-        <p>
-          <a href="https://flask-confirm-api.onrender.com/confirm?tx={transaction_id}&r=YES">YES - I Confirm</a><br>
-          <a href="https://flask-confirm-api.onrender.com/confirm?tx={transaction_id}&r=NO">NO - This Was Not Me</a>
-        </p>
-      </body>
-    </html>
+  <html>
+    <body>
+      <p>Did you make transaction #{transaction_id}?</p>
+      <p>
+<a href="https://flask-confirm-api.onrender.com/confirm?tx={transaction_id}&r=YES">YES - I Confirm</a>
+<a href="https://flask-confirm-api.onrender.com/confirm?tx={transaction_id}&r=NO">NO - This Was Not Me</a>
+      </p>
+    </body>
+  </html>
     """
+
 
     try:
         yag = yagmail.SMTP(
@@ -202,11 +196,11 @@ def send_otp_email(to_email, otp_code):
 def save_customer_response(transaction_id, response):
     try:
         conn = pymysql.connect(
-            host=os.environ.get("DB_HOST"),
-            user=os.environ.get("DB_USER"),
-            password=os.environ.get("DB_PASSWORD"),
-            database=os.environ.get("DB_NAME"),
-            port=int(os.environ.get("DB_PORT"))
+            host="crossover.proxy.rlwy.net",
+            user="root",
+            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+            database="railway",
+            port=55790
         )
         cursor = conn.cursor()
         cursor.execute(
@@ -225,11 +219,11 @@ def save_customer_response(transaction_id, response):
 # --------------------------------------------------------------
 def get_customer_responses(transaction_id):
     conn = pymysql.connect(
-        host=os.environ.get("DB_HOST"),
-        user=os.environ.get("DB_USER"),
-        password=os.environ.get("DB_PASSWORD"),
-        database=os.environ.get("DB_NAME"),
-        port=int(os.environ.get("DB_PORT"))
+        host="crossover.proxy.rlwy.net",
+        user="root",
+        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+        database="railway",
+        port=55790
     )
     cursor = conn.cursor()
     cursor.execute(
@@ -251,85 +245,87 @@ def get_customer_responses(transaction_id):
 # --------------------------------------------------------------
 def fraud_detection_system():
     # ----------------------------------------------------------
-    # TOP NAVIGATION BAR using streamlit_navigation_bar
+    # TOP NAVIGATION BAR (Modern CSS Navigation Bar, full width)
     # ----------------------------------------------------------
-    parent_dir = os.path.dirname(os.path.abspath(__file__))
-    logo_path = os.path.join(parent_dir, "logo.svg")
-    pages = ["Dashboard", "Upload Transactions", "Logout"]
-    styles = {
-        "nav": {"background-color": "#2e7d32"},
-        "img": {
-            "margin-left": "0px",
-            "margin-right": "auto",
-            "display": "inline-block",
-            "height": "40px",
-            "position": "absolute",
-            "top": "50%",
-            "left": "0px",
-            "transform": "translateY(-50%)"
-        },
-        "a": {
-            "color": "white",
-            "padding": "8px 20px",
-            "text-decoration": "none",
-            "font-size": "16px",
-            "font-weight": "400"
-        },
-        "active": {
-            "color": "#2e7d32",
-            "background-color": "white",
-            "border-radius": "0px"
-        },
-        "span": {
-            "color": "white",
-            "font-size": "16px",
-            "font-weight": "500",
-            "margin-left": "12px"
-        }
-    }
+    st.markdown("""
+        <style>
+            .nav-container {
+                background-color: #2e7d32;
+                padding: 15px 30px;
+                border-radius: 8px;
+                margin-top: 0px;
+                margin-bottom: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .nav-left {
+                display: flex;
+                align-items: center;
+            }
+            .nav-left img {
+                height: 40px;
+                margin-right: 15px;
+            }
+            .nav-title {
+                font-size: 22px;
+                font-weight: bold;
+                color: white;
+            }
+            .nav-buttons button {
+                background-color: white;
+                color: #2e7d32;
+                border: none;
+                border-radius: 6px;
+                padding: 6px 16px;
+                margin-left: 10px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+        </style>
+        <div class="nav-container">
+            <div class="nav-left">
+                <img src="logo.svg" alt="Logo">
+                <span class="nav-title">Banking Fraud Detection System</span>
+            </div>
+            <div class="nav-buttons">
+                <form method="post">
+                    <button name="nav_button" value="Dashboard">Dashboard</button>
+                    <button name="nav_button" value="Upload Transactions">Upload Transactions</button>
+                    <button name="nav_button" value="Logout">Logout</button>
+                </form>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    nav_clicked = st.query_params.get("nav_button", [None])[0]
+    if nav_clicked:
+        st.session_state["selected_page"] = nav_clicked
+    selected_page = st.session_state.get("selected_page", "Dashboard")
+
+    # Initialize df_all to avoid UnboundLocalError
+    df_all = pd.DataFrame()
 
     # ----------------------------------------------------------
     # LOAD MODEL BEFORE ANY PAGE LOGIC
     # ----------------------------------------------------------
+    import urllib.request
+    model_path = "fraud_detection_PKL2_model.pkl"
+    model_url = "https://github.com/lRazan/AI-based-fraud-detection-system-for-banks/releases/download/v1.0.0/fraud_detection_PKL2_model.pkl"
     try:
-        model = joblib.load("fraud_detection_PKL1_model.pkl")
+        if not os.path.exists(model_path):
+            with st.spinner("Downloading model..."):
+                urllib.request.urlretrieve(model_url, model_path)
+                st.success("Model downloaded.")
+        model = joblib.load(model_path)
     except Exception as e:
         st.error(f"❌ Failed to load model: {e}")
         model = None
 
-    selected = st_navbar(
-        pages,
-        logo_path=logo_path,
-        styles=styles
-    )
-    st.markdown("""
-        <style>
-            .navbar-title {
-                position: fixed;
-                top: 22px;
-                left: 90px;
-                font-size: 13px;
-                font-weight: 400;
-                color: white;
-                z-index: 9999;
-            }
-        </style>
-        <div class="navbar-title">Banking Fraud Detection System</div>
-    """, unsafe_allow_html=True)
-    selected_page = selected.strip().lower()
-
-    if "upload transactions" in selected_page:
+    if selected_page == "Upload Transactions":
         # ------------------------------------------------------
         # UPLOAD TRANSACTIONS PAGE
         # ------------------------------------------------------
-        st.markdown("""
-            <style>
-                .block-container {
-                    padding-top: 5rem !important;
-                    padding-bottom: 2rem !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
         uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
         if uploaded_file and model:
             try:
@@ -347,7 +343,7 @@ def fraud_detection_system():
                 ]
                 df_csv["fraud_probability"] = model.predict_proba(df_csv[required_cols])[:, 1]
                 df_csv["prediction"] = df_csv["fraud_probability"].apply(lambda p: "🟥 Fraudulent" if p >= 0.9 else "🟩 Legitimate")
-                st.success("✅ File processed successfully.")
+                # st.success("✅ File processed successfully.")  # تم التعليق لمنع الإشعار غير الضروري
                 st.dataframe(df_csv[["transactionID", "amount", "type", "fraud_probability", "prediction"]])
 
                 import pymysql
@@ -355,53 +351,39 @@ def fraud_detection_system():
                     df_csv.rename(columns={
                         "transactionID": "transaction_id",
                         "type": "transaction_type",
-                        "oldBalanceOrig": "oldbalanceOrg",
-                        "newBalanceOrig": "newbalanceOrig",
-                        "oldBalanceDest": "oldbalanceDest",
-                        "newBalanceDest": "newbalanceDest",
                         "isFlaggedFraud": "is_fraud"
                     }, inplace=True)
 
-                    df_csv["errorBalanceOrig"] = df_csv["oldbalanceOrg"] - df_csv["newbalanceOrig"] - df_csv["amount"]
-                    df_csv["errorBalanceDest"] = df_csv["newbalanceDest"] - df_csv["oldbalanceDest"]
-                    df_csv["email"] = None
-
                     conn = pymysql.connect(
-                        host=os.environ.get("DB_HOST"),
-                        user=os.environ.get("DB_USER"),
-                        password=os.environ.get("DB_PASSWORD"),
-                        database=os.environ.get("DB_NAME"),
-                        port=int(os.environ.get("DB_PORT"))
+                        host="crossover.proxy.rlwy.net",
+                        user="root",
+                        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+                        database="railway",
+                        port=55790
                     )
                     cursor = conn.cursor()
 
                     for _, row in df_csv.iterrows():
                         cursor.execute("""
-                            INSERT INTO transactions (transaction_id, amount, transaction_type, is_fraud, step, oldbalanceOrg, newbalanceOrig, oldbalanceDest, newbalanceDest, errorBalanceOrig, errorBalanceDest, email)
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                            INSERT INTO transactions (transaction_id, amount, transaction_type, is_fraud)
+                            VALUES (%s, %s, %s, %s)
                         """, (
                             int(row['transaction_id']), float(row['amount']), row['transaction_type'],
-                            int(row['is_fraud']), int(row['step']), float(row['oldbalanceOrg']),
-                            float(row['newbalanceOrig']), float(row['oldbalanceDest']),
-                            float(row['newbalanceDest']), float(row['errorBalanceOrig']),
-                            float(row['errorBalanceDest']), row['email']
+                            int(row['is_fraud'])
                         ))
 
                     conn.commit()
                     cursor.close()
                     conn.close()
-                    st.success("✅ Transactions inserted into database and reflected in dashboard.")
+                    # st.success("✅ Transactions inserted into database and reflected in dashboard.")  # تم التعليق لمنع الإشعار غير الضروري
                 except Exception as e:
                     st.error(f"❌ Failed to insert data into database: {e}")
             except Exception as e:
                 st.error(f"Error processing uploaded file: {e}")
         return
-    elif "dashboard" in selected_page:
+    elif selected_page == "Dashboard":
         selected_page = "dashboard"
-    elif "settings" in selected_page:
-        st.markdown("## ⚙️ Settings Page (Coming Soon)")
-        return
-    elif "logout" in selected_page:
+    elif selected_page == "Logout":
         st.session_state.clear()
         st.success("You have been logged out.")
         st.rerun()
@@ -412,11 +394,11 @@ def fraud_detection_system():
     # Allows customer to respond YES/NO via email link; processes the response.
     # ----------------------------------------------------------
     from streamlit_autorefresh import st_autorefresh
-    # Customer response handling via email link
-    if 'tx' in st.query_params and 'r' in st.query_params:
-        query_params = st.query_params
-        if st.session_state.get('response_already_processed'):
-            return
+    query_params = st.query_params
+    # Prevent duplicate processing if already handled (e.g. on auto-reload)
+    if st.session_state.get('response_already_processed'):
+        return
+    if 'tx' in query_params and 'r' in query_params:
         try:
             # Convert tx value from URL to transaction_id as integer
             transaction_id_raw = query_params['tx'][0]
@@ -434,23 +416,30 @@ def fraud_detection_system():
         # Save the response in transaction_feedback table
         save_customer_response(transaction_id, response)
         st.session_state['response_already_processed'] = True
-        # st.query_params.clear()
+        st.query_params.clear()
         # Update the transaction status (is_active) according to the response
-        conn = pymysql.connect(
-            host=os.environ.get("DB_HOST"),
-            user=os.environ.get("DB_USER"),
-            password=os.environ.get("DB_PASSWORD"),
-            database=os.environ.get("DB_NAME"),
-            port=int(os.environ.get("DB_PORT"))
-        )
-        cursor = conn.cursor()
-        if response == 'NO':
-            cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (transaction_id,))
-        elif response == 'YES':
-            cursor.execute("UPDATE transactions SET is_active = 1 WHERE transaction_id = %s", (transaction_id,))
-        conn.commit()
-        cursor.close()
-        conn.close()
+        conn = None
+        try:
+            conn = pymysql.connect(
+                host="crossover.proxy.rlwy.net",
+                user="root",
+                password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+                database="railway",
+                port=55790
+            )
+            cursor = conn.cursor()
+            if response == 'NO':
+                cursor.execute("UPDATE transactions SET is_active = 0 WHERE transaction_id = %s", (transaction_id,))
+            elif response == 'YES':
+                cursor.execute("UPDATE transactions SET is_active = 1 WHERE transaction_id = %s", (transaction_id,))
+            conn.commit()
+            cursor.close()
+        except Exception as e:
+            st.error("Could not connect to the database. Please try again later.")
+            return
+        finally:
+            if conn:
+                conn.close()
         st.session_state[f'alert_sent_{transaction_id}'] = True
         st.session_state[f'show_alert_{transaction_id}'] = True
         # Show confirmation message to the customer
@@ -468,6 +457,8 @@ def fraud_detection_system():
     # ----------------------------------------------------------
     try:
         df_all = load_transactions()
+        #st.subheader("🔍 Debug: Preview of loaded transactions")
+        #st.write(df_all.head())
         fraud_count = df_all[df_all["is_fraud"] == 1].shape[0]
         legit_count = df_all[df_all["is_fraud"] == 0].shape[0]
         total_transactions = df_all.shape[0]
@@ -478,51 +469,27 @@ def fraud_detection_system():
             id_map = {}
     except:
         st.error("❌ Failed to load live data from database.")
+        df_all = pd.DataFrame()
         fraud_count = 0
         legit_count = 0
         total_transactions = 0
 
     # ----------------------------------------------------------
-    # KPI Cards: Only Number + Arrow/Percentage (all in one card div)
+    # KPI Cards: Use st.metric for summary metrics
     # ----------------------------------------------------------
     col1, col2, col3 = st.columns(3, gap="large")
     with col1:
-        st.markdown(
-            f"""
-            <div style='padding:28px 28px 18px 28px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.03); border:1px solid #f1f1f1; min-height:140px;'>
-                <div style='font-size:17px; color:#2c3e50; font-weight:600; margin-bottom:7px; text-align:left;'>Fraudulent</div>
-                <div style='font-size:30px; font-weight:800; color:#212121; text-align:center; margin-bottom:2px; letter-spacing:1px;'>{fraud_count:,}</div>
-                <div style='text-align:center; font-size:13px; color:#FF1744; font-weight:600;'>▲ 2.15%</div>
-            </div>
-            """, unsafe_allow_html=True
-        )
+        st.metric(label="Fraudulent", value=f"{fraud_count:,}", delta="▲ 2.15%", delta_color="inverse")
     with col2:
-        st.markdown(
-            f"""
-            <div style='padding:28px 28px 18px 28px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.03); border:1px solid #f1f1f1; min-height:140px;'>
-                <div style='font-size:17px; color:#2c3e50; font-weight:600; margin-bottom:7px; text-align:left;'>Legitimate</div>
-                <div style='font-size:30px; font-weight:800; color:#212121; text-align:center; margin-bottom:2px; letter-spacing:1px;'>{legit_count:,}</div>
-                <div style='text-align:center; font-size:13px; color:#00C853; font-weight:600;'>▲ 1.07%</div>
-            </div>
-            """, unsafe_allow_html=True
-        )
+        st.metric(label="Legitimate", value=f"{legit_count:,}", delta="▲ 1.07%", delta_color="normal")
     with col3:
-        st.markdown(
-            f"""
-            <div style='padding:28px 28px 18px 28px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.03); border:1px solid #f1f1f1; min-height:140px;'>
-                <div style='font-size:17px; color:#2c3e50; font-weight:600; margin-bottom:7px; text-align:left;'>Total</div>
-                <div style='font-size:30px; font-weight:800; color:#212121; text-align:center; margin-bottom:16px; letter-spacing:1px;'>{total_transactions:,}</div>
-                <div style='text-align:center; font-size:13px; color:#999; font-weight:600;'>&nbsp;</div>
-            </div>
-            """, unsafe_allow_html=True
-        )
-    st.markdown("<div style='margin-bottom:10px;'></div>", unsafe_allow_html=True)
+        st.metric(label="Total", value=f"{total_transactions:,}", delta="")
 
     # ----------------------------------------------------------
     # PERFORMANCE CHART
     # Displays a stacked bar chart of fraudulent vs. legitimate transactions over months (green theme).
     # ----------------------------------------------------------
-    st.markdown("<h4 style='color:#2c3e50; font-size:16px; margin-top:0px; margin-bottom:0px; text-align:left;'>Performance Overview</h4>", unsafe_allow_html=True)
+    st.subheader("Performance Overview")
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
     fraud_data = [v * 8 for v in [1.2, 1.8, 1.5, 1.6, 1.9, 1.4, 2.2]]
     legit_data = [v * 8 for v in [2.2, 2.5, 2.4, 1.6, 1.7, 2, 2.9]]
@@ -544,7 +511,7 @@ def fraud_detection_system():
     # TRANSACTION FILTERING & TABLE
     # Allows filtering by Transaction ID, Type, and Fraud Status. Table displays main transaction details.
     # ----------------------------------------------------------
-    st.markdown("<h4 style='color:#2c3e50; font-size:18px; margin-bottom:10px; text-align:left;'>Transaction Table</h4>", unsafe_allow_html=True)
+    st.subheader("Transaction Table")
     # Compact row for search/type/fraud filters (no refresh)
     with st.container():
         col_search, col_filter1, col_filter2 = st.columns([2, 2, 2])
@@ -606,91 +573,26 @@ def fraud_detection_system():
     # TRANSACTION TABLE
     # Table columns: Transaction ID, Amount, Type, Fraud Status, Customer Details, Transaction Status, Execution Status
     # ----------------------------------------------------------
-    st.markdown("""
-        <style>
-            .block-container {
-                padding-top: 1rem;
-            }
-            .element-container {
-                margin-bottom: 0.2rem !important;
-            }
-            .css-1r6slb0 {
-                padding: 0.25rem !important;
-            }
-            .stDataFrame div {
-                font-size: 13px;
-            }
-            .row-container:hover {
-                background-color: #f3f4f6;
-                border-radius: 8px;
-            }
-            div.stButton > button {
-                padding: 6px 16px;
-                font-size: 13px;
-                border-radius: 10px;
-                width: 100px;
-                margin-left: auto;
-                margin-right: auto;
-                display: block;
-            }
-            .element-container > div > div {
-                text-align: center !important;
-            }
-            th {
-                text-align: center !important;
-            }
-            .stDataFrame tbody tr td {
-                border-right: 1px solid #ccc;
-            }
-            .stDataFrame tbody tr td:last-child {
-                border-right: none;
-            }
-            .stDataFrame thead tr th {
-                border-right: 1px solid #ccc;
-            }
-            .stDataFrame thead tr th:last-child {
-                border-right: none;
-            }
-            /* Adjust the vertical height and padding of transaction table cells */
-            .stDataFrame tbody tr {
-                height: 10px;
-            }
-            .stDataFrame tbody tr td {
-                padding-top: 0px;
-                padding-bottom: 0px;
-                line-height: 1;
-            }
-            /* Reduce the space between rows of the manual transaction table */
-            .stMarkdown + div {
-                margin-top: -6px !important;
-                margin-bottom: -6px !important;
-            }
-        </style>
-    """, unsafe_allow_html=True)
     header1, header2, header3, header4, header5, header6, header7 = st.columns([0.9, 0.9, 1.2, 1.1, 1.1, 1.2, 1.2])
-    header1.markdown("**Transaction ID**")  # Unique ID for transaction
-    header2.markdown("**Amount**")          # Transaction amount
-    header3.markdown("**Transaction Type**")# Type: CASH_OUT, PAYMENT, etc.
-    header4.markdown("**Fraud Status**")    # Whether transaction is flagged as fraud
-    header5.markdown("**Customer Details**")# Button to view customer info
-    header6.markdown("**Transaction Status**") # Status: Waiting/Active/Stopped
-    header7.markdown("**Execution Status**")   # Status: Completed/Cancelled/N/A
-    # Horizontal rule after headers
-    st.markdown("<hr>", unsafe_allow_html=True)
+    header1.text("Transaction ID")
+    header2.text("Amount")
+    header3.text("Transaction Type")
+    header4.text("Fraud Status")
+    header5.text("Customer Details")
+    header6.text("Transaction Status")
+    header7.text("Execution Status")
 
     for idx, row in page_data.iterrows():
         with st.container():
-            st.markdown("<div style='margin-bottom:-16px'></div>", unsafe_allow_html=True)
             cols = st.columns([0.9, 0.9, 1.2, 1.1, 1.1, 1.2, 1.2])
             # Transaction ID column
-            cols[0].markdown(f"<div style='text-align:center;'>{row['transaction_id']}</div>", unsafe_allow_html=True)
+            cols[0].text(str(row['transaction_id']))
             # Amount column
-            cols[1].markdown(f"<div style='text-align:center;'>{row['amount']:.2f}</div>", unsafe_allow_html=True)
+            cols[1].text(f"{row['amount']:.2f}")
             # Transaction Type column
-            cols[2].markdown(f"<div style='text-align:center;'>{row['Transaction Type']}</div>", unsafe_allow_html=True)
-            # Fraud Status column, styled
-            bg_color = '#f8d7da' if row['Fraud Status']=='Fraud' else '#d0f0c0'
-            cols[3].markdown(f"<div style='background-color:{bg_color};padding:5px 10px;border-radius:20px;display:inline-block;text-align:center'>{row['Fraud Status']}</div>", unsafe_allow_html=True)
+            cols[2].text(str(row['Transaction Type']))
+            # Fraud Status column
+            cols[3].text(str(row['Fraud Status']))
 
             detail_key = f"detail_{row['transaction_id']}"
             alert_key = f"alert_{row['transaction_id']}"
@@ -708,53 +610,40 @@ def fraud_detection_system():
                 else:
                     cust = None
                 if cust:
-                    st.markdown(f"""
-                    <div style='background-color:#eef2f7; padding:10px; border-radius:8px;'>
-                    <strong>Name:</strong> {cust[0]}<br>
-                    <strong>Phone:</strong> {cust[1]}<br>
-                    <strong>City:</strong> {cust[2]}<br>
-                    <strong>Email:</strong> {cust[3]}
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.text(f"Name: {cust[0]}")
+                    st.text(f"Phone: {cust[1]}")
+                    st.text(f"City: {cust[2]}")
+                    st.text(f"Email: {cust[3]}")
                 else:
                     st.warning("No customer info found.")
             else:
-                # Empty cell for alignment
-                cols[4].markdown(f"<div style='text-align:center;'>&nbsp;</div>", unsafe_allow_html=True)
+                cols[4].text("")
 
-            # ----------------------------------------------------------
             # Transaction Status column (cols[5])
-            # If fraudulent, allow sending confirmation email and show status based on response
-            # ----------------------------------------------------------
             responses = get_customer_responses(row['transaction_id']) if row['Fraud Status'] == "Fraud" else []
-            # Show Send button only if not Active or Stopped
             if row['Fraud Status'] == "Fraud" and (not responses or responses[0][0].upper() not in ["YES", "NO"]):
                 if cols[5].button("Send", key=send_key):
                     cust = get_customer_info(customer_id)
                     if cust and cust[3]:
                         success = send_email_confirmation(cust[3], row['transaction_id'])
                         if success:
-                            cols[5].markdown("<span style='color:green; font-size:12px;'>Sent successfully</span>", unsafe_allow_html=True)
-                        # st.success() or st.error() messages related to email sending removed here
+                            cols[5].success("Sent successfully")
                     else:
                         cols[5].error("No email found.")
             # Show transaction status: Active (YES), Stopped (NO)
             if row['Fraud Status'] == "Fraud":
                 if responses:
                     latest_response = responses[0][0].upper()
-                    # YES: Active, NO: Stopped
                     if latest_response == "YES":
-                        cols[5].markdown("<div style='background-color:#d0f0c0; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>Active</div>", unsafe_allow_html=True)
+                        cols[5].success("Active")
                     elif latest_response == "NO":
-                        cols[5].markdown("<div style='background-color:#f8d7da; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>Stopped</div>", unsafe_allow_html=True)
+                        cols[5].error("Stopped")
+                else:
+                    cols[5].warning("Waiting")
             else:
-                # Not fraudulent: show Legitimate
-                cols[5].markdown("<div style='background-color:#e2e3e5; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>Legitimate</div>", unsafe_allow_html=True)
+                cols[5].info("Legitimate")
 
-            # ----------------------------------------------------------
             # Execution Status column (cols[6])
-            # Shows Completed/Cancelled if response received, Waiting otherwise
-            # ----------------------------------------------------------
             show_details_key = f"show_exec_{row['transaction_id']}"
             detail_toggle_key = f"exec_detail_toggle_{row['transaction_id']}"
             if detail_toggle_key not in st.session_state:
@@ -768,23 +657,13 @@ def fraud_detection_system():
                             if st.button(status_label, key=show_details_key):
                                 st.session_state[detail_toggle_key] = not st.session_state[detail_toggle_key]
                             if st.session_state[detail_toggle_key]:
-                                # Show response details with timestamp
-                                st.markdown(
-                                    f"<div style='background-color:#f0f0f0; padding:6px 12px; border-radius:15px; display:inline-block; font-size:13px; margin-top:5px; text-align:center;'>Response: <strong>{latest_response}</strong><br><small>{latest_time.strftime('%Y-%m-%d %H:%M')}</small></div>",
-                                    unsafe_allow_html=True
-                                )
+                                st.text(f"Response: {latest_response}\n{latest_time.strftime('%Y-%m-%d %H:%M')}")
                     else:
-                        # Waiting for response
-                        cols[6].markdown("<div style='background-color:#fff3cd; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>Waiting</div>", unsafe_allow_html=True)
+                        cols[6].warning("Waiting")
                 else:
-                    # Waiting for response
-                    cols[6].markdown("<div style='background-color:#fff3cd; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>Waiting</div>", unsafe_allow_html=True)
+                    cols[6].warning("Waiting")
             else:
-                # Not applicable for legitimate transactions
-                cols[6].markdown("<div style='background-color:#e2e3e5; padding:5px 10px; border-radius:20px; display:inline-block; text-align:center;'>N/A</div>", unsafe_allow_html=True)
-
-            # Add horizontal rule after each row for clarity
-            st.markdown("<hr style='margin-top:5px; margin-bottom:5px; border-color:#ddd;'>", unsafe_allow_html=True)
+                cols[6].info("N/A")
 
     # ----------------------------------------------------------
     # PAGINATION CONTROLS
@@ -799,7 +678,7 @@ def fraud_detection_system():
             st.session_state.dashboard_page += 1
             st.rerun()
     with col_page:
-        st.markdown(f"<div style='text-align:center;'>Page {st.session_state.dashboard_page} of {total_pages}</div>", unsafe_allow_html=True)
+        st.text(f"Page {st.session_state.dashboard_page} of {total_pages}")
     return
 
 # ==============================================================
@@ -824,8 +703,8 @@ def main():
     # ----------------------------------------------------------
     # CUSTOMER RESPONSE HANDLING FROM EMAIL LINK (NO LOGIN REQUIRED)
     # ----------------------------------------------------------
-    if 'tx' in st.query_params and 'r' in st.query_params:
-        query_params = st.query_params
+    query_params = st.query_params
+    if 'tx' in query_params and 'r' in query_params:
         # Handle response from email link without requiring login
         fraud_detection_system()
 
@@ -833,119 +712,7 @@ def main():
     # LOGIN FORM FOR STAFF
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
-        # Add top navbar for login page with a hidden 'Login' link to avoid empty item error,
-        # set color same as background and font-size small to hide visually.
-        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
-        selected = st_navbar(
-            ["Login"],
-            logo_path=logo_path,
-            styles={
-                "nav": {"background-color": "#2e7d32"},
-                "img": {
-                    "margin-left": "0px",
-                    "margin-right": "auto",
-                    "display": "inline-block",
-                    "height": "40px",
-                    "position": "absolute",
-                    "top": "50%",
-                    "left": "0px",
-                    "transform": "translateY(-50%)"
-                },
-                "a": {
-                    "color": "#2e7d32",
-                    "pointer-events": "none",
-                    "padding": "0px",
-                    "font-size": "1px"
-                },
-                "active": {
-                    "background-color": "#2e7d32",
-                    "border-radius": "0px"
-                }
-            }
-        )
-        # Add navbar title and logo text beside each other (like dashboard)
-        st.markdown("""
-            <style>
-                .navbar-title {
-                    position: fixed;
-                    top: 22px;
-                    left: 90px;
-                    font-size: 13px;
-                    font-weight: 400;
-                    color: white;
-                    z-index: 9999;
-                }
-            </style>
-            <div class="navbar-title">Banking Fraud Detection System</div>
-        """, unsafe_allow_html=True)
-        # Enforce full-width top navbar
-        st.markdown("""
-            <style>
-                nav {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    left: 0 !important;
-                    right: 0 !important;
-                    margin: 0 auto !important;
-                    padding: 0 !important;
-                }
-                .css-18ni7ap.e8zbici2 {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    padding: 0 !important;
-                    margin: 0 !important;
-                }
-                .block-container {
-                    padding-top: 6rem !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-        # Ensure navbar spans full width and has no margin/padding
-        st.markdown("""
-    <style>
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            z-index: 9999;
-        }
-        .stApp {
-            padding-top: 4rem !important;
-        }
-    </style>
-""", unsafe_allow_html=True)
-        # Add CSS to hide navbar items (keep colored bar only)
-
-
-        # Improved login form centering and style
-        st.markdown("""
-            <style>
-                .stApp {
-                    background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
-                    background-attachment: scroll;
-                }
-                .stApp > header, .stApp > footer {
-                    box-shadow: none !important;
-                }
-                form {
-                    max-width: 360px;
-                    margin: auto;
-                    background: #ffffff;
-                    padding: 1.2rem;
-                    border-radius: 10px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-                    position: relative;
-                    z-index: 1000;
-                }
-                .block-container {
-                    padding-top: 7rem !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-
+        # Login form with NO custom CSS for backgrounds or forms
         with st.form("login_form"):
             email = st.text_input("Email", key="email_input")
             password = st.text_input("Password", type="password", key="pass_input")
@@ -956,11 +723,9 @@ def main():
 
             col_forgot, _ = st.columns([1, 5])
             with col_forgot:
-                st.markdown("""
-                <div style='text-align:left; margin-top:-8px;'>
-                    <a href='#' style='color:#14532d; font-size:12px;'>Forgot password?</a>
-                </div>
-                """, unsafe_allow_html=True)
+                st.markdown(
+                    "<div style='text-align:left; margin-top:-8px;'><a href='#' style='color:#14532d; font-size:12px;'>Forgot password?</a></div>",
+                    unsafe_allow_html=True)
 
         # Direct Access button aligned left only
         col_direct, _ = st.columns([1, 10])
@@ -969,24 +734,6 @@ def main():
                 st.session_state['logged_in'] = True
                 st.session_state['otp_verified'] = True
                 st.rerun()
-
-        # Custom button color
-        st.markdown("""
-            <style>
-                div.stButton > button:first-child {
-                    background-color: #81c784;
-                    color: white;
-                    height: 38px;
-                    font-size: 14px;
-                    border-radius: 8px;
-                    border: none;
-                }
-                div.stTextInput > div > input {
-                    height: 36px;
-                    font-size: 14px;
-                }
-            </style>
-        """, unsafe_allow_html=True)
 
         if login_button:
             with st.spinner('Verifying credentials...'):
@@ -1011,136 +758,10 @@ def main():
     # OTP VERIFICATION FORM
     # ----------------------------------------------------------
     elif st.session_state['logged_in'] and not st.session_state['otp_verified']:
-        # Add top navbar for OTP page, hide nav items as in login page
-        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.svg")
-        st_navbar(
-            ["Login"],
-            logo_path=logo_path,
-            styles={
-                "nav": {"background-color": "#2e7d32"},
-                "img": {
-                    "margin-left": "0px",
-                    "margin-right": "auto",
-                    "display": "inline-block",
-                    "height": "40px",
-                    "position": "absolute",
-                    "top": "50%",
-                    "left": "0px",
-                    "transform": "translateY(-50%)"
-                },
-                "a": {
-                    "color": "#2e7d32",
-                    "pointer-events": "none",
-                    "padding": "0px",
-                    "font-size": "1px"
-                },
-                "active": {
-                    "background-color": "#2e7d32",
-                    "border-radius": "0px"
-                }
-            }
-        )
-        # Add navbar title and logo text beside each other (like dashboard)
-        st.markdown("""
-            <style>
-                .navbar-title {
-                    position: fixed;
-                    top: 22px;
-                    left: 90px;
-                    font-size: 13px;
-                    font-weight: 400;
-                    color: white;
-                    z-index: 9999;
-                }
-            </style>
-            <div class="navbar-title">Banking Fraud Detection System</div>
-        """, unsafe_allow_html=True)
-        # Enforce full-width top navbar on OTP screen
-        st.markdown("""
-            <style>
-                nav {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    left: 0 !important;
-                    right: 0 !important;
-                    margin: 0 auto !important;
-                    padding: 0 !important;
-                }
-                .css-18ni7ap.e8zbici2 {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    padding: 0 !important;
-                    margin: 0 !important;
-                }
-                .block-container {
-                    padding-top: 6rem !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-        # Ensure navbar spans full width and has no margin/padding
-        st.markdown("""
-            <style>
-                nav {
-                    width: 100vw !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    left: 0 !important;
-                }
-                header.css-1avcm0n.ezrtsby0 {
-                    width: 100vw !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-        # Add CSS to hide navbar items (keep colored bar only)
-        st.markdown("""
-            <style>
-                nav ul li {
-                    display: none !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-        # Background, font, and form settings as in login page
-        st.markdown("""
-            <style>
-                .stApp {
-                    background: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2100&q=80') center/cover no-repeat;
-                    background-attachment: scroll;
-                }
-                .stApp > header, .stApp > footer {
-                    box-shadow: none !important;
-                }
-                form {
-                    max-width: 360px;
-                    margin: auto;
-                    background: #ffffff;
-                    padding: 1.2rem;
-                    border-radius: 10px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-                    position: relative;
-                    z-index: 1000;
-                }
-                .block-container {
-                    padding-top: 7rem !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
         # OTP check after login; user must enter OTP sent to email
         col_otp, _ = st.columns([5, 5])
         with col_otp:
             otp_input = st.text_input("Enter OTP", key="otp_input")
-            st.markdown("""
-                <style>
-                    div[data-testid="stTextInput"] input {
-                        background-color: white !important;
-                        height: 36px !important;
-                        font-size: 14px !important;
-                        padding: 8px 12px !important;
-                        border-radius: 6px !important;
-                    }
-                </style>
-            """, unsafe_allow_html=True)
         col_btn_verify, _ = st.columns([1, 9])
         with col_btn_verify:
             if st.button("Verify"):
