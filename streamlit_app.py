@@ -838,7 +838,7 @@ def main():
     # Displays the main dashboard after successful login and OTP verification.
     # ----------------------------------------------------------
     else:
-        show_green_header()
+        
         fraud_detection_system()
 
 # ==============================================================
