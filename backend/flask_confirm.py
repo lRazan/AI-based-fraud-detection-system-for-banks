@@ -1,16 +1,18 @@
 from flask import Flask, request
 import pymysql
+import os
+import traceback
 
 app = Flask(__name__)
 
 def save_customer_response(transaction_id, response):
     try:
         conn = pymysql.connect(
-            host='crossover.proxy.rlwy.net',
-            user='root',
-            password='HTtlTyOOZChpHZPwcmeTPpwORFblfqKx',
-            database='railway',
-            port=55790
+            host=os.getenv("MYSQLHOST"),
+            user=os.getenv("MYSQLUSER"),
+            password=os.getenv("MYSQLPASSWORD"),
+            database=os.getenv("MYSQLDATABASE"),
+            port=int(os.getenv("MYSQLPORT"))
         )
         cursor = conn.cursor()
         cursor.execute(
@@ -22,7 +24,6 @@ def save_customer_response(transaction_id, response):
         conn.close()
         return True
     except Exception as e:
-        import traceback
         print("❌ Database error while saving response:")
         traceback.print_exc()
         return False
@@ -48,6 +49,5 @@ def confirm():
         return "Invalid transaction reference. Please verify your link or contact support.", 400
 
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
