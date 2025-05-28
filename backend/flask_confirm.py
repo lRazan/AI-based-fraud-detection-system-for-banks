@@ -8,11 +8,11 @@ app = Flask(__name__)
 def save_customer_response(transaction_id, response):
     try:
         conn = pymysql.connect(
-            host=os.getenv("MYSQL_HOST"),
-            user=os.getenv("MYSQL_USER"),
-            password=os.getenv("MYSQL_PASSWORD"),
-            database=os.getenv("MYSQL_DATABASE"),
-            port=int(os.getenv("MYSQL_PORT"))
+            host="crossover.proxy.rlwy.net",
+            user="root",
+            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+            database="railway",
+            port=55790
         )
         cursor = conn.cursor()
         cursor.execute(
