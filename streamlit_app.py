@@ -77,7 +77,7 @@ def login_user(email, password):
             user=os.getenv("MYSQL_USER"),
             password=os.getenv("MYSQL_PASSWORD"),
             database=os.getenv("MYSQL_DATABASE"),
-            port=int(os.getenv("MYSQL_PORT"))
+            port=int(os.getenv("MYSQL_PORT", "3306"))
         )
         cursor = conn.cursor()
         query = "SELECT * FROM users WHERE email=%s AND password=%s"
@@ -100,7 +100,7 @@ def load_transactions():
         user=os.getenv("MYSQLUSER"),
         password=os.getenv("MYSQLPASSWORD"),
         database=os.getenv("MYSQLDATABASE"),
-        port=int(os.getenv("MYSQLPORT"))
+        port=int(os.getenv("MYSQL_PORT", "3306"))
     )
     df = pd.read_sql("SELECT * FROM transactions", conn)
     conn.close()
@@ -116,7 +116,7 @@ def get_customer_info(customer_id):
         user=os.getenv("MYSQL_USER"),
         password=os.getenv("MYSQL_PASSWORD"),
         database=os.getenv("MYSQL_DATABASE"),
-        port=int(os.getenv("MYSQL_PORT"))
+        port=int(os.getenv("MYSQL_PORT", "3306"))
     )
     cursor = conn.cursor()
     query = "SELECT name, phone_number, city, email FROM customers WHERE customer_id = %s"
@@ -321,7 +321,7 @@ def fraud_detection_system():
                         user=os.getenv("MYSQL_USER"),
                         password=os.getenv("MYSQL_PASSWORD"),
                         database=os.getenv("MYSQL_DATABASE"),
-                        port=int(os.getenv("MYSQL_PORT"))
+                        port=int(os.getenv("MYSQL_PORT", "3306"))
                     )
                     cursor = conn.cursor()
 
@@ -386,7 +386,7 @@ def fraud_detection_system():
                     user=os.getenv("MYSQL_USER"),
                     password=os.getenv("MYSQL_PASSWORD"),
                     database=os.getenv("MYSQL_DATABASE"),
-                    port=int(os.getenv("MYSQL_PORT"))
+                    port=int(os.getenv("MYSQL_PORT", "3306"))
             )
             cursor = conn.cursor()
             if response == 'NO':
@@ -624,7 +624,7 @@ def fraud_detection_system():
                                     user=os.getenv("MYSQL_USER"),
                                     password=os.getenv("MYSQL_PASSWORD"),
                                     database=os.getenv("MYSQL_DATABASE"),
-                                    port=int(os.getenv("MYSQL_PORT"))
+                                    port=int(os.getenv("MYSQL_PORT", "3306"))
                                 )
                                 cursor = conn.cursor()
                                 try:
@@ -655,7 +655,7 @@ def fraud_detection_system():
                                     user=os.getenv("MYSQL_USER"),
                                     password=os.getenv("MYSQL_PASSWORD"),
                                     database=os.getenv("MYSQL_DATABASE"),
-                                    port=int(os.getenv("MYSQL_PORT"))
+                                    port=int(os.getenv("MYSQL_PORT", "3306"))
                                 )
                                 cursor = conn.cursor()
                                 try:
