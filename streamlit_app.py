@@ -73,11 +73,11 @@ def show_green_header():
 def login_user(email, password):
     try:
         conn = pymysql.connect(
-            host=os.getenv("MYSQL_HOST"),
-            user=os.getenv("MYSQL_USER"),
-            password=os.getenv("MYSQL_PASSWORD"),
-            database=os.getenv("MYSQL_DATABASE"),
-            port=int(os.getenv("MYSQL_PORT", "3306"))
+            host="crossover.proxy.rlwy.net",
+            user="root",
+            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+            database="railway",
+            port=55790
         )
         cursor = conn.cursor()
         query = "SELECT * FROM users WHERE email=%s AND password=%s"
@@ -96,11 +96,11 @@ def login_user(email, password):
 # --------------------------------------------------------------
 def load_transactions():
     conn = pymysql.connect(
-        host=os.getenv("MYSQLHOST"),
-        user=os.getenv("MYSQLUSER"),
-        password=os.getenv("MYSQLPASSWORD"),
-        database=os.getenv("MYSQLDATABASE"),
-        port=int(os.getenv("MYSQL_PORT", "3306"))
+            host="crossover.proxy.rlwy.net",
+            user="root",
+            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+            database="railway",
+            port=55790
     )
     df = pd.read_sql("SELECT * FROM transactions", conn)
     conn.close()
@@ -112,11 +112,11 @@ def load_transactions():
 # --------------------------------------------------------------
 def get_customer_info(customer_id):
     conn = pymysql.connect(
-        host=os.getenv("MYSQL_HOST"),
-        user=os.getenv("MYSQL_USER"),
-        password=os.getenv("MYSQL_PASSWORD"),
-        database=os.getenv("MYSQL_DATABASE"),
-        port=int(os.getenv("MYSQL_PORT", "3306"))
+       host="crossover.proxy.rlwy.net",
+        user="root",
+        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+        database="railway",
+        port=55790
     )
     cursor = conn.cursor()
     query = "SELECT name, phone_number, city, email FROM customers WHERE customer_id = %s"
@@ -193,11 +193,11 @@ def send_otp_email(to_email, otp_code):
 def save_customer_response(transaction_id, response):
     try:
         conn = pymysql.connect(
-            host=os.getenv("MYSQL_HOST"),
-            user=os.getenv("MYSQL_USER"),
-            password=os.getenv("MYSQL_PASSWORD"),
-            database=os.getenv("MYSQL_DATABASE"),
-            port=int(os.getenv("MYSQL_PORT"))
+            host="crossover.proxy.rlwy.net",
+            user="root",
+            password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+            database="railway",
+            port=55790
         )
         cursor = conn.cursor()
         cursor.execute(
@@ -216,11 +216,11 @@ def save_customer_response(transaction_id, response):
 # --------------------------------------------------------------
 def get_customer_responses(transaction_id):
     conn = pymysql.connect(
-        host=os.getenv("MYSQL_HOST"),
-        user=os.getenv("MYSQL_USER"),
-        password=os.getenv("MYSQL_PASSWORD"),
-        database=os.getenv("MYSQL_DATABASE"),
-        port=int(os.getenv("MYSQL_PORT"))
+       host="crossover.proxy.rlwy.net",
+        user="root",
+        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+        database="railway",
+        port=55790
     )
     cursor = conn.cursor()
     cursor.execute(
@@ -317,11 +317,11 @@ def fraud_detection_system():
                     }, inplace=True)
 
                     conn = pymysql.connect(
-                        host=os.getenv("MYSQL_HOST"),
-                        user=os.getenv("MYSQL_USER"),
-                        password=os.getenv("MYSQL_PASSWORD"),
-                        database=os.getenv("MYSQL_DATABASE"),
-                        port=int(os.getenv("MYSQL_PORT", "3306"))
+                        host="crossover.proxy.rlwy.net",
+                        user="root",
+                        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+                        database="railway",
+                        port=55790
                     )
                     cursor = conn.cursor()
 
@@ -382,11 +382,11 @@ def fraud_detection_system():
         conn = None
         try:
             conn = pymysql.connect(
-                    host=os.getenv("MYSQL_HOST"),
-                    user=os.getenv("MYSQL_USER"),
-                    password=os.getenv("MYSQL_PASSWORD"),
-                    database=os.getenv("MYSQL_DATABASE"),
-                    port=int(os.getenv("MYSQL_PORT", "3306"))
+                host="crossover.proxy.rlwy.net",
+                user="root",
+                password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+                database="railway",
+                port=55790
             )
             cursor = conn.cursor()
             if response == 'NO':
@@ -620,11 +620,11 @@ def fraud_detection_system():
                         if cols[6].button("Complete", key=f"complete_{row['transaction_id']}"):
                             try:
                                 conn = pymysql.connect(
-                                    host=os.getenv("MYSQL_HOST"),
-                                    user=os.getenv("MYSQL_USER"),
-                                    password=os.getenv("MYSQL_PASSWORD"),
-                                    database=os.getenv("MYSQL_DATABASE"),
-                                    port=int(os.getenv("MYSQL_PORT", "3306"))
+                                        host="crossover.proxy.rlwy.net",
+                                        user="root",
+                                        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+                                        database="railway",
+                                        port=55790
                                 )
                                 cursor = conn.cursor()
                                 try:
@@ -651,11 +651,11 @@ def fraud_detection_system():
                         if cols[6].button("Cancel", key=f"cancel_{row['transaction_id']}"):
                             try:
                                 conn = pymysql.connect(
-                                    host=os.getenv("MYSQL_HOST"),
-                                    user=os.getenv("MYSQL_USER"),
-                                    password=os.getenv("MYSQL_PASSWORD"),
-                                    database=os.getenv("MYSQL_DATABASE"),
-                                    port=int(os.getenv("MYSQL_PORT", "3306"))
+                                        host="crossover.proxy.rlwy.net",
+                                        user="root",
+                                        password="HTtlTyOOZChpHZPwcmeTPpwORFblfqKx",
+                                        database="railway",
+                                        port=55790
                                 )
                                 cursor = conn.cursor()
                                 try:
