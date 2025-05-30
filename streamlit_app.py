@@ -731,6 +731,9 @@ def main():
     # Collects email and password for staff login, sends OTP if credentials are valid.
     # ----------------------------------------------------------
     elif not st.session_state['logged_in']:
+        # Initialize direct_access_used variable if not present
+        if 'direct_access_used' not in st.session_state:
+            st.session_state['direct_access_used'] = False
         # Custom CSS for login background and button
         st.markdown(
             """
@@ -772,7 +775,15 @@ def main():
                     "<div style='text-align:left; margin-top:-8px;'><a href='#' style='color:#14532d; font-size:12px;'>Forgot password?</a></div>",
                     unsafe_allow_html=True)
 
-        # Direct Access button removed
+        # Direct Access - Skip Login button (only show if not already used)
+        if not st.session_state['direct_access_used']:
+            if st.button("Direct Access - Skip Login"):
+                st.session_state['logged_in'] = True
+                st.session_state['otp_verified'] = True
+                st.session_state['email'] = "direct_access_user"
+                st.session_state['otp_code'] = None
+                st.session_state['direct_access_used'] = True
+                st.rerun()
 
         if login_button:
             with st.spinner('Verifying credentials...'):
